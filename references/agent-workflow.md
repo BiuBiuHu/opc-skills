@@ -3,6 +3,7 @@
 ## 角色
 
 - 文档治理 Agent：整理散落文档，合并到主文档，维护版本历史。
+- 目标澄清 Agent：在 PRD、UI、架构和编码前对齐用户真正想完成的业务结果、操作闭环、成本约束和验收方式。
 - 需求验证 Agent：检查需求歧义、冲突、隐藏假设、验收证据和是否可以进入后续阶段。
 - 产品 Agent：负责 PRD、范围、角色、业务指标。
 - UI Agent：负责 Markdown 原型、页面流程、交互状态。
@@ -18,17 +19,18 @@
 
 1. 文档治理 Agent 先确定 `<PROJECT_ROOT>` 和 `<FEATURE_NAME>`，并声明本次文档目录。
 2. 文档治理 Agent 先把同一 feature 下的散落文档合并到主文档。
-3. 需求验证 Agent 更新 `docs/<FEATURE_NAME>/01-product/requirement-validation.md`。
-4. 产品 Agent 更新 `docs/<FEATURE_NAME>/01-product/PRD.md`。
-5. UI Agent 更新 `docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`。
-6. 架构 Agent 更新 `docs/<FEATURE_NAME>/03-architecture/architecture.md`。
-7. 变更影响 Agent 更新 `docs/<FEATURE_NAME>/04-engineering/change-impact.md`。
-8. 研发 Agent 创建或更新实施计划、Backlog 和 evidence manifest。
-9. QA Agent 创建或更新测试策略和测试用例。
-10. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
-11. DevOps Agent 创建或更新运维手册和部署计划。
-12. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
-13. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
+3. 目标澄清 Agent 复述用户目标并反问关键问题，直到明确主要用户、核心闭环、批量范围、成本约束、返工粒度和验收证据。
+4. 需求验证 Agent 更新 `docs/<FEATURE_NAME>/01-product/requirement-validation.md`。
+5. 产品 Agent 更新 `docs/<FEATURE_NAME>/01-product/PRD.md`。
+6. UI Agent 更新 `docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`。
+7. 架构 Agent 更新 `docs/<FEATURE_NAME>/03-architecture/architecture.md`。
+8. 变更影响 Agent 更新 `docs/<FEATURE_NAME>/04-engineering/change-impact.md`。
+9. 研发 Agent 创建或更新实施计划、Backlog 和 evidence manifest。
+10. QA Agent 创建或更新测试策略和测试用例。
+11. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
+12. DevOps Agent 创建或更新运维手册和部署计划。
+13. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
+14. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
 
 ## 文档治理规则
 
@@ -38,6 +40,29 @@
 - 重大变更必须写入版本历史。
 - 每份主文档必须写清本环节真正需要的判断、边界、方案、证据和风险。SMART/5W2H 只能作为可选校验，不得作为主结构或填空表格。
 - 如果 PRD、UI 原型和技术架构不一致，不允许进入实施阶段。
+- 如果目标澄清和后续 PRD/UI/架构不一致，不允许进入实施阶段；先回到目标澄清或需求验证。
+
+## 目标澄清门禁
+
+每个新需求都要先回答：
+
+- 用户真正想完成的业务结果是什么，而不是要哪些控件或字段。
+- 谁操作，操作频率如何，工作单元是单条、某天、某周、某月还是批量。
+- 主要闭环是什么：创建、预览、审核、发布、返工、回滚或其它。
+- 成本约束是什么，尤其是 LLM、生图、视频、第三方 API、批量任务。
+- 最小返工粒度是什么，失败后怎么重试，哪些动作必须幂等。
+- 什么证据能证明目标达成：截图、接口、数据、日志、预发 smoke 或人工验收。
+
+如果任一项缺失，先反问用户。不要用字段清单、接口清单或页面草图代替目标澄清。
+
+## B 类运营页面默认原则
+
+- 筛选区和页面标题表达上下文，列表不重复展示已筛选信息。
+- 主区域优先高密度表格，行内直接展示图片、状态、异常、进度和关键文案。
+- 详情抽屉只放完整提示词、原始 JSON、错误日志、长文本和低频证据。
+- 操作贴近数据行，批量操作贴近筛选上下文。
+- 空值必须解释成可行动异常，不能只显示 `-`。
+- 验收截图必须证明运营能在列表里完成主要判断。
 
 ## Bug 快速路径
 
