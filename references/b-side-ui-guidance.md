@@ -1,57 +1,77 @@
-# B-Side UI Guidance
+# B 类页面设计指南
 
-Use this reference when designing or reviewing admin consoles, operation workbenches, review queues, batch generation pages, data tables, or any B-side workflow where operators need fast judgment and repeatable actions.
+用于设计或审查管理后台、运营台、审核台、批量生成台、数据表格、长任务列表等 B 类页面。目标不是把字段铺出来，而是让操作者更快判断、更快操作、更少返工。
 
-## Source Baseline
+## 开源 Skills 与设计系统调研基线
 
-Prefer mature design-system patterns before inventing custom table behavior:
+设计 B 类页面前，先查可复用的开源 skills、组件库和设计系统，不要直接手写交互。当前可优先参考：
 
-- Ant Design Pagination: https://ant.design/components/pagination/
-- Ant Design Table: https://ant-design.antgroup.com/components/table
-- Carbon Design System Data Table: https://carbondesignsystem.com/components/data-table/usage/
-- Carbon Filtering Pattern: https://carbondesignsystem.com/patterns/filtering/
-- Material Design Data Tables: https://m2.material.io/components/data-tables
+- `openstatushq/data-table-filters@data-table-filters`：适合参考筛选、排序、虚拟列表、详情面板、批量操作、服务端查询和表格 schema 化能力。来源：https://skills.sh/openstatushq/data-table-filters/data-table-filters
+- `nextlevelbuilder/ui-ux-pro-max-skill@design-system`：适合参考设计系统、颜色、排版、可访问性、响应式和交互质量检查。来源：https://skills.sh/nextlevelbuilder/ui-ux-pro-max-skill/design-system
+- `mblode/agent-skills@ui-audit`：适合参考 UI 发布前审计流程，覆盖可访问性、交互、表单、排版、布局、性能和文案。来源：https://skills.sh/mblode/agent-skills/ui-audit
+- `ancoleman/ai-design-components@creating-dashboards`、`bergside/awesome-design-skills@dashboard`：适合参考仪表盘/数据展示结构，但运营台不要照搬大屏和卡片堆叠。
+- Ant Design Table / Pagination / ProComponents：适合后台表格、筛选、分页、批量操作和表单布局。来源：https://ant.design/components/table/ 、https://ant.design/components/pagination/
+- Carbon Data Table / Filtering：适合参考企业级表格、批量选择、过滤、空态和工具栏模式。来源：https://carbondesignsystem.com/components/data-table/usage/ 、https://carbondesignsystem.com/patterns/filtering/
+- Material Design Data Tables：适合参考基础表格行为、排序、选择和密度。来源：https://m2.material.io/components/data-tables
 
-## Hard Rules
+调研结论必须落到取舍：复用哪个组件或模式、拒绝哪个模式、为什么适合当前业务。不要只列链接。
 
-1. Long lists need navigation controls.
-   - Any table or list that can exceed one screen or one query page must include pagination, page size, total count, current page, loading state, empty state, and error state.
-   - Use server-side pagination, sorting, and filtering when data size, latency, or permission rules make client-side handling unreliable.
-   - Use virtual scrolling only when row height is stable and the interaction benefits from continuous scanning; still provide total count or range context.
+## B 类页面工作流
 
-2. The main table is for decisions and actions.
-   - Keep only fields needed for scan, compare, decide, select, or act.
-   - Do not repeat context that filters, tabs, route params, or batch task headers already establish.
-   - Put raw JSON, full prompts, long logs, audit trails, and verbose descriptions into drawers, popovers, expandable rows, or detail pages.
+1. 先澄清目标：用户是谁、要批量完成什么结果、操作单位是单条/某天/某周/某月/一批、成功标准是什么、哪些成本不能浪费。
+2. 再定义决策单元：本页面每一行、每一组、每一批到底帮助用户判断什么；没有服务这个判断的内容默认不展示。
+3. 做信息裁剪：筛选条件、页面标题、任务头已经表达的信息，不要在每行重复出现；完整提示词、JSON、日志、审计字段默认进抽屉、hover、展开行或独立详情。
+4. 选主结构：B 类运营页面默认采用“筛选上下文 + 高密度决策表 + 批量工具条 + 详情抽屉”。只有当对象数量很少且视觉比较是核心任务时，才使用卡片或画廊。
+5. 先本地 mock 验证，再接预发真实数据。mock 必须覆盖成功、空、慢、错、长文本、缺字段、多状态、批量范围、单条返工、部分失败和超过一页的数据。
 
-3. Batch work must be first-class.
-   - If users can act on multiple rows, provide row selection, persistent selected count, batch action bar, clear selection, cross-page selection rules, partial failure feedback, and retry entry.
-   - Disable or clarify row-level actions while batch mode is active if the actions conflict.
+## 硬规则
 
-4. Filtering and sorting must be visible and reversible.
-   - Put common filters close to the table.
-   - Show active filter count or chips when filters are collapsed.
-   - Provide reset for one category and reset all.
-   - For slow or multi-category filtering, use an explicit Apply button to avoid reloading after every small change.
+1. 长列表必须有分页或明确的虚拟滚动方案。
+   - 能超过一屏或一个查询页的数据，必须展示分页、每页条数、总数、当前页、加载态、空态和错误态。
+   - 数据量、权限、延迟或筛选复杂时，优先服务端分页/排序/筛选。
+   - 使用虚拟滚动时必须说明行高稳定性、总数/范围上下文、键盘访问和批量选择如何保持。
 
-5. Long content should be progressively disclosed.
-   - Use ellipsis, preview text, hover, drawer, or expandable row depending on frequency.
-   - P0/P1 decision fields must remain visible without opening details.
-   - Low-frequency diagnostic content must not break the scanning rhythm of the list.
+2. 主表只放决策字段和行动字段。
+   - 保留用于扫描、比较、选择、判断、操作的字段。
+   - 删除已由筛选项、Tab、路由、任务头确定的重复上下文。
+   - P0/P1 决策字段不得藏进详情；低频诊断信息不得常驻主流程。
 
-6. Verification must use realistic data.
-   - Mock data must include more rows than one page, long text, empty fields, failed rows, running rows, selected rows, and batch partial failure.
-   - Tests must assert pagination, page size changes, sorting/filtering persistence, selection behavior, and recovery from errors.
+3. 图片和可视对象要行内可判断。
+   - 图片、封面、生成结果、截图、状态图这类决策对象应直接放在行内，支持 hover 或点击查看大图。
+   - 行内缩略图必须有稳定尺寸、占位、失败态和重试/查看错误入口，不能因加载导致表格跳动。
+   - 如果图片成本昂贵，必须区分“提示词已生成”“图片生成中”“图片已缓存”“生成失败可重试”“需要重新生成”。
 
-## B-Side Table Checklist
+4. 批量能力是一等流程。
+   - 支持多选时必须有选中数量、批量工具条、清空选择、跨页选择规则、部分失败回显和重试入口。
+   - 批量模式和单行操作冲突时，必须禁用或解释冲突操作。
+   - 昂贵批量操作必须先确认范围、成本和不可逆副作用。
 
-- Does the operator know how many records exist?
-- Can the operator move across pages or use virtual scroll without losing context?
-- Can the operator change page size when density matters?
-- Are filters, sort order, page, and selected rows preserved across refreshes or actions where appropriate?
-- Are P0 decision fields visible in the table?
-- Are low-frequency details hidden until requested?
-- Are images or visual artifacts visible inline when they are part of the decision?
-- Are failed, missing, running, and stale states directly actionable?
-- Are batch actions available where repetitive row actions would waste time?
-- Are partial failures explained at row level and batch summary level?
+5. 筛选和排序必须可见、可撤销、可复现。
+   - 高频筛选靠近表格；折叠筛选必须显示生效数量或标签。
+   - 支持单项重置和全部重置。
+   - 慢查询或多条件筛选使用“应用”按钮，避免每改一个条件就刷新。
+   - URL、状态管理或本地存储要能保留必要的筛选、排序、页码和选中状态。
+
+6. 长内容必须渐进披露。
+   - 短预览、截断、tooltip、hover、抽屉、展开行按使用频率选择。
+   - 完整提示词、原始 JSON、错误堆栈、审计日志默认不在主表常驻展示。
+   - 详情区只承载低频检查，不承担主判断。
+
+7. 异常必须可行动。
+   - 空值不要只显示 `-`，要说明“缺图片”“缺提示词”“缺 contentSnapshot”“OSS 未命中”“重试 2/3 失败”等可处理状态。
+   - 错误态要给出下一步：重试、重新生成、查看日志、补字段、回滚或联系谁。
+   - 长任务要展示进度、最近更新时间、失败次数和下一次重试。
+
+## 原型与实现检查清单
+
+- 页面是否先说明了效率目标和核心工作单元？
+- 操作者是否一眼知道总数、当前范围和筛选条件？
+- 表格是否只保留了决策字段和行动字段？
+- 已筛选出的上下文字段是否从每行移除了？
+- 图片或视觉产物是否能在行内直接判断，并可 hover/点击大图？
+- 是否有分页、每页条数、总数、排序/筛选状态和加载/空/错态？
+- 是否支持批量选择、批量工具条、跨页选择规则、部分失败回显和重试？
+- 长提示词、日志、JSON、审计字段是否被收进低频详情？
+- 缺失、失败、处理中、过期、缓存命中等状态是否可行动？
+- 本地 mock 是否覆盖超过一页、长文本、缺字段、失败、处理中、已完成、选中行和批量部分失败？
+- Playwright 或浏览器截图是否证明“行内可看图、流程连续、状态顺滑、无冗余常驻内容”？
