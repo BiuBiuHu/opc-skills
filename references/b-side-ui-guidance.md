@@ -2,19 +2,33 @@
 
 用于设计或审查管理后台、运营台、审核台、批量生成台、数据表格、长任务列表等 B 类页面。目标不是把字段铺出来，而是让操作者更快判断、更快操作、更少返工。
 
-## 开源 Skills 与设计系统调研基线
+## 外部 Skills 与设计系统使用策略
 
-设计 B 类页面前，先查可复用的开源 skills、组件库和设计系统，不要直接手写交互。当前可优先参考：
+不要把外部 skill 整包复制进 `opc-skills`。外部来源只承担“调研、启发、细节查询”的角色；`opc-skills` 只沉淀已经本地化的中文工作流、硬规则和验收门禁。这样可以避免上下文膨胀、规则过期、许可证和维护归属不清，也能防止 Agent 把通用仪表盘、落地页或页面润色规则误用到运营台主流程。
 
-- `openstatushq/data-table-filters@data-table-filters`：适合参考筛选、排序、虚拟列表、详情面板、批量操作、服务端查询和表格 schema 化能力。来源：https://skills.sh/openstatushq/data-table-filters/data-table-filters
-- `nextlevelbuilder/ui-ux-pro-max-skill@design-system`：适合参考设计系统、颜色、排版、可访问性、响应式和交互质量检查。来源：https://skills.sh/nextlevelbuilder/ui-ux-pro-max-skill/design-system
-- `mblode/agent-skills@ui-audit`：适合参考 UI 发布前审计流程，覆盖可访问性、交互、表单、排版、布局、性能和文案。来源：https://skills.sh/mblode/agent-skills/ui-audit
-- `ancoleman/ai-design-components@creating-dashboards`、`bergside/awesome-design-skills@dashboard`：适合参考仪表盘/数据展示结构，但运营台不要照搬大屏和卡片堆叠。
-- Ant Design Table / Pagination / ProComponents：适合后台表格、筛选、分页、批量操作和表单布局。来源：https://ant.design/components/table/ 、https://ant.design/components/pagination/
-- Carbon Data Table / Filtering：适合参考企业级表格、批量选择、过滤、空态和工具栏模式。来源：https://carbondesignsystem.com/components/data-table/usage/ 、https://carbondesignsystem.com/patterns/filtering/
-- Material Design Data Tables：适合参考基础表格行为、排序、选择和密度。来源：https://m2.material.io/components/data-tables
+设计 B 类页面时必须输出“外部参考取舍”，而不是只贴链接：
 
-调研结论必须落到取舍：复用哪个组件或模式、拒绝哪个模式、为什么适合当前业务。不要只列链接。
+- 候选来源：本次查了哪些 skills、组件库或设计系统。
+- 采纳内容：采纳了哪些具体模式，例如 URL 状态、服务端筛选、详情抽屉、批量工具条、行内图片。
+- 拒绝内容：拒绝了哪些模式，例如大屏卡片堆叠、营销页首屏、装饰型仪表盘、全量外部组件引入。
+- 本地化规则：这些模式如何转成当前业务页面的列、筛选、状态、操作和验证点。
+
+### 已本地化吸收的核心能力
+
+- 表格工作台：来自 data-table-filters、Ant Design、Carbon 和 Material 的共同模式，沉淀为筛选、排序、分页、总数、列可见性、详情抽屉、行选择、批量操作、空/错/慢态和服务端查询规则。
+- 设计质量：来自 ui-ux-pro-max 和成熟设计系统的共同模式，沉淀为清晰层级、稳定间距、可读排版、可访问性、响应式、图标一致性和无布局跳动。
+- 发布前审计：来自 ui-audit 的流程，沉淀为改动面审计、P0 交互优先、表单/键盘/可访问性检查、性能和视觉稳定性检查。
+- 业务效率：来自当前 OPC/Dida 运营台实践，沉淀为目标澄清、信息裁剪、行内可判断、低频详情收纳、本地 mock 先验收、预发真实链路复验。
+
+### 何时打开外部来源
+
+- 表格、筛选、虚拟列表、详情抽屉、批量工具条或服务端查询实现不明确时，先查 `openstatushq/data-table-filters@data-table-filters`，来源：https://skills.sh/openstatushq/data-table-filters/data-table-filters
+- 需要后台组件 API、Table/Pagination/Form/ProComponents 选型或 antd 代码实现时，使用本地 `ant-design` skill，并优先查官方文档：https://ant.design/components/table/ 、https://ant.design/components/pagination/
+- 需要设计系统、颜色、排版、响应式、可访问性和交互质量补充时，使用 `ui-ux-pro-max`，来源：https://skills.sh/nextlevelbuilder/ui-ux-pro-max-skill/design-system
+- 页面准备合并、预发或用户反馈“交互别扭/不够顺滑/不美观”时，使用 `ui-audit` 做改动面审计，来源：https://skills.sh/mblode/agent-skills/ui-audit
+- 只在信息展示型 dashboard、监控大屏或指标总览场景参考 `creating-dashboards`、`dashboard` 类 skills；运营台主流程不得照搬卡片流、大屏布局或营销式视觉。
+- 需要企业表格通用模式时参考 Carbon Data Table / Filtering：https://carbondesignsystem.com/components/data-table/usage/ 、https://carbondesignsystem.com/patterns/filtering/
+- 需要基础表格行为时参考 Material Data Tables：https://m2.material.io/components/data-tables
 
 ## B 类页面工作流
 
