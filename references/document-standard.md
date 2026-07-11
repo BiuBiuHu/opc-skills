@@ -27,8 +27,8 @@
 
 `<FEATURE_NAME>` 必须按本次需求动态确定：
 
-- 使用英文 kebab-case，例如 `evidence-review-workflow`。
-- 名称应表达业务能力，而不是临时动作，例如用 `evidence-review-workflow`，不要用 `update-docs`。
+- 使用英文 kebab-case，例如 `trustpilot-public-visibility`。
+- 名称应表达业务能力，而不是临时动作，例如用 `trustpilot-public-visibility`，不要用 `update-docs`。
 - 如果同一需求后续迭代，继续写入同一个 feature 目录，并在文档版本历史中追加版本。
 - 如果是新需求，必须新建新的 feature 目录。
 

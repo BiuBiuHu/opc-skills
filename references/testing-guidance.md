@@ -8,6 +8,7 @@
 - ISTQB：风险驱动测试、黑盒/白盒/经验型测试技术、等价类、边界值、状态迁移、决策表。
 - OWASP ASVS：认证、会话、访问控制、API 安全的可验证安全要求。
 - OAuth 2.0 Security BCP / RFC 9700：OAuth/OIDC 类登录、回调、token、redirect、state、PKCE、客户端与服务端边界的安全验证。
+- 认证/登录端到端专项：当需求涉及验证码、OAuth、token exchange、current user、绑定/解绑、会话持久化或冷启动恢复时，同时读取 `auth-login-e2e.md`。
 
 ## 测试策略必须回答的问题
 
@@ -31,13 +32,15 @@
 - 第三方：OAuth/provider callback、签名/JWKS、redirect URI、state/nonce、失败回调、供应商不可用。
 - 运维/发布：构建产物、环境变量、deployment、日志、监控、回滚、预发和生产 smoke。
 
+认证类需求必须额外拆分：客户端登录入口、网关鉴权转发、auth-service token/userinfo、数据层 identity、第三方 provider、客户端 storage 和冷启动恢复。
+
 ## 用例最小字段
 
 每条可执行 case 必须包含：
 
 - `id`：稳定编号，例如 `API-001`、`FE-001`、`ENV-001`。
 - `title`：一句话说明要证明的行为。
-- `system`：客户端、主服务、identity-service、数据库、第三方、运维。
+- `system`：客户端、主服务、auth-service、数据库、第三方、运维。
 - `priority`：P0/P1/P2。
 - `scopeType`：changed-feature、impacted-regression、core-smoke、full-regression。
 - `preconditions`：账号、数据、配置、登录态、provider mock。
@@ -57,6 +60,8 @@
 - 状态迁移：登录、绑定、解绑、退出、token 刷新、账号合并状态。
 - 错误猜测：历史 bug、跨环境 URL、旧缓存、重复点击、并发提交。
 - 安全验证：鉴权绕过、越权访问、OAuth state/nonce、redirect URI、secret 泄漏。
+
+认证类 case 的通过断言必须是稳定业务状态，例如登录后首页、设置页用户信息、storage token、冷启动恢复和服务端消费证据。禁止把 Loading、按钮消失、接口 2xx、构建成功或发布成功当作认证链路通过。
 
 ## 输出要求
 
