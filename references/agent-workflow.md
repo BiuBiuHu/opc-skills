@@ -15,6 +15,31 @@
 - 联调 Agent：负责端到端联调门禁；仅当本次需求涉及客户端应用或用户明确要求时，启用客户端专项联调。
 - DevOps Agent：负责部署、可观测性、运维手册和故障处理。
 
+## 概念 Agent 与可执行 Subagent
+
+`opc-skills` 默认定义的是概念 Agent，用来规定职责、产物和质量门禁。可执行 subagent 只能在用户明确允许 subagent、多 Agent 或并行执行时，由主 Agent 按任务边界启动。
+
+Skill 文件不能直接调用 subagent。真实调用顺序必须是：主 Agent 读取 `references/subagent-orchestration.md`，读取对应 `agents/<role>-agent.md`，用 `templates/subagent-task-brief-template.md` 生成任务包，然后调用 Codex Runtime 工具 `multi_agent_v1.spawn_agent`。subagent 返回后，主 Agent 用 `templates/subagent-result-template.md` 审查结果。
+
+启动 subagent 前必须回答：
+
+- 是否能并行推进，或明显提高审查质量。
+- ownership 是否清楚：可读范围、可写文件、禁止修改范围。
+- 输出是否能被主 Agent 快速验收和集成。
+- 不启动 subagent 的主要风险是什么。
+- subagent 是否避开生产发布、数据库迁移、环境变量修改和破坏性清理。
+
+推荐可执行 subagent：
+
+- Explorer Agent：只读探索代码影响面、接口、数据模型、开源方案和历史文档。
+- Frontend Agent：负责 Web/RN 页面、B 类表格、筛选、分页、抽屉、批量工具条、本地 mock 和前端测试。
+- Backend Agent：负责主服务/BFF/API 契约、权限、分页、幂等、重试和后端测试。
+- Data/Migration Agent：负责 schema、索引、迁移和回滚脚本设计；不得直接执行生产迁移。
+- QA/Test Agent：负责测试策略、测试用例、自动化断言和失败路径。
+- Integration Agent：负责前后端联调、环境拓扑、API contract 和证据汇总。
+
+subagent 完成后，主 Agent 必须检查是否越权、是否引入无关改动、是否违反分层边界、是否有可复验证据，并记录实际收益、冲突和下次是否继续使用同类 subagent。
+
 ## 默认顺序
 
 1. 文档治理 Agent 先确定 `<PROJECT_ROOT>` 和 `<FEATURE_NAME>`，并声明本次文档目录。
@@ -29,8 +54,9 @@
 10. QA Agent 创建或更新测试策略和测试用例。
 11. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
 12. DevOps Agent 创建或更新运维手册和部署计划。
-13. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
-14. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
+13. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
+14. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
+15. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
 
 ## 文档治理规则
 
