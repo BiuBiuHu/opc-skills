@@ -1,6 +1,6 @@
 # OPC Skills
 
-当前版本：`v0.2.2`
+当前版本：`v0.3.3`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。
 
@@ -13,6 +13,8 @@
 - 强化 B 类页面、本地 mock、Mermaid 调用图、预发/线上门禁的阅读提示。
 - 补充昂贵批量操作的确认规则：禁止嵌套确认，必须展示成本、缓存、重试和覆盖策略。
 - 明确预发证据不能只停留在登录页，必须验证真实 API、OSS/数据库和功能页路径。
+- 增加发布方案评审、关联系统核销和生产发布后线上回归门禁；线上 smoke 不能替代 P0/P1 回归。
+- 增加新需求分支准备门禁：保存当前工作区，切回远端默认主分支并 `git pull --ff-only`，再从同步后的主分支创建需求分支。
 
 ## 适用场景
 
@@ -65,7 +67,10 @@
 -> 本地 mock / 客户端自动化验证
 -> 预发联调和真实 API 复验
 -> 测试报告和 Code Review
+-> 发布方案评审和关联系统核销
 -> 生产发布和线上 smoke test
+-> 固定生产域名线上回归
+-> 观察窗口完成后发布核销
 ```
 
 默认模式是 `manual-gated`：文档和方案完成后进入 `awaiting-user-review`，用户审核通过后才进入实现、迁移或部署。
@@ -106,6 +111,7 @@ opc-skills/
     ├── implementation-plan-template.md
     ├── ops-runbook-template.md
     ├── prd-template.md
+    ├── release-plan-template.md
     ├── requirement-validation-template.md
     ├── subagent-result-template.md
     ├── subagent-task-brief-template.md
@@ -125,14 +131,15 @@ opc-skills/
 - AI/生成类需求必须先低成本预览，再高成本生成。
 - 客户端不得直连内部子服务。
 - 发布必须先预发、再线上，并且必须有测试报告和 Code Review。
+- 生产发布后必须完成线上回归；全部系统核销、回归通过且观察窗口完成后才能宣布发布完成。
 - subagent 只能在用户明确允许、任务边界清楚、能证明提速或提质时使用；skill 只写规则，主 Agent 通过 `multi_agent_v1.spawn_agent` 执行调用。
 
 ## 版本发布
 
-当前本地版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.2.2`。若要开源发布，建议先把本目录迁入独立 Git 仓库，再补齐：
+当前本地版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.3.3`。若要开源发布，建议先把本目录迁入独立 Git 仓库，再补齐：
 
 - `LICENSE`
 - GitHub Releases
 - 安装说明
 - 示例任务和输出样例
-- 版本 tag，例如 `v0.2.2`
+- 版本 tag，例如 `v0.3.3`

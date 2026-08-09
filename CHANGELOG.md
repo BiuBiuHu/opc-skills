@@ -4,6 +4,48 @@
 
 ### Added
 
+- 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
+- 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
+
+## v0.3.2 - 2026-08-08
+
+### Added
+
+- 增加新需求分支准备门禁：保存当前工作区，切回远端默认主分支并 `git pull --ff-only`，确认同步后再创建需求分支。
+- 多仓库需求按仓库分别记录分支保存点、主分支同步结果和新需求分支；同步失败时禁止开始实现。
+
+### Changed
+
+- 同步 `SKILL.md`、README 和 `references/agent-workflow.md` 的研发顺序与编码前门禁。
+
+## v0.3.1 - 2026-08-06
+
+### Added
+
+- 增加生产发布后的强制线上回归门禁，覆盖 P0/P1、关联系统契约、相邻高风险路径和失败路径。
+
+### Changed
+
+- 发布完成条件改为：全部系统核销、线上回归通过且观察窗口完成；health/smoke 不再能单独证明发布完成。
+- P0/P1 回归失败必须停止核销、回滚并重新走预发和发布评审流程。
+- 同步 `release-gated` 模式、README、QA Agent 和 DevOps Agent，避免执行入口仍以 smoke 作为发布终点。
+- `VERSION` 更新为 `0.3.1`。
+
+## v0.3.0 - 2026-08-06
+
+### Added
+
+- 增加强制发布方案评审门禁：每次共享环境发布前必须形成关联系统发布矩阵并获得明确批准。
+- 增加 `templates/release-plan-template.md`，覆盖系统范围、候选版本、部署顺序、环境、迁移、验证、监控和回滚核销。
+
+### Changed
+
+- 生产发布流程增加方案变更重新评审和发布后逐系统核销，防止只发布主仓库而漏发关联服务。
+- DevOps Agent 和运维模板同步关联系统矩阵要求。
+- `VERSION` 更新为 `0.3.0`。
+
+### Added
+
 - 增加 `agents/` 目录，定义 Explorer、Frontend、Backend、QA/Test、Integration 和 DevOps subagent 的角色、边界和输出格式。
 - 增加 `templates/subagent-task-brief-template.md` 和 `templates/subagent-result-template.md`，用于主 Agent 生成任务包和验收 subagent 输出。
 - 增加 `references/subagent-orchestration.md`，明确 skill 不能直接调用 subagent，必须由主 Agent 使用 Codex Runtime `multi_agent_v1.spawn_agent` 执行。

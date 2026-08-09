@@ -27,6 +27,27 @@
 9. 验证服务端副作用：验证码被消费、attempts/冷却正确、identity 绑定状态正确、不会跨环境写库。
 10. 将失败归因到客户端、网关/主服务、auth-service、数据库、第三方 provider、配置、旧构建/缓存或网络。
 
+## 预发/运行时前置排查
+
+登录类问题在预发或线上出现时，先证明运行时和环境健康，再判断业务代码。尤其是“账号密码正确但提示错误”“验证码正确但登录失败”“OAuth 回调失败”“前端显示凭据错误但请求 status 0/5xx”。
+
+按顺序执行：
+
+1. 固定目标：记录客户端 URL、API baseURL、主服务固定 alias、deployment id、commit、分支和创建时间。确认用户访问的不是旧 deployment、错误 alias、旧包、旧缓存或错误环境。
+2. 直接健康检查：不用客户端，直接请求主服务根路径/health 和本次涉及 auth API。记录 HTTP 状态、`x-vercel-error`、CORS preflight 结果和超时情况。
+3. Runtime 日志：读取对应 deployment 的 Vercel/serverless 日志。优先寻找函数启动失败、`FUNCTION_INVOCATION_FAILED`、模块入口错误、DB 连接失败、tenant/user not found、schema 不存在、CORS preflight 500。
+4. 环境变量脱敏巡检：只输出变量名、目标环境、host、schema、hash/指纹和是否存在换行，不输出 secret。检查 `APP_ENV`、`DEPLOY_TARGET`、API URL、auth-service URL、`DATABASE_URL`、`DB_HOST`、`DB_SCHEMA`、`EXPECTED_DB_HOST`。
+5. DB 只读连通性：用只读查询验证目标数据库能连接，目标 schema 存在，必要测试账号存在。若 DB host `ENOTFOUND`、Supabase pooler 返回 tenant/user not found、schema 不存在或指纹指向生产库，先停止业务代码修改。
+6. 下游服务：主服务依赖 auth-service/email-service/provider 时，直接检查下游 health、redirect URL、token/userinfo 最小路径和 service-to-service secret 是否在目标环境存在。
+7. 客户端复现：只有前六项健康后，再用浏览器/模拟器复现并看 Network。前端错误文案必须和真实层级一致：401 才是凭据/授权失败；5xx、status 0、CORS、timeout 应显示服务不可用或环境异常。
+
+硬规则：
+
+- `READY` deployment 不是认证通过证据；必须有 runtime/API/DB 证据。
+- 不得把生产数据库连接串临时填到预发来“验证通过”，除非用户明确批准并接受风险。
+- 不得在 runtime/env/DB 失败时继续改登录表单、密码校验或账号迁移逻辑。
+- 所有日志和 env 输出必须脱敏；测试账号密码只能用于当次验证，不能写入文档或代码。
+
 ## 最小状态矩阵
 
 认证测试至少覆盖以下状态。无法执行的项必须说明原因和风险：

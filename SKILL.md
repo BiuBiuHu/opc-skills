@@ -47,12 +47,25 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - Code Review 门禁：生产发布前必须发起 CR/PR 或生成 code review 记录，说明变更范围、风险点、验证结果、回滚方案和 reviewer/审批状态。记录建议写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/code-review.md`；若使用 GitHub/GitLab PR，最终回复必须给出 PR/CR 链接。
 - 线上发布门禁：只有预发验证通过、测试报告完成、CR/PR 已创建或已审核后，才能部署生产。生产部署后必须做线上 smoke test，并把生产 deployment、线上域名、验证结果和残留风险补回测试报告或运维记录。
 - 环境隔离门禁：所有部署命令必须明确目标环境和目标项目。禁止在未确认 Vercel/云项目 link、deployment target、环境变量、数据库 host/schema 的情况下执行发布。预发与线上部署记录必须分别列出，不得用同一条结果混写。
+- 真实入口清单门禁：项目真实域名、登录入口、主服务/BFF、Auth 服务入口、第三方 provider callback、业务回跳、固定 alias 和 deployment 快照不得写入通用 skill；必须从项目文档仓库的 `runtime-entry-inventory.md` 或等价入口清单读取。发布前逐项核对客户端实际入口、BFF URL、provider callback URL、callback alias、目标云项目、deployment ID、commit、target、DB/schema 和回滚点；每个 callback 域名必须单独 `inspect`，不能只检查同一项目的默认 Production alias。将本次候选复制到 `release-plan.md` 冻结；alias、deployment、commit 或入口变化后重新审批。若项目没有入口清单，先在项目文档仓库建立，不得把临时聊天记录当作长期事实源。
+- 低流量生产观察门禁：当生产用户少、功能未开量或观察窗口内自然请求不足时，`0` 条错误日志只能说明“未观察到错误”，不能证明链路健康。必须使用受控、可重复、无破坏性的合成探针主动覆盖本次主链路和相邻高风险路径，同时检查 runtime 日志；探针不得重复触发付费、发送、绑定、解绑、迁移或其它不可逆副作用。探针账号、凭据和 token 不得写入仓库或报告。
+- Release PR 最终核销门禁：涉及生产用户路径、数据写入或第三方回调时，最终核销至少包含真实用户或受控真实账号验证、合成探针、DB after/副作用检查、日志观察窗口和 alias/deployment 漂移检查。缺少任一适用证据时 Release PR 保持 open；不适用项必须写明理由，不能静默跳过。
+- 线上失败暂停门禁：用户报告线上失败或 P0/P1 探针失败后，立即暂停 Release PR 合并、观察核销和后续切流。先从客户端实际 URL、请求 host、callback URL、runtime 日志和云平台 inspect 定位请求真实命中的 project/deployment/commit，再判断代码、环境、数据或第三方根因；禁止在未确认命中版本时继续改业务代码或宣布观察通过。
+- 发布后本地主分支归位：Production 发布核销并合并 Release PR 后，受影响仓库必须切回远端默认主分支，执行 `git pull --ff-only`，确认本地 HEAD 与远端主分支一致且工作区状态可解释。若有未提交用户改动，先保存或说明，不得为归位而丢弃改动。
+
+**每次共享环境发布必须先完成发布方案评审，禁止只发布眼前仓库。** 任何预发、生产、灰度、TestFlight、Worker 或多服务发布，在执行部署前都必须创建或更新 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/06-ops/release-plan.md`，并使用 `templates/release-plan-template.md`。发布方案必须沿真实调用链盘点客户端、主服务、认证、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方配置，形成“关联系统发布矩阵”。矩阵中的每个系统都必须明确仓库、云项目、域名、当前版本、候选 commit、是否发布、判断依据、依赖、顺序、环境变量、数据迁移、验证和回滚；没有改动的系统也必须以“不发布 + 证据”记录，禁止因未列出而默认遗漏。评审状态只能为 `awaiting-review`、`approved` 或 `rejected`；未取得用户或指定 reviewer 的明确 `approved` 前禁止部署。候选 commit、系统范围、迁移、环境或发布顺序发生变化时，原审批失效，必须重新评审。部署完成后必须把实际 deployment、smoke、监控和回滚点回填发布方案，并逐项核销矩阵，不能只报告主系统成功。
+
+**代码 PR、Release PR、方案审批和部署必须分流表达。** 发布前必须读取 `references/release-pr-lifecycle.md`，明确当前讨论的是 Code PR 还是 Release PR，以及用户当前需要执行的是 review/merge、批准 release plan、验证 Preview 还是批准 Production。Release PR 默认在 Preview 验证期间保持 open：release plan 获得 `approved` 后即可按方案部署 Preview，不要求先 merge Release PR；Preview 通过并回填 deployment、E2E、DB、监控和回滚证据后，才评审是否 merge Release PR。禁止只说“先 merge”“继续”或“发布吧”而不指出 PR 编号、PR 类型、目标环境和下一动作。
+
+**生产发布后必须完成线上回归，回归通过前禁止宣布发布完成。** 线上回归必须基于固定生产域名和受控生产测试账号，覆盖本次变更、所有已发布关联系统的契约、P0 核心用户路径、相邻高风险路径、环境隔离、数据库/队列副作用和关键失败路径；不能用 health check、构建 Ready 或单页 smoke 代替。测试用例、命令、结果、截图/API/日志证据必须写回 `05-testing/test-report.md` 和 `06-ops/release-plan.md`。任一 P0/P1 回归失败时，立即停止后续切流和发布核销，按发布方案回滚受影响系统，完成根因修复后重新走预发、发布评审、生产部署和线上回归。只有矩阵系统全部核销、线上回归通过并完成观察窗口，发布状态才能标记为 `complete`。
 
 **零散想法先进入 Inbox，不直接开发。** 当用户说“先记下来”“后面再开发”或临时给出产品想法时，只记录到轻量草稿清单，不启动正式 PRD/架构/编码流程。当前任务完成后，再回看 Inbox：评估清单事项与当前工作、已提交代码和已完成任务的相关性；选择一个任务；然后按 OPC Skills 正式研发流程执行，包括开新分支、编写技术方案和测试方案、实施、端到端联调和测试用例。
 
 **功能页证据闭环，不用间接证据替代验收。** 当本次改动涉及 UI、交互、客户端页面、移动端 Tab、Web 路由、弹窗、列表、表单、布局、图片、图表或可视状态时，完成标准必须包含“进入被改功能的真实页面并验证”。禁止用以下证据替代功能验收：仅类型检查通过、仅构建成功、仅安装成功、仅应用启动成功、停留在默认首页截图、停留在错误 Tab 截图、只看运行日志没有看页面、只验证相邻页面或抽象组件。改了哪个页面或交互，就必须导航到那个页面或交互状态；如果用户给了截图指出问题，必须在同一页面、同一状态、同类设备视口下截图对比。截图或运行时快照发现未修复时，必须继续修复，不得报告完成。
 
 **验证码登录必须自动化闭环。** 当发布或修复涉及邮箱验证码登录、注册、OAuth 回跳后的 token 交换、登录态持久化或客户端登录入口时，发布前必须在真实客户端环境完成自动化端到端测试。移动端必须优先使用 iOS Simulator 或 Android Emulator 自动操作登录页，向项目约定测试邮箱（Dida 当前使用 `biubiu_hu@qq.com`）发送验证码；验证码可从受控服务端日志、数据库中的验证码 hash、邮件服务日志或测试后门中取得，不得以“无法登录邮箱”为理由跳过验证。测试必须覆盖：发送验证码、冷却/Loading、输入正确验证码、verify、token exchange、userinfo/current user、进入登录后首页、token 持久化、冷启动恢复和用户身份一致性；失败时必须定位到客户端、网关、auth-service、数据库或第三方服务的具体层级，并修复后复验。断言必须使用稳定业务结果，不能用按钮消失、Loading 出现、接口 2xx、构建成功、上传 TestFlight 或包内容检查替代真实登录闭环。认证/登录类任务必须先读取 `references/auth-login-e2e.md`。
+
+**登录/预发故障必须先验运行时、环境和数据库。** 当用户报告登录失败、账号密码正确但被拒、验证码/OAuth/绑定异常、预发登录不可用、前端提示和真实凭据不一致时，禁止先默认是登录业务代码问题。必须先完成认证故障前置三分法：第一，确认客户端实际请求的主服务域名、固定 alias、deployment id、commit 和构建时间，排除旧构建/缓存/alias 未切；第二，直接请求主服务健康接口和目标 auth 接口，并读取 Vercel/runtime 日志，确认服务进程是否启动、是否 5xx、是否 CORS/网络失败；第三，脱敏检查目标环境变量、DB host/schema、`EXPECTED_DB_HOST`、下游 auth-service URL 和只读数据库连接，确认预发没有混用生产且数据库 tenant/user/schema 可用。只有当服务运行时、环境边界和数据库连接都健康，才能继续改登录校验、UI 文案或账号迁移逻辑；若 runtime/DB/env 已失败，必须先停在环境修复和证据记录，不得继续叠加无关代码。认证/登录类排障必须读取 `references/auth-login-e2e.md` 的“预发/运行时前置排查”。
 
 **客户端只进主服务，不直连内部子服务。** C 端业务项目必须采用分层架构：客户端层只能调用网关/主服务/API server。以 Dida 项目为例，移动端、Web、小程序、桌面端和 SDK 只能调用 `dida-core/service`；不得直接访问 `dida-auth-service`、AI service、Worker、数据服务、邮件服务、对象存储 API 或任何生成的 Vercel deployment URL。`dida-core/service` 负责客户端契约、鉴权代理、用户上下文、CORS/网络边界、环境路由、降级与错误格式；内部服务只接受主服务或受控 service-to-service 调用。预发 auth 服务/项目命名可使用 `pre-dida-auth-service`，生产使用正式 `dida-auth-service` 或批准的生产 auth 域名；这些内部地址只能出现在服务端配置中，不能出现在客户端包或客户端 `.env` 中。
 
@@ -105,7 +118,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - `implementation-loop`：当需求、架构和验收标准已经明确，且用户要求“开始编码”“往下推进”“实现一下”时启用。跳过不必要的重新调研，但必须先做项目发现、变更影响分析、保存点、实现、验证、修复、复验和证据记录。
 - `bugfix-fast-path`：当用户描述线上/预发/本地 bug、截图问题、报错、性能卡顿、交互异常或回归问题时启用。只要求完成复现、定位、修复、回归和证据闭环；除非 bug 暴露出产品或架构缺口，否则不强制补全完整 PRD/UI/架构流程。
 - `validation-only`：当用户要求“验证一下”“review 需求”“看看能不能做”“只检查不改代码”时启用。只输出需求验证、实现验证或风险清单，不进入编码。
-- `release-gated`：当用户要求预发、线上、发布、回滚、灰度、TestFlight 或运维检查时启用。只处理发布门禁、环境隔离、验证报告、回滚和线上 smoke test，不夹带无关功能开发。
+- `release-gated`：当用户要求预发、线上、发布、回滚、灰度、TestFlight 或运维检查时启用。只处理发布门禁、环境隔离、验证报告、回滚、线上 smoke、线上回归和观察窗口，不夹带无关功能开发。
 - `architecture-review`：当用户要求检查架构、调用关系、分层、服务腐化或 Agent 产物质量时启用。重点审查依赖方向、服务边界、数据所有权、调用图和防腐化规则。
 
 ## Subagent 执行模型
@@ -256,7 +269,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 11. DevOps Agent
    - 负责部署、可观测性、Worker 运维、节点健康、客户端发布和运维手册。
    - 运维手册必须回答：环境隔离、发布门禁、回滚方案、关键配置、巡检命令、告警分级、故障归因和数据/对象存储安全边界。
-   - 负责执行发布门禁：先预发部署，再预发测试报告，再 CR/PR 或 code review 记录，最后生产发布和线上 smoke test。
+   - 负责执行发布门禁：先预发部署，再预发测试报告，再 CR/PR 或 code review 记录，最后生产发布、线上 smoke、线上回归和观察窗口核销。
    - 生产发布前必须核对目标项目、域名、环境变量、数据库 host/schema、下游服务 URL 和回滚方案；发布后必须记录 deployment URL、固定域名、验证命令、验证账号、结果和残留风险。
    - 当发布目标涉及 iOS、TestFlight、App Store Connect、App Store 正式提交、IPA、archive/exportArchive 或 Apple 签名时，必须调用 `ios-release`；旧的 `ios-testflight-release` 仅作为兼容入口。
 
@@ -300,6 +313,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - `docs/<FEATURE_NAME>/05-testing/test-strategy.md`
    - `docs/<FEATURE_NAME>/05-testing/test-cases.json`
    - `docs/<FEATURE_NAME>/05-testing/integration-report.md`
+   - `docs/<FEATURE_NAME>/06-ops/release-plan.md`
    - `docs/<FEATURE_NAME>/06-ops/ops-runbook.md`
 
    生成或更新这些文档时，必须优先使用以下模板：
@@ -313,6 +327,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - `templates/evidence-manifest-template.md`
    - `templates/backlog-template.md`
    - `templates/test-strategy-template.md`
+   - `templates/release-plan-template.md`
    - `templates/ops-runbook-template.md`
 
 4. 编码前必须执行研发准备门禁，并把结论写入 `docs/<FEATURE_NAME>/04-engineering/implementation-plan.md`、`change-impact.md` 或 `debug-report.md`：
@@ -320,7 +335,8 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 需求可执行性：验收标准必须可测试、可截图、可接口验证或可日志/数据验证；不可验证的表述必须先改写。
    - 开源方案调研：先查可复用开源项目、官方 SDK 或成熟组件，记录候选方案、来源、兼容性、引入成本、风险和采纳/拒绝理由。没有调研结论前，不得开始非平凡代码实现。
    - 项目发现：识别相关 repo、包管理器、启动命令、测试命令、lint/typecheck 命令、dev server、端口、环境变量样例、当前分支、未提交改动和已有测试。
-   - 保存点：确认当前代码已有 commit、stash、补丁或其它可回滚保存点。
+   - 保存点：确认当前代码已有 commit、stash、补丁或其它可回滚保存点；记录保存点标识、原分支、主分支同步结果和新需求分支。
+   - 分支准备：先切回远端默认主分支并 `git pull --ff-only`，确认同步成功后再创建需求分支；主分支同步失败时不得开始实现。
    - 变更影响：列出受影响模块、API、数据、缓存、任务、环境、客户端版本、预发/线上配置和回滚路径。
    - 任务切分：每个任务必须有明确文件/模块范围、验证方式、退出条件和失败后处理动作。
    - 自动执行循环：每轮实现后必须运行最小验证；失败时先读错误和日志，再修复并复验；不能在失败未解释时继续叠加无关改动。
@@ -329,6 +345,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 5. 当启用 `bugfix-fast-path` 时，执行以下 bug 修复门禁：
    - 复现门禁：记录环境、版本/commit、账号/权限、操作步骤、期望结果、实际结果、截图/日志/API 响应和复现稳定性。
    - 定位门禁：明确归因层级，先排除旧包、缓存、错误环境、配置混用和服务未重启，再判断代码问题。
+   - 认证前置门禁：登录、注册、验证码、OAuth、绑定、账号迁移或预发认证问题，必须先完成主服务 runtime、Vercel alias/deployment、环境变量、DB host/schema、下游 auth-service 和客户端实际请求目标检查；任何一项失败时，先修环境/配置，不得先改业务登录代码。
    - 最小修复门禁：只修改与 bug 相关的代码和测试；需要扩大范围时必须说明原因。
    - 回归门禁：验证原 bug、相邻路径、失败路径和预发/线上差异；客户端/UI bug 必须进入真实功能页或同类设备状态截图验证。
    - 根因记录：`debug-report.md` 必须写清根因、修复点、验证证据、未覆盖风险和后续建议。
@@ -345,6 +362,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 客户端能力矩阵：启用客户端专项门禁时，先列出客户端类型、运行方式、目标环境、关键用户路径、依赖 API、认证方式、缓存/离线/推送/深链等受影响能力。
    - 进程和端口拓扑：确认每个服务只保留一份有效进程，端口无冲突，客户端配置指向正确 API。
    - 环境变量：确认本地、预发、生产的服务 URL、API key、模型名、数据库连接、schema、CORS/ATS/网络安全配置完整且不交叉。
+   - 预发运行时健康：部署后必须直接验证固定预发主服务 alias 的健康接口和本次涉及 API；`READY` 只代表构建完成，不能替代 runtime/API/DB 可用性。Vercel 日志中出现函数启动失败、DB 连接失败、tenant/user not found、CORS preflight 500 或 request status 0 时，优先归因到 runtime/env/DB。
    - 客户端网关边界：确认客户端环境变量、运行时配置、网络日志和构建产物中没有内部子服务 URL 或生成的 Vercel deployment URL；客户端所有业务 API 都必须指向网关/主服务。
    - 数据库和迁移：确认目标数据库、schema、表、索引、幂等约束存在，写入路径不会污染其它环境。
    - service-to-service：验证客户端到主服务、主服务到 AI/Worker 服务、AI/Worker 到第三方 API 的链路。
@@ -362,13 +380,18 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 8. 如果用户要求“发布”“上线”“部署线上”“准备发布”或类似生产发布意图，必须执行生产发布门禁：
    - 先确认目标环境：如果用户没有明确说预发、线上、production、prod、preview、staging 等目标环境，必须先询问用户，不得执行部署命令。
    - 确认代码保存状态：列出当前分支、commit、工作区是否干净。若存在未提交改动，必须停止发布并先要求提交、暂存或回滚；禁止从本地未提交工作区部署。
+   - 生成关联系统发布矩阵：沿客户端到主服务、Auth、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方的调用链逐项判断是否发布；所有“不发布”项必须给出 commit/config/API 契约未变化等证据。
+   - 评审发布方案：把系统范围、候选 commit、部署顺序、依赖、迁移、环境、验证、监控和回滚写入 `06-ops/release-plan.md`；状态为 `approved` 前不得执行任何共享环境部署。方案变化后必须重新评审。
    - 确认 CR 状态：若尚未发 CR/PR，先创建或生成 code review 记录；未经用户明确授权，不得跳过。
+   - 确认 PR 生命周期：按 `references/release-pr-lifecycle.md` 分别报告 Code PR 和 Release PR 的编号、状态与下一动作；Release PR 在 Preview 验证前保持 open，不能要求用户先 merge 它再部署 Preview。
    - 部署预发：明确预发项目、预发域名、预发 API、预发数据库/schema 和预发下游服务；部署完成后记录 deployment URL。
    - 执行预发测试：至少覆盖本次变更涉及的核心路径、失败路径和环境隔离检查；输出 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/test-report.md` 或项目既有测试报告。
    - 评审测试结果：若测试报告存在失败项，必须先修复或由用户明确接受风险；不得把失败报告当作发布通过。
    - 部署生产：明确生产项目、生产域名、生产 API、生产数据库/schema 和生产下游服务；部署完成后记录 deployment URL。
-   - 线上 smoke test：验证线上关键页面/API/后台任务可用；若生产发布包含数据库迁移，必须记录迁移命令、目标 host/schema、迁移结果和回滚方式。
-   - 最终回复必须列出：预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上验证结果、未解决风险。
+   - 线上 smoke test：先验证线上关键页面/API/后台任务可用；若生产发布包含数据库迁移，必须记录迁移命令、目标 host/schema、迁移结果和回滚方式。
+   - 线上回归门禁：smoke 通过后，使用固定生产域名和受控生产账号执行本次需求、P0 核心路径、关联系统契约、相邻高风险路径和失败路径回归；结果与证据写回测试报告和发布方案。P0/P1 失败必须回滚并重新走完整发布链路，不能带失败核销发布。
+   - 发布核销：逐项确认发布矩阵中的系统已发布或按评审结论跳过，记录实际 deployment、版本、固定域名、smoke、线上回归、监控和回滚点；发现漏项或回归失败时停止后续流量切换。
+   - 最终回复必须列出：发布方案及审批状态、关联系统核销结果、预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上 smoke、线上回归结果、观察窗口和未解决风险。
 
 ### 客户端专项联调方案
 
@@ -526,6 +549,7 @@ Agent 在读写文档时：
 ├── 05-testing/test-cases.json
 ├── 05-testing/test-report.md
 ├── 05-testing/integration-report.md
+├── 06-ops/release-plan.md
 └── 06-ops/ops-runbook.md
 ```
 
