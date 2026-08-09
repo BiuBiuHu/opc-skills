@@ -27,7 +27,7 @@
 2. 明确候选策略：
    - 若项目要求主分支候选，先 merge Code PR，再从同步后的主分支读取精确 merge commit。
    - 若项目允许 PR head Preview，在 release plan 中写明 head commit 和不先 merge Code PR 的理由。
-   - Dida/Auth 默认使用主分支 merge commit，除非用户明确批准例外。
+   - 候选策略必须遵循项目级发布规范；若项目要求主分支候选，则使用精确的主分支 merge commit。
 3. 从同步后的主分支创建 release 分支，创建 Release PR；初始 release plan 为 `awaiting-review`。
 4. 读取并核对项目 runtime entry inventory，向用户展示候选 commit、真实登录/BFF/callback/回跳入口、目标环境、发布矩阵、数据动作、验证路径和回滚点，请求批准 release plan。不要请求 merge Release PR。
 5. 用户明确批准后，把 release plan 更新为 `approved` 并提交到仍为 open 的 Release PR。

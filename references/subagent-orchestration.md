@@ -68,22 +68,22 @@ input:
     你是 OPC Frontend Agent。你不是独自在代码库里工作，不要 revert 他人改动。
 
     业务目标：
-    - 日历运营页生成本月提示词时覆盖整月，不只覆盖当前分页。
-    - 单日抽屉允许编辑存量一句话，保存不触发生图。
+    - 审核列表的批量操作必须覆盖全部已选项，不受当前分页限制。
+    - 单项抽屉允许编辑审核备注，保存不触发提交动作。
 
     Ownership：
-    - 可读：dida-admin/src, dida-admin/scripts, docs/calendar-ops-workbench
-    - 可写：dida-admin/src/pages/CalendarOps.tsx, dida-admin/src/services/api.ts, dida-admin/scripts/calendar-ops-mock-gate.py
-    - 禁止：dida-core/**, dida-ai-service/**, env 文件, Vercel 配置
+    - 可读：<CLIENT_REPO>/src, <CLIENT_REPO>/scripts, docs/<FEATURE_NAME>
+    - 可写：<CLIENT_REPO>/src/pages/ReviewWorkbench.tsx, <CLIENT_REPO>/src/services/api.ts, <CLIENT_REPO>/src/**/*.test.tsx
+    - 禁止：<PRIMARY_API_REPO>/**, <INTERNAL_SERVICE_REPO>/**, env 文件, 部署配置
 
     架构边界：
-    - dida-admin 只能调用 dida-core admin API。
-    - 禁止前端直连 dida-ai-service。
+    - 客户端只能调用主服务/BFF 的公开 API。
+    - 禁止前端直连内部服务。
 
     验证：
-    - npm run build
-    - npm run test:run
-    - npm run calendar:mock-gate
+    - <PROJECT_TEST_COMMAND>
+    - <PROJECT_BUILD_COMMAND>
+    - <FEATURE_MOCK_GATE_COMMAND>
 
     输出：
     - 按 templates/subagent-result-template.md 返回。
@@ -105,7 +105,7 @@ tool: multi_agent_v1.send_input
 input:
   target: "<agent id>"
   interrupt: false
-  message: "补充约束：不要修改 CalendarOps 之外的页面；只汇报结果，不提交 git。"
+  message: "补充约束：不要修改已授权范围之外的页面；只汇报结果，不提交 git。"
 ```
 
 关闭时：

@@ -14,7 +14,8 @@
 1. Fork 本仓库。
 2. 创建 feature branch。
 3. 修改后运行敏感词扫描。
-4. 提交 PR，并说明变更范围、使用场景和兼容影响。
+4. 运行 `scripts/check_project_coupling.sh`；若要检查某个项目的专用词，使用 `OPC_PROJECT_TERMS='term-a|term-b' scripts/check_project_coupling.sh`。
+5. 提交 PR，并说明变更范围、使用场景和兼容影响。
 
 建议扫描命令：
 

@@ -6,7 +6,7 @@ FEATURE_NAME="${2:-}"
 
 if [ -z "$FEATURE_NAME" ]; then
   echo "Usage: $0 <project-root> <feature-name>"
-  echo "Example: $0 scrper-v2 trustpilot-public-visibility"
+  echo "Example: $0 example-project example-feature"
   exit 1
 fi
 

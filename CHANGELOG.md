@@ -7,6 +7,10 @@
 - 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
 - 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
 
+### Changed
+
+- 增加通用 Skill 与项目事实隔离规则，并将项目名、固定服务、测试账号、仓库路径和业务专用示例改为角色占位符或通用示例。
+
 ## v0.3.2 - 2026-08-08
 
 ### Added
@@ -104,7 +108,7 @@
 - 增加 `VERSION`，标记当前本地版本为 `0.1.0`。
 - 增加 `CHANGELOG.md`，记录版本发布内容。
 - 纳入 B 类运营页面方法论：总分下钻、ASCII 草图与交互路径合并、本地 mock 验证、分页和行内可判断。
-- 纳入 Dida/OPC 分层架构原则：客户端只调用主服务/API server，内部子服务不暴露给前端。
+- 纳入通用分层架构原则：客户端只调用主服务/API server，内部子服务不暴露给前端。
 - 纳入 AI/生成类成本保护：先提示词预览和审核，再昂贵生成，复用 OSS/缓存。
 - 增加 `docs/subagent-optimization-plan.md` 草案，用于后续引入 Frontend、Backend、QA、Integration 等专业执行角色。
 

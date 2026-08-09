@@ -258,12 +258,12 @@ opc-skills/
 你是 OPC Explorer Agent。
 
 目标：
-- 只读分析 dida-admin 的 /calendar-ops 页面涉及哪些 API、状态和测试文件。
+- 只读分析 `<CLIENT_REPO>` 的审核工作台涉及哪些 API、状态和测试文件。
 
 可读范围：
-- /Users/ysh/code/ai/didi-operator/dida-admin/src
-- /Users/ysh/code/ai/didi-operator/dida-admin/scripts
-- /Users/ysh/code/ai/didi-operator/dida-admin/docs/calendar-ops-workbench
+- <CLIENT_REPO>/src
+- <CLIENT_REPO>/scripts
+- <PROJECT_ROOT>/docs/<FEATURE_NAME>
 
 禁止事项：
 - 不修改任何文件。
@@ -293,38 +293,37 @@ opc-skills/
 你是 OPC Frontend Agent。你不是独自在代码库里工作，其他人可能同时修改后端或文档。不要 revert 他人的改动。
 
 业务目标：
-- 日历运营页生成本月提示词时，必须覆盖整个月，而不是当前分页。
-- 单日抽屉允许编辑存量文案。
-- 提示词预览不能触发生图。
+- 审核列表的批量操作必须覆盖全部已选项，不受当前分页限制。
+- 单项抽屉允许编辑审核备注。
+- 保存草稿不能触发正式提交。
 
 架构边界：
-- dida-admin 只能调用 dida-core 的 admin API。
-- 禁止在前端直接调用 dida-ai-service。
-- 禁止把内部 Vercel deployment URL 写进前端代码。
+- 客户端只能调用主服务/BFF 的公开 API。
+- 禁止在前端直接调用内部服务。
+- 禁止把内部服务地址或临时 deployment URL 写进前端代码。
 
 可写范围：
-- dida-admin/src/pages/CalendarOps.tsx
-- dida-admin/src/services/api.ts
-- dida-admin/scripts/calendar-ops-mock-gate.py
-- dida-admin/src/**/*.test.ts 或 *.test.tsx
+- <CLIENT_REPO>/src/pages/ReviewWorkbench.tsx
+- <CLIENT_REPO>/src/services/api.ts
+- <CLIENT_REPO>/src/**/*.test.ts 或 *.test.tsx
 
 禁止修改：
-- dida-core/**
-- dida-ai-service/**
-- Vercel 配置
+- <PRIMARY_API_REPO>/**
+- <INTERNAL_SERVICE_REPO>/**
+- 部署配置
 - env 文件
 - package 依赖，除非先说明原因
 
 完成标准：
-- 本月提示词 preview range 使用整月天数。
-- mock gate 能断言跨分页日期，比如 2026-07-25。
-- 单日文案保存调用 core BFF。
-- 保存文案不触发生图。
+- 批量请求携带全部已选 ID。
+- mock gate 能断言跨分页选择。
+- 单项备注保存调用主服务/BFF。
+- 保存草稿不触发正式提交。
 
 验证命令：
-- npm run test:run
-- npm run build
-- npm run calendar:mock-gate -- --base-url <local-dev-url>
+- <PROJECT_TEST_COMMAND>
+- <PROJECT_BUILD_COMMAND>
+- <FEATURE_MOCK_GATE_COMMAND> --base-url <LOCAL_DEV_URL>
 
 输出要求：
 - 修改文件列表。
@@ -337,7 +336,7 @@ opc-skills/
 
 ### 6.3 启动 Backend Worker
 
-适用：让子 Agent 修改 `dida-core/server` 或 `dida-ai-service`。前后端 worker 的可写范围必须不重叠。
+适用：让子 Agent 修改主服务或内部领域服务。前后端 worker 的可写范围必须不重叠。
 
 ```text
 {
@@ -347,34 +346,32 @@ opc-skills/
 你是 OPC Backend Agent。你不是独自在代码库里工作，不要 revert 他人的改动。
 
 业务目标：
-- 为日历图片 job 增加文案更新能力。
-- 前端必须通过 dida-core BFF 调用，不允许直连 dida-ai-service。
-- 保存文案不得自动重生图片。
+- 为审核项增加备注更新能力。
+- 前端必须通过主服务/BFF 调用，不允许直连内部领域服务。
+- 保存草稿不得自动执行正式提交。
 
 可写范围：
-- dida-core/server/src/modules/calendar-image/**
-- dida-core/server/src/modules/ai/**
-- dida-core/server/test/regression/calendar-image-admin.regression.spec.ts
-- dida-ai-service/src/modules/calendar-image/**
-- dida-ai-service/scripts/verify-calendar-image-prompt.ts
+- <PRIMARY_API_REPO>/src/modules/review/**
+- <PRIMARY_API_REPO>/test/regression/review-admin.regression.spec.ts
+- <INTERNAL_SERVICE_REPO>/src/modules/review/**
+- <INTERNAL_SERVICE_REPO>/test/review-update.spec.ts
 
 禁止修改：
-- dida-admin/**
+- <CLIENT_REPO>/**
 - 数据库迁移文件，除非确认现有字段无法承载
 - 生产 env
 - 部署配置
 
 完成标准：
-- core 暴露 POST /admin/calendar-images/jobs/:id/copy。
-- core 代理到 ai-service，并保留 URL 归一化。
-- ai-service 更新 contentSnapshot、promptSections 和 prompt 中的指定文案。
-- ai-service 不触发 regenerate。
-- 主题化每日一句能区分毛选、纳瓦尔、唐诗宋词。
+- 主服务暴露项目架构约定的审核备注更新 API。
+- 主服务代理到内部领域服务，并保留鉴权和错误归一化。
+- 内部服务只更新备注字段，不执行正式提交副作用。
+- 重复请求符合项目幂等约束。
 
 验证命令：
-- cd dida-core/server && npm run test:gate
-- cd dida-ai-service && npm run build
-- cd dida-ai-service && npm run test:calendar-image
+- <PRIMARY_API_TEST_COMMAND>
+- <INTERNAL_SERVICE_BUILD_COMMAND>
+- <INTERNAL_SERVICE_TEST_COMMAND>
 
 输出要求：
 - 修改文件列表。
@@ -419,8 +416,8 @@ input:
   "interrupt": false,
   "message": "
 补充约束：
-- 不要修改 CalendarOps 之外的页面。
-- 需要额外断言 preview_range 的 limit 等于 selected month day count。
+- 不要修改授权范围之外的页面。
+- 需要额外断言批量请求范围等于全部已选项数量。
 - 完成后只汇报结果，不要提交 git。
 "
 }
@@ -507,15 +504,15 @@ subagent 返回时必须按以下格式。
 - 是否触碰了边界。
 ```
 
-## 9. 完整示例：Dida 日历运营页修复
+## 9. 参数化示例：审核工作台修复
 
 ### 9.1 用户目标
 
 用户反馈：
 
-- 生成本月提示词只覆盖当前分页。
-- 一句话应该和日历集相关，例如毛选日历要体现毛选方法论，纳瓦尔日历要体现纳瓦尔特色。
-- 存量日历的一句话无法修改。
+- 批量审核只处理当前分页，没有覆盖跨页已选项。
+- 审核备注无法保存草稿。
+- 保存草稿不应触发正式提交。
 
 ### 9.2 主 Agent 拆分判断
 
@@ -524,7 +521,7 @@ subagent 返回时必须按以下格式。
 - 用户已允许围绕 opc-skills 设计 subagent 机制；真实执行前仍需在任务当次确认。
 
 是否适合拆：
-- 适合。涉及 dida-admin、dida-core/server、dida-ai-service 三仓。
+- 适合。涉及客户端、主服务和内部领域服务三个仓库。
 
 拆分收益：
 - Frontend 和 Backend 可并行推进。
@@ -532,8 +529,8 @@ subagent 返回时必须按以下格式。
 - 主 Agent 专注分层边界和最终验证。
 
 ownership：
-- Frontend 只写 dida-admin。
-- Backend 只写 dida-core/server 和 dida-ai-service。
+- Frontend 只写 `<CLIENT_REPO>`。
+- Backend 只写 `<PRIMARY_API_REPO>` 和 `<INTERNAL_SERVICE_REPO>`。
 - QA 只写测试/文档，不改业务实现。
 ```
 
@@ -543,40 +540,39 @@ Frontend Worker：
 
 ```text
 目标：
-- 修改 CalendarOps，让本月提示词覆盖整月。
-- 单日抽屉增加文案编辑。
-- 补 mock gate 跨分页和 copy save 断言。
+- 修改审核工作台，让批量请求覆盖全部已选项。
+- 单项抽屉增加备注草稿编辑。
+- 补 mock gate 的跨分页选择和草稿保存断言。
 
 可写：
-- dida-admin/src/pages/CalendarOps.tsx
-- dida-admin/src/services/api.ts
-- dida-admin/scripts/calendar-ops-mock-gate.py
+- <CLIENT_REPO>/src/pages/ReviewWorkbench.tsx
+- <CLIENT_REPO>/src/services/api.ts
+- <CLIENT_REPO>/src/**/*.test.tsx
 
 验证：
-- npm run test:run
-- npm run build
-- npm run calendar:mock-gate
+- <PROJECT_TEST_COMMAND>
+- <PROJECT_BUILD_COMMAND>
+- <FEATURE_MOCK_GATE_COMMAND>
 ```
 
 Backend Worker：
 
 ```text
 目标：
-- core 增加 job copy BFF。
-- ai-service 增加 copy update 内部接口。
-- ai-service 增加 style-specific daily quote。
+- 主服务增加审核备注更新 API。
+- 内部领域服务增加草稿更新能力。
+- 确保草稿更新不触发正式提交。
 
 可写：
-- dida-core/server/src/modules/calendar-image/**
-- dida-core/server/src/modules/ai/**
-- dida-core/server/test/regression/**
-- dida-ai-service/src/modules/calendar-image/**
-- dida-ai-service/scripts/verify-calendar-image-prompt.ts
+- <PRIMARY_API_REPO>/src/modules/review/**
+- <PRIMARY_API_REPO>/test/regression/**
+- <INTERNAL_SERVICE_REPO>/src/modules/review/**
+- <INTERNAL_SERVICE_REPO>/test/**
 
 验证：
-- dida-core/server npm run test:gate
-- dida-ai-service npm run build
-- dida-ai-service npm run test:calendar-image
+- <PRIMARY_API_TEST_COMMAND>
+- <INTERNAL_SERVICE_BUILD_COMMAND>
+- <INTERNAL_SERVICE_TEST_COMMAND>
 ```
 
 QA Agent：
@@ -584,10 +580,10 @@ QA Agent：
 ```text
 目标：
 - 检查测试是否证明：
-  1. prompt preview 不触发生图。
-  2. full month preview 覆盖跨分页日期。
-  3. copy save 不触发生图。
-  4. 前端不直连 ai-service。
+  1. 跨页选择能完整提交。
+  2. 草稿保存不会触发正式提交。
+  3. 重复保存符合幂等约束。
+  4. 前端不直连内部服务。
 
 可写：
 - docs/<feature>/05-testing/test-report.md
@@ -602,9 +598,9 @@ QA Agent：
 主 Agent 拿到结果后必须做：
 
 - `git diff --check`。
-- 检查前端是否出现 `dida-ai-service` URL。
-- 检查 core 是否仍是唯一外部 admin API。
-- 检查 ai-service 是否未触发 regenerate。
+- 检查前端是否出现内部服务 URL。
+- 检查主服务是否仍是唯一外部管理 API。
+- 检查内部服务是否未触发正式提交副作用。
 - 运行完整本地验证。
 - 更新 test report、integration report、code review。
 - 预发部署前确认所有改动已 commit。

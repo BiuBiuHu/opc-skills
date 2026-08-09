@@ -19,7 +19,7 @@
 - 客户端层只能调用网关/主服务/API server，不得直连内部子服务。
 - 网关/主服务负责客户端 API 契约、鉴权代理、用户上下文、CORS/网络边界、环境路由、降级与错误格式。
 - 领域服务、AI/Worker/子服务、邮件服务、对象存储、第三方 API 只能通过主服务编排或受控 service-to-service 调用暴露能力。
-- Dida 项目中，客户端只能调用 `dida-core/service`；`dida-auth-service` 预发可命名为 `pre-dida-auth-service`，生产使用正式 `dida-auth-service` 或批准的生产 auth 域名。内部服务地址不得进入客户端包或客户端 `.env`。
+- 用 `<CLIENT_APP>`、`<PRIMARY_API>`、`<AUTH_SERVICE>` 等角色表达通用边界；真实服务名、域名和环境 alias 从项目事实源读取，不得写回模板。内部服务地址不得进入客户端包或客户端 `.env`。
 
 ```mermaid
 flowchart LR

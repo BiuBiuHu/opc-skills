@@ -10,7 +10,7 @@
 - GitHub、Apple、Google、Facebook 等 OAuth 登录、绑定、解绑和回调。
 - auth code、id token、access token、refresh token、userinfo/current user。
 - 登录态持久化、冷启动恢复、token 刷新、退出登录、账号合并。
-- 客户端、网关、auth-service、数据库或第三方 provider 任一层有改动。
+- 客户端、网关、统一认证服务、数据库或第三方 provider 任一层有改动。
 
 ## P0 闭环
 
@@ -25,7 +25,7 @@
 7. 终止并重启客户端，验证冷启动仍保持登录，并最终拿到同一个业务用户。
 8. 验证用户身份一致性：token `sub`、core user id、业务数据 owner、头像/昵称显示不能在初次登录和冷启动之间分裂。
 9. 验证服务端副作用：验证码被消费、attempts/冷却正确、identity 绑定状态正确、不会跨环境写库。
-10. 将失败归因到客户端、网关/主服务、auth-service、数据库、第三方 provider、配置、旧构建/缓存或网络。
+10. 将失败归因到客户端、网关/主服务、统一认证服务、数据库、第三方 provider、配置、旧构建/缓存或网络。
 
 ## 预发/运行时前置排查
 
@@ -36,9 +36,9 @@
 1. 固定目标：记录客户端 URL、API baseURL、主服务固定 alias、deployment id、commit、分支和创建时间。确认用户访问的不是旧 deployment、错误 alias、旧包、旧缓存或错误环境。
 2. 直接健康检查：不用客户端，直接请求主服务根路径/health 和本次涉及 auth API。记录 HTTP 状态、`x-vercel-error`、CORS preflight 结果和超时情况。
 3. Runtime 日志：读取对应 deployment 的 Vercel/serverless 日志。优先寻找函数启动失败、`FUNCTION_INVOCATION_FAILED`、模块入口错误、DB 连接失败、tenant/user not found、schema 不存在、CORS preflight 500。
-4. 环境变量脱敏巡检：只输出变量名、目标环境、host、schema、hash/指纹和是否存在换行，不输出 secret。检查 `APP_ENV`、`DEPLOY_TARGET`、API URL、auth-service URL、`DATABASE_URL`、`DB_HOST`、`DB_SCHEMA`、`EXPECTED_DB_HOST`。
+4. 环境变量脱敏巡检：从项目环境变量清单读取应检查的变量，只输出变量名、目标环境、host、schema、hash/指纹和是否存在换行，不输出 secret。至少覆盖环境标识、部署目标、API URL、认证服务 URL 和数据库连接信息；不得把项目专用变量名固化到通用 skill。
 5. DB 只读连通性：用只读查询验证目标数据库能连接，目标 schema 存在，必要测试账号存在。若 DB host `ENOTFOUND`、Supabase pooler 返回 tenant/user not found、schema 不存在或指纹指向生产库，先停止业务代码修改。
-6. 下游服务：主服务依赖 auth-service/email-service/provider 时，直接检查下游 health、redirect URL、token/userinfo 最小路径和 service-to-service secret 是否在目标环境存在。
+6. 下游服务：主服务依赖认证、邮件或第三方 provider 时，直接检查下游 health、redirect URL、token/userinfo 最小路径和 service-to-service secret 是否在目标环境存在。
 7. 客户端复现：只有前六项健康后，再用浏览器/模拟器复现并看 Network。前端错误文案必须和真实层级一致：401 才是凭据/授权失败；5xx、status 0、CORS、timeout 应显示服务不可用或环境异常。
 
 硬规则：
@@ -69,7 +69,7 @@
 
 - 客户端问题：按钮坐标/selector 错误、断言用了瞬时状态、旧 bundle、token 未持久化、错误地把可恢复 userinfo 失败当登录失败。
 - 网关问题：CORS、路由前缀、环境 URL、Authorization 转发、错误码归一、fallback 契约缺失。
-- auth-service 问题：验证码未写入/未消费、token 签发、userinfo 缺字段、provider identity 约束、redirect_uri/state 校验。
+- 认证服务问题：验证码未写入/未消费、token 签发、userinfo 缺字段、provider identity 约束、redirect_uri/state 校验。
 - 数据问题：账号缺 email identity、历史脏 identity、跨环境 schema、唯一约束或事务失败。
 - 第三方问题：OAuth app 配置、callback URL、client id/secret、Apple team/key、GitHub scopes。
 - 发布问题：TestFlight/生产包不是最新 commit、未清缓存、未记录 build number、从未提交工作区发布。

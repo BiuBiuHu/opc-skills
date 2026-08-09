@@ -32,7 +32,7 @@
 - 第三方：OAuth/provider callback、签名/JWKS、redirect URI、state/nonce、失败回调、供应商不可用。
 - 运维/发布：构建产物、环境变量、deployment、日志、监控、回滚、预发和生产 smoke。
 
-认证类需求必须额外拆分：客户端登录入口、网关鉴权转发、auth-service token/userinfo、数据层 identity、第三方 provider、客户端 storage 和冷启动恢复。
+认证类需求必须额外拆分：客户端登录入口、网关鉴权转发、统一认证服务 token/userinfo、数据层 identity、第三方 provider、客户端 storage 和冷启动恢复。
 
 ## 用例最小字段
 
@@ -40,7 +40,7 @@
 
 - `id`：稳定编号，例如 `API-001`、`FE-001`、`ENV-001`。
 - `title`：一句话说明要证明的行为。
-- `system`：客户端、主服务、auth-service、数据库、第三方、运维。
+- `system`：客户端、主服务、统一认证服务、数据库、第三方、运维。
 - `priority`：P0/P1/P2。
 - `scopeType`：changed-feature、impacted-regression、core-smoke、full-regression。
 - `preconditions`：账号、数据、配置、登录态、provider mock。

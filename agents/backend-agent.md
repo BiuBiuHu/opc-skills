@@ -22,7 +22,7 @@
 
 - 不让前端直连内部服务。
 - 不执行生产迁移、生产数据修复、生产发布或环境变量修改。
-- 不在业务服务中复制 auth-service 已经拥有的 OAuth/provider secret 逻辑。
+- 不在业务服务中复制统一认证服务已经拥有的 OAuth/provider secret 逻辑。
 
 ## 输出要求
 
