@@ -43,20 +43,21 @@ subagent 完成后，主 Agent 必须检查是否越权、是否引入无关改�
 ## 默认顺序
 
 1. 文档治理 Agent 先确定 `<PROJECT_ROOT>` 和 `<FEATURE_NAME>`，并声明本次文档目录。
-2. 文档治理 Agent 先把同一 feature 下的散落文档合并到主文档。
-3. 目标澄清 Agent 复述用户目标并反问关键问题，直到明确主要用户、核心闭环、批量范围、成本约束、返工粒度和验收证据。
-4. 需求验证 Agent 更新 `docs/<FEATURE_NAME>/01-product/requirement-validation.md`。
-5. 产品 Agent 更新 `docs/<FEATURE_NAME>/01-product/PRD.md`。
-6. UI Agent 更新 `docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`。
-7. 架构 Agent 更新 `docs/<FEATURE_NAME>/03-architecture/architecture.md`。
-8. 变更影响 Agent 更新 `docs/<FEATURE_NAME>/04-engineering/change-impact.md`。
-9. 研发 Agent 创建或更新实施计划、Backlog 和 evidence manifest。
-10. QA Agent 创建或更新测试策略和测试用例。
-11. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
-12. DevOps Agent 创建或更新运维手册和部署计划。
-13. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
-14. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
-15. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
+2. 需求分支准备门禁：保存当前工作区（commit 优先，否则带说明的 stash/补丁），识别远端默认主分支，切回该主分支并执行 `git pull --ff-only`，确认同步后创建并切换到新的需求分支；多仓库需求逐仓库记录，失败则停止实现。
+3. 文档治理 Agent 先把同一 feature 下的散落文档合并到主文档。
+4. 目标澄清 Agent 复述用户目标并反问关键问题，直到明确主要用户、核心闭环、批量范围、成本约束、返工粒度和验收证据。
+5. 需求验证 Agent 更新 `docs/<FEATURE_NAME>/01-product/requirement-validation.md`。
+6. 产品 Agent 更新 `docs/<FEATURE_NAME>/01-product/PRD.md`。
+7. UI Agent 更新 `docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`。
+8. 架构 Agent 更新 `docs/<FEATURE_NAME>/03-architecture/architecture.md`。
+9. 变更影响 Agent 更新 `docs/<FEATURE_NAME>/04-engineering/change-impact.md`。
+10. 研发 Agent 创建或更新实施计划、Backlog 和 evidence manifest。
+11. QA Agent 创建或更新测试策略和测试用例。
+12. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
+13. DevOps Agent 创建或更新运维手册和部署计划。
+14. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
+15. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
+16. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
 
 ## 文档治理规则
 
