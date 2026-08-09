@@ -4,6 +4,7 @@
 
 ### Added
 
+- 增加中英文 README：根 `README.md` 作为语言入口，中文说明迁移到 `README.zh-CN.md`，新增 `README.en.md`。
 - 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
 - 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
 
