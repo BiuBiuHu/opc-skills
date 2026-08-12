@@ -7,10 +7,12 @@
 - 增加中英文 README：根 `README.md` 作为语言入口，中文说明迁移到 `README.zh-CN.md`，新增 `README.en.md`。
 - 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
 - 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
+- 增加 PR 中文门禁：新建 Code PR、Release PR、文档 PR 的标题、正文和检查清单默认使用中文，并在创建后回读核对。
 
 ### Changed
 
 - 增加通用 Skill 与项目事实隔离规则，并将项目名、固定服务、测试账号、仓库路径和业务专用示例改为角色占位符或通用示例。
+- 强化研发和 QA 的测试范围选择规则：每轮验证先按改动文件、调用链、共享契约和风险选择最小充分测试集，全量测试仅在发布门禁、公共基础设施变更、影响范围不可可靠切分或用户明确要求时升级。
 
 ## v0.3.2 - 2026-08-08
 

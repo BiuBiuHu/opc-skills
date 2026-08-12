@@ -15,6 +15,8 @@ Current version: `v0.3.3`
 - Added confirmation rules for expensive batch operations, including cost, cache, retry, and overwrite strategies.
 - Added runtime entry inventory gates so project-specific domains, accounts, service aliases, deployment IDs, and callback URLs stay in project documentation instead of the generic skill.
 - Added Release PR lifecycle guidance, production synthetic probes, deployment drift checks, and post-release default-branch reset gates.
+- Added a Chinese-by-default PR rule for new Code PRs, Release PRs, documentation PRs, titles, bodies, and checklists.
+- Refined testing scope rules: choose the smallest sufficient test set from changed files, call chains, shared contracts, and risk; full test runs are an explicit escalation, not the default.
 
 ## When To Use It
 
@@ -114,6 +116,8 @@ opc-skills/
 - AI/generative features must preview cheaply before expensive generation.
 - Clients must not call internal services directly.
 - Production release requires staging, a test report, code review, release plan review, production smoke, production regression, and an observation window.
+- New PRs default to Chinese unless repository policy or the user explicitly requires another language.
+- Test scope must be selected from impact and risk; full test suites are used only when the escalation criteria are met.
 - Subagents are used only when explicitly allowed by the user and when ownership boundaries are clear.
 
 ## Useful Commands

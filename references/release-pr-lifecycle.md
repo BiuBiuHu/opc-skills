@@ -21,6 +21,14 @@
 - **Preview verification**：对已部署候选执行真实页面/API/DB/第三方闭环。`Ready` 不是验证通过。
 - **Runtime entry inventory**：项目文档仓库中的真实入口清单，记录登录入口、BFF、Auth/service-only URL、provider callback、业务回跳、固定 alias 以及当前 deployment 快照。它是事实源；Release PR 只冻结本次候选，不把项目事实写进通用 skill。
 
+### PR 创建语言
+
+- 新建 Code PR、Release PR、文档 PR 和其它 PR 时，标题与正文默认使用中文。
+- 正文中的范围、验证、风险、回滚、发布状态和检查清单均使用中文；代码标识、命令、路径、commit hash、API 名称和产品专有名词保留原文即可。
+- 仓库规范明确强制其它语言，或用户明确指定其它语言时才例外；创建前说明原因。
+- 执行 `gh pr create` 或等价操作后立即回读 PR，检查标题、正文、base/head 和状态，修正遗留英文模板或无意义的中英混排。
+- 不因本规则批量重命名历史 PR；只有用户要求或本次工作需要主动重写时才修改已有 PR。
+
 ## 3. 标准时序
 
 1. 保存并验证代码，创建 Code PR。
