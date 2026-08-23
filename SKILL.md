@@ -1,6 +1,6 @@
 ---
 name: opc-skills
-description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调和发布门禁。
+description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调、多仓库发布完整性、main/master 归并和 worktree 同步门禁。
 ---
 
 # OPC Skills
@@ -53,9 +53,12 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - 低流量生产观察门禁：当生产用户少、功能未开量或观察窗口内自然请求不足时，`0` 条错误日志只能说明“未观察到错误”，不能证明链路健康。必须使用受控、可重复、无破坏性的合成探针主动覆盖本次主链路和相邻高风险路径，同时检查 runtime 日志；探针不得重复触发付费、发送、绑定、解绑、迁移或其它不可逆副作用。探针账号、凭据和 token 不得写入仓库或报告。
 - Release PR 最终核销门禁：涉及生产用户路径、数据写入或第三方回调时，最终核销至少包含真实用户或受控真实账号验证、合成探针、DB after/副作用检查、日志观察窗口和 alias/deployment 漂移检查。缺少任一适用证据时 Release PR 保持 open；不适用项必须写明理由，不能静默跳过。
 - 线上失败暂停门禁：用户报告线上失败或 P0/P1 探针失败后，立即暂停 Release PR 合并、观察核销和后续切流。先从客户端实际 URL、请求 host、callback URL、runtime 日志和云平台 inspect 定位请求真实命中的 project/deployment/commit，再判断代码、环境、数据或第三方根因；禁止在未确认命中版本时继续改业务代码或宣布观察通过。
-- 发布后本地主分支归位：Production 发布核销并合并 Release PR 后，受影响仓库必须切回远端默认主分支，执行 `git pull --ff-only`，确认本地 HEAD 与远端主分支一致且工作区状态可解释。若有未提交用户改动，先保存或说明，不得为归位而丢弃改动。
+- 生产候选默认分支门禁：Preview 可以按已审批方案使用可追踪的 PR head；进入 Production 前，发布矩阵中所有包含代码或配置候选的仓库都必须先合并 Code PR 到各自远端默认分支，并记录精确 merge commit。Production deployment 必须直接来自该 merge commit，或来自能提供源码 commit、构建任务和产物摘要映射的可追踪构建产物；无法证明映射时不得发布。客户端包、灰度包或商店构建即使已上传，也只表示单个产物完成；依赖服务尚未部署、默认分支尚未归并或跨系统契约尚未通过时，完整 Release Train 必须保持 open。
+- 发布后跨仓库归位：Production 发布核销并合并 Release PR 后，逐一确认所有受影响仓库的远端默认分支包含本次候选 merge commit，再将本地工作区切回对应默认分支并执行 `git pull --ff-only`；记录远端默认分支、merge commit、deployment commit、本地/远端 HEAD 和工作区状态。若有未提交用户改动，先保存或说明，不得为归位而丢弃改动。本地切回默认分支不能替代 Code PR 合并或 deployment commit 核对。
 
-**每次共享环境发布必须先完成发布方案评审，禁止只发布眼前仓库。** 任何预发、生产、灰度、TestFlight、Worker 或多服务发布，在执行部署前都必须创建或更新 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/06-ops/release-plan.md`，并使用 `templates/release-plan-template.md`。发布方案必须沿真实调用链盘点客户端、主服务、认证、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方配置，形成“关联系统发布矩阵”。矩阵中的每个系统都必须明确仓库、云项目、域名、当前版本、候选 commit、是否发布、判断依据、依赖、顺序、环境变量、数据迁移、验证和回滚；没有改动的系统也必须以“不发布 + 证据”记录，禁止因未列出而默认遗漏。评审状态只能为 `awaiting-review`、`approved` 或 `rejected`；未取得用户或指定 reviewer 的明确 `approved` 前禁止部署。候选 commit、系统范围、迁移、环境或发布顺序发生变化时，原审批失效，必须重新评审。部署完成后必须把实际 deployment、smoke、监控和回滚点回填发布方案，并逐项核销矩阵，不能只报告主系统成功。
+**每次共享环境发布必须先完成发布方案评审，禁止只发布眼前仓库。** 任何预发、生产、灰度、TestFlight、Worker 或多服务发布，在执行部署前都必须创建或更新 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/06-ops/release-plan.md`，并使用 `templates/release-plan-template.md`。发布方案必须读取 `references/release-integrity.md`，从用户入口沿真实调用链递归盘点客户端、主服务、认证、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方配置；同时从每个候选仓库的 `base...head` 变更反向扫描 API、事件、队列、Webhook、共享包、迁移、环境变量、部署/IaC 和定时任务，形成“关联系统发布矩阵”。“客户端不直连内部服务”不能作为排除主服务下游依赖的理由。矩阵中的每个系统都必须明确仓库、默认分支、云项目、域名、当前版本、实现/head commit、默认分支 merge commit、deployment/产物 commit、是否已归并默认分支、发布决策、判断依据、依赖、顺序、环境变量、数据迁移、验证和回滚；每个系统的决策只能是“发布”“不发布（证据）”“本次已在前置版本发布”或“阻断”，不能留空、待定或只写“依赖上游”。没有改动的系统也必须以“不发布 + 证据”记录，禁止因未列出而默认遗漏。发布前必须做一次从下游回到用户入口的反向闭包复核，孤立行、未确认 owner、未知调用方向或未知部署目标都阻断。评审状态只能为 `awaiting-review`、`approved` 或 `rejected`；未取得用户或指定 reviewer 的明确 `approved` 前禁止部署。候选 commit、系统范围、迁移、环境或发布顺序发生变化时，原审批失效，必须重新评审。部署完成后必须把实际 deployment、commit、smoke、监控和回滚点回填发布方案，并逐项核销矩阵，不能只报告客户端或主系统成功。
+
+**发布完整性与主干归位是同一条硬门禁。** 发布按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> complete` 推进，不得跳过状态。Production 绝不允许从 feature/hotfix 分支、未合并 PR、未提交工作区或无法映射到远端默认分支 merge commit 的构建发布；“先线上发布、之后再补 main/master”视为无效发布。部署前和部署后都必须对每个受影响仓库运行 `scripts/check_release_integrity.sh`（或项目等价检查），证明候选 commit 被 `origin/<default-branch>` 包含、deployment 源码 commit 与候选一致，并列出所有 Git worktree。默认分支 worktree 必须和远端 HEAD 一致且干净；其它 worktree 若落后或有未提交改动，必须先保存并记录，禁止 reset/checkout/强制覆盖。发现漏发、候选漂移、默认分支未合并、deployment 映射不一致、默认分支 worktree 落后/脏或无法确认远端状态时，状态保持 `blocked`，暂停切流和 Release PR 核销，按 `references/release-integrity.md` 修复、回滚或重新审批；不得用重新部署、切换本地分支或刷新页面掩盖。
 
 **代码 PR、Release PR、方案审批和部署必须分流表达。** 发布前必须读取 `references/release-pr-lifecycle.md`，明确当前讨论的是 Code PR 还是 Release PR，以及用户当前需要执行的是 review/merge、批准 release plan、验证 Preview 还是批准 Production。Release PR 默认在 Preview 验证期间保持 open：release plan 获得 `approved` 后即可按方案部署 Preview，不要求先 merge Release PR；Preview 通过并回填 deployment、E2E、DB、监控和回滚证据后，才评审是否 merge Release PR。禁止只说“先 merge”“继续”或“发布吧”而不指出 PR 编号、PR 类型、目标环境和下一动作。
 
@@ -389,18 +392,21 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 8. 如果用户要求“发布”“上线”“部署线上”“准备发布”或类似生产发布意图，必须执行生产发布门禁：
    - 先确认目标环境：如果用户没有明确说预发、线上、production、prod、preview、staging 等目标环境，必须先询问用户，不得执行部署命令。
    - 确认代码保存状态：列出当前分支、commit、工作区是否干净。若存在未提交改动，必须停止发布并先要求提交、暂存或回滚；禁止从本地未提交工作区部署。
-   - 生成关联系统发布矩阵：沿客户端到主服务、Auth、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方的调用链逐项判断是否发布；所有“不发布”项必须给出 commit/config/API 契约未变化等证据。
+   - 生成关联系统发布矩阵：从用户入口沿客户端、主服务及其内部下游递归检查 Auth、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方，逐项判断是否发布；所有“不发布”项必须给出 commit/config/API 契约未变化等证据。
+   - 完成双向影响闭包：除入口向下游递归外，对每个候选仓库执行 `base...head` 变更反查，覆盖代码调用、API/事件契约、队列/Cron/Webhook、共享包、迁移、环境变量、部署/IaC 和客户端入口；存在未知依赖、未知 owner 或未知部署目标时阻断，不得猜测“不影响”。
    - 评审发布方案：把系统范围、候选 commit、部署顺序、依赖、迁移、环境、验证、监控和回滚写入 `06-ops/release-plan.md`；状态为 `approved` 前不得执行任何共享环境部署。方案变化后必须重新评审。
    - 确认 CR 状态：若尚未发 CR/PR，先创建或生成 code review 记录；未经用户明确授权，不得跳过。
    - 确认 PR 生命周期：按 `references/release-pr-lifecycle.md` 分别报告 Code PR 和 Release PR 的编号、状态与下一动作；Release PR 在 Preview 验证前保持 open，不能要求用户先 merge 它再部署 Preview。
    - 部署预发：明确预发项目、预发域名、预发 API、预发数据库/schema 和预发下游服务；部署完成后记录 deployment URL。
    - 执行预发测试：至少覆盖本次变更涉及的核心路径、失败路径和环境隔离检查；输出 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/test-report.md` 或项目既有测试报告。
    - 评审测试结果：若测试报告存在失败项，必须先修复或由用户明确接受风险；不得把失败报告当作发布通过。
-   - 部署生产：明确生产项目、生产域名、生产 API、生产数据库/schema 和生产下游服务；部署完成后记录 deployment URL。
+   - 冻结生产候选：把所有包含代码或配置候选的 Code PR 合并到各仓库远端默认分支，记录精确 merge commit，并更新发布矩阵；先运行 `scripts/check_release_integrity.sh`，证明候选已被 `origin/<default-branch>` 包含。merge commit 与已审批候选不一致时重新审批 Production release plan。
+   - 部署生产：明确生产项目、生产域名、生产 API、生产数据库/schema 和生产下游服务；按依赖优先顺序先部署并验证下游服务和主服务，再发布或放量客户端；每个 deployment/构建产物记录其源码 commit 和默认分支 merge commit。禁止从 feature/hotfix head 或未合并 PR 直接部署线上。
    - 线上 smoke test：先验证线上关键页面/API/后台任务可用；若生产发布包含数据库迁移，必须记录迁移命令、目标 host/schema、迁移结果和回滚方式。
    - 线上回归门禁：smoke 通过后，使用固定生产域名和受控生产账号执行本次需求、P0 核心路径、关联系统契约、相邻高风险路径和失败路径回归；结果与证据写回测试报告和发布方案。P0/P1 失败必须回滚并重新走完整发布链路，不能带失败核销发布。
-   - 发布核销：逐项确认发布矩阵中的系统已发布或按评审结论跳过，记录实际 deployment、版本、固定域名、smoke、线上回归、监控和回滚点；发现漏项或回归失败时停止后续流量切换。
-   - 最终回复必须列出：发布方案及审批状态、关联系统核销结果、预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上 smoke、线上回归结果、观察窗口和未解决风险。
+   - 发布核销：逐项确认发布矩阵中的系统已发布或按评审结论跳过，记录默认分支 merge commit、实际 deployment/产物 commit、版本、固定域名、smoke、线上回归、监控和回滚点；客户端产物完成但依赖服务未核销时保持 Release Train open，发现漏项、版本无法追溯或回归失败时停止后续流量切换。
+   - 跨仓库归位：确认远端默认分支包含本次 merge commit，再逐仓库切回默认分支并 `git pull --ff-only`；运行 `git worktree list --porcelain` 核对所有 worktree，记录每个 worktree 的路径、分支、HEAD、脏状态和处理结果。默认分支 worktree 未与远端一致或存在未提交改动时，保持阻断，不得强制覆盖。
+   - 最终回复必须列出：发布方案及审批状态、关联系统核销结果、各仓库默认分支 merge commit 与 deployment/产物 commit、预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上 smoke、线上回归结果、跨仓库归位、观察窗口和未解决风险。
 
 ### 客户端专项联调方案
 
@@ -450,7 +456,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 证据清单：命令、页面、截图、接口响应、日志、数据库检查、设备/浏览器、结果和未执行原因。
    - 测试：用例、命令、数据、断言、截图/API/日志证据和失败路径。
    - 测试用例必须从“测什么、哪个系统测、怎么测、具体 case、证据是什么”五个维度写清楚，并覆盖成功路径、失败路径、边界路径和不能发生的副作用。
-   - 运维：环境、配置、发布、回滚、巡检、告警和故障处理。
+   - 运维：环境、配置、发布、回滚、巡检、告警和故障处理；发布方案还必须包含双向影响闭包、逐系统发布/不发布证据、候选与默认分支一致性、deployment 映射和 worktree 归位证据。
 
 4. 架构调用关系
    - 适用于 `03-architecture/architecture.md`。

@@ -5,6 +5,9 @@
 ### Added
 
 - 增加中英文 README：根 `README.md` 作为语言入口，中文说明迁移到 `README.zh-CN.md`，新增 `README.en.md`。
+- 增加 `references/release-integrity.md`，固化双向依赖闭包、发布状态机、候选冻结、deployment 与默认分支一致性和 worktree 归位门禁。
+- 增加 `scripts/check_release_integrity.sh`，只读检查候选 commit 是否已进入远端默认分支、deployment commit 是否匹配，并核对默认分支 worktree。
+- 发布方案模板新增变更来源、逐系统决策、漏发复核、完整性检查和逐 worktree 归位证据。
 - 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
 - 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
 - 增加 PR 中文门禁：新建 Code PR、Release PR、文档 PR 的标题、正文和检查清单默认使用中文，并在创建后回读核对。
@@ -12,7 +15,9 @@
 ### Changed
 
 - 增加通用 Skill 与项目事实隔离规则，并将项目名、固定服务、测试账号、仓库路径和业务专用示例改为角色占位符或通用示例。
+- 发布与 DevOps 规则改为：未知依赖、未知 owner、未知 deployment 映射、默认分支未合并或 worktree 未同步时阻断；禁止先部署线上再补 main/master。
 - 强化研发和 QA 的测试范围选择规则：每轮验证先按改动文件、调用链、共享契约和风险选择最小充分测试集，全量测试仅在发布门禁、公共基础设施变更、影响范围不可可靠切分或用户明确要求时升级。
+- `VERSION` 和 README 当前版本更新为 `0.4.0`。
 
 ## v0.3.2 - 2026-08-08
 

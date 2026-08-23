@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md)
 
-Current version: `v0.3.3`
+Current version: `v0.4.0`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is designed for full delivery loops: clarify the user goal, define the core journey, design the user experience and service contracts, implement in controlled steps, verify with real pages and real clients, and release only after staging evidence, review, and production regression.
 
@@ -17,6 +17,9 @@ Current version: `v0.3.3`
 - Added Release PR lifecycle guidance, production synthetic probes, deployment drift checks, and post-release default-branch reset gates.
 - Added a Chinese-by-default PR rule for new Code PRs, Release PRs, documentation PRs, titles, bodies, and checklists.
 - Refined testing scope rules: choose the smallest sufficient test set from changed files, call chains, shared contracts, and risk; full test runs are an explicit escalation, not the default.
+- Added release-integrity gates for bidirectional impact closure, per-system release decisions, candidate freezing, and missed-system review.
+- Production deployments must come from a remote default-branch merge commit, or from a traceable build artifact that maps back to source commit and build job.
+- Added `references/release-integrity.md` and `scripts/check_release_integrity.sh` for candidate, deployment commit, and worktree reconciliation checks.
 
 ## When To Use It
 
@@ -75,8 +78,10 @@ Goal clarification
 -> Staging integration and real API verification
 -> Test report and code review
 -> Release plan review and related-system sign-off
+-> Default-branch merge commit freeze
 -> Production release and smoke test
 -> Production-domain regression
+-> Worktree reconciliation and release-integrity closeout
 -> Observation window and release closeout
 ```
 
@@ -99,6 +104,7 @@ opc-skills/
 ├── docs/
 ├── references/
 ├── scripts/
+│   ├── check_release_integrity.sh
 │   ├── check_project_coupling.sh
 │   └── start_rnd.sh
 └── templates/
@@ -116,6 +122,8 @@ opc-skills/
 - AI/generative features must preview cheaply before expensive generation.
 - Clients must not call internal services directly.
 - Production release requires staging, a test report, code review, release plan review, production smoke, production regression, and an observation window.
+- Release integrity and default-branch reconciliation are one hard gate: production candidates must be merged into the remote default branch and mapped to the actual deployment or artifact commit.
+- After production closeout, affected repositories must record default branch, merge commit, deployment commit, local/remote HEAD, and worktree state.
 - New PRs default to Chinese unless repository policy or the user explicitly requires another language.
 - Test scope must be selected from impact and risk; full test suites are used only when the escalation criteria are met.
 - Subagents are used only when explicitly allowed by the user and when ownership boundaries are clear.
@@ -132,6 +140,12 @@ Check for project-specific coupling before publishing generic skill changes:
 
 ```bash
 ./scripts/check_project_coupling.sh
+```
+
+Check release candidate ancestry, deployment commit mapping, and worktree reconciliation:
+
+```bash
+./scripts/check_release_integrity.sh /path/to/repo <candidate-commit> [default-branch] [deployment-commit]
 ```
 
 ## Security

@@ -2,7 +2,7 @@
 
 [English README](README.en.md) | [语言入口](README.md)
 
-当前版本：`v0.3.3`
+当前版本：`v0.4.0`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。
 
@@ -20,6 +20,9 @@
 - 隔离通用 Skill 与项目事实：具体项目名、账号、域名、服务别名和 deployment 只保存在项目事实源中，通用材料使用角色占位符。
 - 增加 PR 中文门禁：新建 Code PR、Release PR、文档 PR 默认用中文标题、正文和检查清单。
 - 强化测试范围规则：按改动文件、调用链、共享契约和风险选择最小充分测试集，不默认执行无关全量测试。
+- 增加发布完整性门禁：发布方案必须完成双向影响闭包、逐系统发布/不发布证据、候选冻结和漏发复核。
+- Production 部署必须来自远端默认分支 merge commit，或提供可验证的源码 commit、构建任务和产物映射；禁止先部署线上再补 main/master。
+- 增加 `references/release-integrity.md` 和 `scripts/check_release_integrity.sh`，用于核对候选 commit、deployment commit 和 worktree 归位状态。
 
 ## 适用场景
 
@@ -73,8 +76,10 @@
 -> 预发联调和真实 API 复验
 -> 测试报告和 Code Review
 -> 发布方案评审和关联系统核销
+-> 默认分支 merge commit 冻结
 -> 生产发布和线上 smoke test
 -> 固定生产域名线上回归
+-> worktree 归位和发布完整性核销
 -> 观察窗口完成后发布核销
 ```
 
@@ -106,6 +111,7 @@ opc-skills/
 │   ├── b-side-ui-guidance.md
 │   ├── document-standard.md
 │   ├── open-source-stack.md
+│   ├── release-integrity.md
 │   ├── release-pr-lifecycle.md
 │   ├── subagent-orchestration.md
 │   └── testing-guidance.md
@@ -113,6 +119,7 @@ opc-skills/
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
+│   ├── check_release_integrity.sh
 │   ├── check_project_coupling.sh
 │   └── start_rnd.sh
 └── templates/
@@ -146,16 +153,38 @@ opc-skills/
 - 客户端不得直连内部子服务。
 - 发布必须先预发、再线上，并且必须有测试报告和 Code Review。
 - 生产发布后必须完成线上回归；全部系统核销、回归通过且观察窗口完成后才能宣布发布完成。
+- 发布完整性和主干归位是同一条硬门禁；Production 候选必须先进入远端默认分支，并能和实际 deployment/产物 commit 对上。
+- 发布后必须核对受影响仓库的默认分支、merge commit、deployment commit 和 worktree 状态；默认分支 worktree 未同步或脏时保持阻断。
 - 创建 PR 默认使用中文；除非仓库规范或用户明确要求其它语言。
 - 测试范围必须按改动影响选择；全量测试只作为明确触发条件下的升级选项。
 - subagent 只能在用户明确允许、任务边界清楚、能证明提速或提质时使用；skill 只写规则，主 Agent 通过 `multi_agent_v1.spawn_agent` 执行调用。
 
+## 常用命令
+
+从模板初始化 feature 文档：
+
+```bash
+./scripts/start_rnd.sh /path/to/project account-linking
+```
+
+发布前检查通用 skill 是否混入项目专属事实：
+
+```bash
+./scripts/check_project_coupling.sh
+```
+
+核对发布候选、deployment commit 和 worktree 归位：
+
+```bash
+./scripts/check_release_integrity.sh /path/to/repo <candidate-commit> [default-branch] [deployment-commit]
+```
+
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.3.3`。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.4.0`。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.3.3`。
+- 为版本创建 tag，例如 `v0.4.0`。
