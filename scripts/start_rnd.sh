@@ -34,9 +34,12 @@ seed_from_template() {
 seed_from_template "$DOCS/01-product/PRD.md" "$TEMPLATES_DIR/prd-template.md"
 seed_from_template "$DOCS/02-ui/markdown-prototype.md" "$TEMPLATES_DIR/ui-prototype-template.md"
 seed_from_template "$DOCS/03-architecture/architecture.md" "$TEMPLATES_DIR/architecture-template.md"
+seed_from_template "$DOCS/04-engineering/change-impact.md" "$TEMPLATES_DIR/change-impact-template.md"
 seed_from_template "$DOCS/04-engineering/implementation-plan.md" "$TEMPLATES_DIR/implementation-plan-template.md"
+seed_from_template "$DOCS/04-engineering/evidence-manifest.md" "$TEMPLATES_DIR/evidence-manifest-template.md"
 seed_from_template "$DOCS/04-engineering/backlog.md" "$TEMPLATES_DIR/backlog-template.md"
 seed_from_template "$DOCS/05-testing/test-strategy.md" "$TEMPLATES_DIR/test-strategy-template.md"
+seed_from_template "$DOCS/06-ops/release-plan.md" "$TEMPLATES_DIR/release-plan-template.md"
 seed_from_template "$DOCS/06-ops/ops-runbook.md" "$TEMPLATES_DIR/ops-runbook-template.md"
 
 echo "OPC Skills 工作区已初始化：$DOCS"
