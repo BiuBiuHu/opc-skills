@@ -23,6 +23,7 @@
 - 增加发布完整性门禁：发布方案必须完成双向影响闭包、逐系统发布/不发布证据、候选冻结和漏发复核。
 - Production 部署必须来自远端默认分支 merge commit，或提供可验证的源码 commit、构建任务和产物映射；禁止先部署线上再补 main/master。
 - 增加 `references/release-integrity.md` 和 `scripts/check_release_integrity.sh`，用于核对候选 commit、deployment commit 和 worktree 归位状态。
+- 当前任务完成后，若未命中硬门禁，主 Agent 会自动回看 Inbox/Todo 并继续下一项，不再等待用户额外说“继续”。
 
 ## 适用场景
 

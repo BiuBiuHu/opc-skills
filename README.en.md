@@ -20,6 +20,7 @@ Current version: `v0.4.0`
 - Added release-integrity gates for bidirectional impact closure, per-system release decisions, candidate freezing, and missed-system review.
 - Production deployments must come from a remote default-branch merge commit, or from a traceable build artifact that maps back to source commit and build job.
 - Added `references/release-integrity.md` and `scripts/check_release_integrity.sh` for candidate, deployment commit, and worktree reconciliation checks.
+- After a task finishes, if no hard gate applies, the main agent automatically revisits Inbox/Todo and continues with the next item instead of waiting for the user to say "continue".
 
 ## When To Use It
 
