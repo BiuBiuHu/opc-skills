@@ -1,6 +1,6 @@
 ---
 name: opc-skills
-description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调、多仓库发布完整性、main/master 归并和 worktree 同步门禁。
+description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调、多仓库发布完整性、main/master 归并、worktree 同步门禁和发布后双语内容生产。
 ---
 
 # OPC Skills
@@ -18,6 +18,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - 要求规划、设计、开发、测试、部署或运维 App、Web、小程序等 C 端应用
 - 要求为 C 端业务补齐运营、审核、配置、发布、客服排错或内容生成工作台
 - 当本次需求明确涉及客户端应用时，要求对当前业务做客户端联调、前后端联调、移动端联调、App 联调、真机或模拟器验证
+- 页面或功能发布完成后，要求生成技术文章、发布复盘、中文/英文内容或 SEO/GEO 内容
 
 ## 核心规则
 
@@ -66,7 +67,9 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 
 **生产发布后必须完成线上回归，回归通过前禁止宣布发布完成。** 线上回归必须基于固定生产域名和受控生产测试账号，覆盖本次变更、所有已发布关联系统的契约、P0 核心用户路径、相邻高风险路径、环境隔离、数据库/队列副作用和关键失败路径；不能用 health check、构建 Ready 或单页 smoke 代替。测试用例、命令、结果、截图/API/日志证据必须写回 `05-testing/test-report.md` 和 `06-ops/release-plan.md`。任一 P0/P1 回归失败时，立即停止后续切流和发布核销，按发布方案回滚受影响系统，完成根因修复后重新走预发、发布评审、生产部署和线上回归。只有矩阵系统全部核销、线上回归通过并完成观察窗口，发布状态才能标记为 `complete`。
 
-**零散想法先进入 Inbox，不直接开发。** 当用户说“先记下来”“后面再开发”或临时给出产品想法时，只记录到轻量草稿清单，不启动正式 PRD/架构/编码流程。当前任务完成后，再回看 Inbox：评估清单事项与当前工作、已提交代码和已完成任务的相关性；选择一个任务；然后按 OPC Skills 正式研发流程执行，包括开新分支、编写技术方案和测试方案、实施、端到端联调和测试用例。
+**发布后内容生产是可选旁路，不是发布硬门禁。** 当页面或功能进入 `complete` 后，主 Agent 必须检查项目是否启用 `postReleaseContent`，并主动提供 `suggest`、`draft`、`publish` 三种选项。`suggest` 只输出 3-5 个候选选题；`draft` 从 Git、代码、方案、测试和发布证据采集素材，生成中文和英文稿并落盘；`publish` 只有在目标站点、内容目录、构建命令和独立文章发布门禁明确后才能执行。文章生产不得阻塞页面发布，文章发布也不得反向替代页面发布核销；默认不得因页面发布完成而静默公开文章。详细规则见 `references/post-release-content.md`，角色定义见 `agents/content-agent.md`。
+
+**零散想法先进入 Inbox，不直接开发。** 当用户说“先记下来”“后面再开发”或临时给出产品想法时，只记录到轻量草稿清单，不启动正式 PRD/架构/编码流程。当前任务完成后，如果没有命中必须停下的硬门禁，必须立刻回看 Inbox/Todo：评估清单事项与当前工作、已提交代码和已完成任务的相关性；选择一个后续任务；然后按 OPC Skills 正式研发流程继续执行，包括开新分支、编写技术方案和测试方案、实施、端到端联调和测试用例。不得等待用户再说“继续”。只有当下一步会进入用户审核、迁移、部署、删除或其它明确确认关卡时才暂停。
 
 **功能页证据闭环，不用间接证据替代验收。** 当本次改动涉及 UI、交互、客户端页面、移动端 Tab、Web 路由、弹窗、列表、表单、布局、图片、图表或可视状态时，完成标准必须包含“进入被改功能的真实页面并验证”。禁止用以下证据替代功能验收：仅类型检查通过、仅构建成功、仅安装成功、仅应用启动成功、停留在默认首页截图、停留在错误 Tab 截图、只看运行日志没有看页面、只验证相邻页面或抽象组件。改了哪个页面或交互，就必须导航到那个页面或交互状态；如果用户给了截图指出问题，必须在同一页面、同一状态、同类设备视口下截图对比。截图或运行时快照发现未修复时，必须继续修复，不得报告完成。
 
@@ -126,6 +129,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - `bugfix-fast-path`：当用户描述线上/预发/本地 bug、截图问题、报错、性能卡顿、交互异常或回归问题时启用。只要求完成复现、定位、修复、回归和证据闭环；除非 bug 暴露出产品或架构缺口，否则不强制补全完整 PRD/UI/架构流程。
 - `validation-only`：当用户要求“验证一下”“review 需求”“看看能不能做”“只检查不改代码”时启用。只输出需求验证、实现验证或风险清单，不进入编码。
 - `release-gated`：当用户要求预发、线上、发布、回滚、灰度、TestFlight 或运维检查时启用。只处理发布门禁、环境隔离、验证报告、回滚、线上 smoke、线上回归和观察窗口，不夹带无关功能开发。
+- `post-release-content`：当页面或功能已经完成生产发布，且用户或项目配置启用文章生产时使用。只处理素材采集、选题、中文/英文稿、SEO/GEO、配图计划和文章落盘/发布，不重新执行页面发布门禁。
 - `architecture-review`：当用户要求检查架构、调用关系、分层、服务腐化或 Agent 产物质量时启用。重点审查依赖方向、服务边界、数据所有权、调用图和防腐化规则。
 
 ## Subagent 执行模型
@@ -285,6 +289,14 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 生产发布前必须核对目标项目、域名、环境变量、数据库 host/schema、下游服务 URL 和回滚方案；发布后必须记录 deployment URL、固定域名、验证命令、验证账号、结果和残留风险。
    - 当发布目标涉及 iOS、TestFlight、App Store Connect、App Store 正式提交、IPA、archive/exportArchive 或 Apple 签名时，必须调用 `ios-release`；旧的 `ios-testflight-release` 仅作为兼容入口。
 
+12. Content Agent
+   - 负责生产发布完成后的可选文章生产：素材采集、选题、双语写作、去 AI 味、SEO/GEO、配图计划和落盘。
+   - 只能使用 Git、代码、项目文档、测试报告、发布方案和脱敏证据；不得凭记忆补数字、版本、时间线、根因或用户数据。
+   - 文章不得包含账号、token、secret、内部域名、deployment URL、数据库 host/schema、客户数据或未脱敏截图。
+   - 默认只生成选题或草稿；文章公开发布必须有独立目标、预览、Code Review、部署和回滚证据。
+   - 文章发布失败不回滚页面发布；保留素材清单和失败阶段，支持从最近成功阶段重试。
+   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/07-content/`，或写入项目事实源指定的博客内容目录。
+
 ## 一键工作流
 
 启动工作流后：
@@ -327,6 +339,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - `docs/<FEATURE_NAME>/05-testing/integration-report.md`
    - `docs/<FEATURE_NAME>/06-ops/release-plan.md`
    - `docs/<FEATURE_NAME>/06-ops/ops-runbook.md`
+   - `docs/<FEATURE_NAME>/07-content/content-production.md`（启用发布后内容生产时）
 
    生成或更新这些文档时，必须优先使用以下模板：
    - `templates/prd-template.md`
@@ -341,6 +354,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - `templates/test-strategy-template.md`
    - `templates/release-plan-template.md`
    - `templates/ops-runbook-template.md`
+   - `templates/content-production-template.md`（启用发布后内容生产时）
 
 4. 编码前必须执行研发准备门禁，并把结论写入 `docs/<FEATURE_NAME>/04-engineering/implementation-plan.md`、`change-impact.md` 或 `debug-report.md`：
    - 目标澄清：确认用户目标、核心工作流、批量范围、成本约束、返工粒度和验收证据已写入需求验证或 PRD；未确认时先反问用户。
@@ -407,6 +421,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 发布核销：逐项确认发布矩阵中的系统已发布或按评审结论跳过，记录默认分支 merge commit、实际 deployment/产物 commit、版本、固定域名、smoke、线上回归、监控和回滚点；客户端产物完成但依赖服务未核销时保持 Release Train open，发现漏项、版本无法追溯或回归失败时停止后续流量切换。
    - 跨仓库归位：确认远端默认分支包含本次 merge commit，再逐仓库切回默认分支并 `git pull --ff-only`；运行 `git worktree list --porcelain` 核对所有 worktree，记录每个 worktree 的路径、分支、HEAD、脏状态和处理结果。默认分支 worktree 未与远端一致或存在未提交改动时，保持阻断，不得强制覆盖。
    - 最终回复必须列出：发布方案及审批状态、关联系统核销结果、各仓库默认分支 merge commit 与 deployment/产物 commit、预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上 smoke、线上回归结果、跨仓库归位、观察窗口和未解决风险。
+   - 发布完成后可选内容生产：若用户或项目配置启用 `postReleaseContent`，进入 `post-release-content` 模式，运行素材准备脚本，读取 `references/post-release-content.md`，生成或更新 `07-content/content-production.md`；内容生产不改变页面发布状态。
 
 ### 客户端专项联调方案
 
@@ -518,6 +533,7 @@ Agent 在读写文档时：
 - `test-case-designer`：测试计划和测试用例设计
 - `test-execution-runner`：测试执行和报告
 - `ios-release`：iOS 客户端发布，覆盖 TestFlight、App Store Connect、App Store 提审、签名、archive/exportArchive 和 IPA 上传；`ios-testflight-release` 只作为旧名称兼容入口
+- `blog-writing`：文章素材采集、选题、双语写作、去 AI 味、SEO/GEO 和博客落盘；项目存在该 skill 时可复用，但必须先过滤项目专属路径和事实
 - `deploy-to-vercel` 或 `vercel-deploy`：当前端需要部署到 Vercel 时使用
 
 ## 开源策略
@@ -564,7 +580,8 @@ Agent 在读写文档时：
 ├── 05-testing/test-report.md
 ├── 05-testing/integration-report.md
 ├── 06-ops/release-plan.md
-└── 06-ops/ops-runbook.md
+├── 06-ops/ops-runbook.md
+└── 07-content/content-production.md  # 启用发布后内容生产时
 ```
 
 除非用户明确要求创建附录或历史归档，否则不要新增顶层产品方案、技术架构方案或 UI 原型文档。
@@ -588,7 +605,8 @@ example-project/docs/example-feature/
 ├── 05-testing/test-cases.json
 ├── 05-testing/test-report.md
 ├── 05-testing/integration-report.md
-└── 06-ops/ops-runbook.md
+├── 06-ops/ops-runbook.md
+└── 07-content/content-production.md  # 启用发布后内容生产时
 ```
 
 ## 最终回复格式
