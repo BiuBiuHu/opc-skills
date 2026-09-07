@@ -8,9 +8,9 @@
 
 `opc-skills` 是一套面向 C 端业务应用和配套 B 端工作台的 Codex Skill。它把目标澄清、PRD、UI、架构、实现、测试、联调、发布评审和生产回归串成可审查的交付流程。
 
-This sync adds release-integrity gates, default-branch reconciliation, and worktree checks to the release flow.
+This sync adds release-integrity gates, default-branch reconciliation, worktree checks, and optional bilingual post-release content production.
 
-本次同步补充了发布完整性门禁、默认分支归位和 worktree 校验。
+本次同步补充了发布完整性门禁、默认分支归位、worktree 校验和可选的发布后双语内容生产。
 
 ## Quick Install
 
@@ -34,6 +34,7 @@ Then trigger it in Codex with:
 - Security policy: [SECURITY.md](SECURITY.md)
 - Release integrity reference: [references/release-integrity.md](references/release-integrity.md)
 - Release integrity check: [scripts/check_release_integrity.sh](scripts/check_release_integrity.sh)
+- Post-release content reference: [references/post-release-content.md](references/post-release-content.md)
 
 ## License
 

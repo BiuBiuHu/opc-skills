@@ -12,6 +12,8 @@
 - 增加项目级 runtime entry inventory 门禁：真实登录入口、BFF、OAuth callback、业务回跳、固定 alias 和 deployment 快照记录在项目文档仓库，不写入通用 skill；发布前必须逐个 callback alias inspect 并将候选快照冻结到 release plan。
 - 增加低流量生产合成探针、Release PR 五项最终核销证据、线上失败暂停与命中 deployment 定位、发布后切回同步默认主分支门禁。
 - 增加 PR 中文门禁：新建 Code PR、Release PR、文档 PR 的标题、正文和检查清单默认使用中文，并在创建后回读核对。
+- 增加发布后可选内容生产：引入 `Content Agent`、`post-release-content` 参考规则和 `content-production` 模板，默认生成中文/英文草稿，不阻塞页面发布且不静默公开文章。
+- 增加 `scripts/prepare_post_release_content.sh`，根据 base/head commit 生成提交记录、变更统计和变更文件清单，供文章选题和写作使用。
 
 ### Changed
 

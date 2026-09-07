@@ -24,6 +24,7 @@
 - Production 部署必须来自远端默认分支 merge commit，或提供可验证的源码 commit、构建任务和产物映射；禁止先部署线上再补 main/master。
 - 增加 `references/release-integrity.md` 和 `scripts/check_release_integrity.sh`，用于核对候选 commit、deployment commit 和 worktree 归位状态。
 - 当前任务完成后，若未命中硬门禁，主 Agent 会自动回看 Inbox/Todo 并继续下一项，不再等待用户额外说“继续”。
+- 增加发布后可选内容生产：通过 `Content Agent` 从 Git、代码、测试和发布证据中生成中文/英文文章草稿，并提供选题、落盘、审核和发布状态机。
 
 ## 适用场景
 
@@ -31,6 +32,7 @@
 - C 端体验：导航、表单、弹窗、列表、媒体、手势、动画、性能、空/错/慢状态和真实设备验证。
 - B 端工作台：运营台、审核台、内容生成台、配置台、客服排错台、发布台和数据修复台。
 - 全栈闭环：客户端、主服务/API、认证、AI/Worker、数据库、对象存储、第三方服务、预发/线上发布和回滚。
+- 发布后内容：技术文章、发布复盘、中文/英文双稿、SEO/GEO、Mermaid 图和脱敏配图计划。
 
 ## 核心能力
 
@@ -40,6 +42,7 @@
 - 成本保护：AI/生成类能力先预览审核，再执行昂贵生成，并复用缓存/对象存储。
 - 证据闭环：真实页面、真实客户端、预发环境、测试报告和发布门禁缺一不可。
 - 文档落盘：产品、UI、架构、研发、测试、联调和运维结论写入 `docs/<FEATURE_NAME>/`。
+- 内容生产旁路：发布完成后可选生成 `suggest`、`draft` 或 `publish` 内容，不阻塞页面发布，默认不静默公开。
 - Subagent 编排：只有在用户明确允许、任务边界清楚、能证明提速或提质时，才拆分 Explorer、Frontend、Backend、QA/Test、Integration 等子任务。
 
 ## 使用方式
@@ -59,9 +62,10 @@
 用 opc-skills 分析这个移动端需求
 用 opc-skills 设计这个 C 端功能
 用 opc-skills 设计配套运营工作台
+按这次发布生成中英文技术文章草稿
 ```
 
-触发后，主 Agent 会读取 `SKILL.md`，并按当前任务类型进入需求验证、UI、架构、实现、测试、联调或发布模式。
+触发后，主 Agent 会读取 `SKILL.md`，并按当前任务类型进入需求验证、UI、架构、实现、测试、联调、发布或 `post-release-content` 模式。
 
 ## 工作流概览
 
@@ -82,9 +86,25 @@
 -> 固定生产域名线上回归
 -> worktree 归位和发布完整性核销
 -> 观察窗口完成后发布核销
+-> 可选：选题 / 中英文草稿 / 内容审核 / 文章发布
 ```
 
 默认模式是 `manual-gated`：文档和方案完成后进入 `awaiting-user-review`，用户审核通过后才进入实现、迁移或部署。
+
+发布后内容生产有三个独立模式：
+
+- `suggest`：输出 3-5 个基于一手素材的候选选题。
+- `draft`：生成中文和英文两版，写入 `docs/<FEATURE_NAME>/07-content/` 或项目事实源指定的博客目录。
+- `publish`：内容审核通过后，按项目事实源指定的博客构建和发布流程执行。
+
+可先准备本次发布的素材清单：
+
+```bash
+./scripts/prepare_post_release_content.sh \
+  /path/to/project feature-name <base-commit> <head-commit>
+```
+
+文章发布默认需要单独批准，不能把页面发布完成自动解释为文章已公开。
 
 ## 目录结构
 
@@ -105,13 +125,15 @@ opc-skills/
 │   ├── backend-agent.md
 │   ├── qa-agent.md
 │   ├── integration-agent.md
-│   └── devops-agent.md
+│   ├── devops-agent.md
+│   └── content-agent.md
 ├── references/
 │   ├── agent-workflow.md
 │   ├── auth-login-e2e.md
 │   ├── b-side-ui-guidance.md
 │   ├── document-standard.md
 │   ├── open-source-stack.md
+│   ├── post-release-content.md
 │   ├── release-integrity.md
 │   ├── release-pr-lifecycle.md
 │   ├── subagent-orchestration.md
@@ -121,12 +143,14 @@ opc-skills/
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
 │   ├── check_release_integrity.sh
+│   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
 │   └── start_rnd.sh
 └── templates/
     ├── architecture-template.md
     ├── backlog-template.md
     ├── change-impact-template.md
+    ├── content-production-template.md
     ├── debug-report-template.md
     ├── evidence-manifest-template.md
     ├── implementation-plan-template.md
@@ -156,6 +180,8 @@ opc-skills/
 - 生产发布后必须完成线上回归；全部系统核销、回归通过且观察窗口完成后才能宣布发布完成。
 - 发布完整性和主干归位是同一条硬门禁；Production 候选必须先进入远端默认分支，并能和实际 deployment/产物 commit 对上。
 - 发布后必须核对受影响仓库的默认分支、merge commit、deployment commit 和 worktree 状态；默认分支 worktree 未同步或脏时保持阻断。
+- 发布后文章必须来自 Git、代码和验证证据；默认同时产出中英文稿，且必须通过敏感信息检查和独立内容审核。
+- 文章发布失败不回滚页面发布；文章公开发布必须有独立目标、预览、deployment 和回滚记录。
 - 创建 PR 默认使用中文；除非仓库规范或用户明确要求其它语言。
 - 测试范围必须按改动影响选择；全量测试只作为明确触发条件下的升级选项。
 - subagent 只能在用户明确允许、任务边界清楚、能证明提速或提质时使用；skill 只写规则，主 Agent 通过 `multi_agent_v1.spawn_agent` 执行调用。
@@ -178,6 +204,13 @@ opc-skills/
 
 ```bash
 ./scripts/check_release_integrity.sh /path/to/repo <candidate-commit> [default-branch] [deployment-commit]
+```
+
+准备发布后文章素材：
+
+```bash
+./scripts/prepare_post_release_content.sh \
+  /path/to/project feature-name <base-commit> <head-commit>
 ```
 
 ## 版本发布

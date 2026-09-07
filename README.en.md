@@ -21,6 +21,7 @@ Current version: `v0.4.0`
 - Production deployments must come from a remote default-branch merge commit, or from a traceable build artifact that maps back to source commit and build job.
 - Added `references/release-integrity.md` and `scripts/check_release_integrity.sh` for candidate, deployment commit, and worktree reconciliation checks.
 - After a task finishes, if no hard gate applies, the main agent automatically revisits Inbox/Todo and continues with the next item instead of waiting for the user to say "continue".
+- Added optional post-release content production through `Content Agent`, including source manifests, topic suggestions, bilingual drafts, SEO/GEO checks, review, and publishing states.
 
 ## When To Use It
 
@@ -28,6 +29,7 @@ Current version: `v0.4.0`
 - Consumer experience work: navigation, forms, dialogs, lists, media, gestures, animation, performance, empty/error/loading states, and real-device verification.
 - B-side operator consoles: operations, review, content generation, configuration, customer-support debugging, release control, and data repair tools.
 - Full-stack delivery: client, primary API/BFF, authentication, AI/worker services, database, object storage, third-party services, staging, production, and rollback.
+- Post-release content: technical articles, release retrospectives, Chinese/English drafts, SEO/GEO metadata, Mermaid diagrams, and redacted visual plans.
 
 ## Core Capabilities
 
@@ -37,6 +39,7 @@ Current version: `v0.4.0`
 - Cost protection: preview and review AI/generative work before expensive batch generation; reuse cache and object storage.
 - Evidence loop: real pages, real clients, staging validation, test reports, code review, production regression, and observation windows.
 - Documentation persistence: product, UI, architecture, engineering, testing, integration, and operations decisions are written to `docs/<FEATURE_NAME>/`.
+- Optional content sidecar: after a completed release, produce `suggest`, `draft`, or `publish` outputs without blocking the page release; publishing is never silent by default.
 - Subagent orchestration: split work only when the user explicitly allows it and the task boundaries are clear enough to improve speed or review quality.
 
 ## Installation
@@ -61,9 +64,10 @@ Use one of these intents in Codex:
 用 opc-skills 分析这个移动端需求
 用 opc-skills 设计这个 C 端功能
 用 opc-skills 设计配套运营工作台
+按这次发布生成中英文技术文章草稿
 ```
 
-After activation, the main agent reads `SKILL.md` and enters the relevant mode: requirement validation, UI, architecture, implementation, testing, integration, or release.
+After activation, the main agent reads `SKILL.md` and enters the relevant mode: requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
 ## Workflow
 
@@ -84,9 +88,25 @@ Goal clarification
 -> Production-domain regression
 -> Worktree reconciliation and release-integrity closeout
 -> Observation window and release closeout
+-> Optional: topic suggestions / bilingual drafts / content review / article publishing
 ```
 
 The default mode is `manual-gated`: the agent writes documents and plans first, then waits in `awaiting-user-review` before implementation, migration, or deployment.
+
+Post-release content has three independent modes:
+
+- `suggest`: produce 3-5 topics grounded in first-party delivery evidence.
+- `draft`: produce Chinese and English drafts under `docs/<FEATURE_NAME>/07-content/`, or in the blog directory defined by the project facts.
+- `publish`: after content review, run the project's documented blog build and publishing workflow.
+
+Prepare a source manifest for a completed release with:
+
+```bash
+./scripts/prepare_post_release_content.sh \
+  /path/to/project feature-name <base-commit> <head-commit>
+```
+
+Article publishing requires a separate approval by default. A completed page release never implies that an article was publicly published.
 
 ## Repository Structure
 
@@ -102,10 +122,13 @@ opc-skills/
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 ├── agents/
+│   └── content-agent.md
 ├── docs/
 ├── references/
+│   └── post-release-content.md
 ├── scripts/
 │   ├── check_release_integrity.sh
+│   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
 │   └── start_rnd.sh
 └── templates/
@@ -125,6 +148,8 @@ opc-skills/
 - Production release requires staging, a test report, code review, release plan review, production smoke, production regression, and an observation window.
 - Release integrity and default-branch reconciliation are one hard gate: production candidates must be merged into the remote default branch and mapped to the actual deployment or artifact commit.
 - After production closeout, affected repositories must record default branch, merge commit, deployment commit, local/remote HEAD, and worktree state.
+- Post-release articles must use Git, code, and verification evidence; bilingual drafts are the default and must pass sensitive-information review.
+- Article publishing is an independent workflow with its own target, preview, deployment, and rollback record. A failed article publish never rolls back the page release.
 - New PRs default to Chinese unless repository policy or the user explicitly requires another language.
 - Test scope must be selected from impact and risk; full test suites are used only when the escalation criteria are met.
 - Subagents are used only when explicitly allowed by the user and when ownership boundaries are clear.
@@ -147,6 +172,13 @@ Check release candidate ancestry, deployment commit mapping, and worktree reconc
 
 ```bash
 ./scripts/check_release_integrity.sh /path/to/repo <candidate-commit> [default-branch] [deployment-commit]
+```
+
+Prepare a post-release content source manifest:
+
+```bash
+./scripts/prepare_post_release_content.sh \
+  /path/to/project feature-name <base-commit> <head-commit>
 ```
 
 ## Security

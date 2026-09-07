@@ -14,6 +14,7 @@
 - QA Agent：负责测试用例、执行结果和测试报告。
 - 联调 Agent：负责端到端联调门禁；仅当本次需求涉及客户端应用或用户明确要求时，启用客户端专项联调。
 - DevOps Agent：负责部署、可观测性、运维手册和故障处理。
+- Content Agent：负责生产发布完成后的可选内容生产，包括素材采集、选题、双语写作、SEO/GEO、配图计划和文章落盘。
 
 ## 概念 Agent 与可执行 Subagent
 
@@ -55,9 +56,10 @@ subagent 完成后，主 Agent 必须检查是否越权、是否引入无关改�
 11. QA Agent 创建或更新测试策略和测试用例。
 12. 联调 Agent 创建或更新联调报告框架，声明本次是否启用客户端专项门禁；启用时补充客户端能力矩阵、验证工具和证据要求。
 13. DevOps Agent 创建或更新运维手册和部署计划。
-14. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
-15. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
-16. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
+14. 生产发布进入 `complete` 后，如果用户或项目事实源启用发布后内容生产，Content Agent 进入 `suggest`、`draft` 或 `publish` 模式；文章生产不改变页面发布状态。
+15. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
+16. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
+17. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
 
 ## 文档治理规则
 
@@ -111,6 +113,18 @@ subagent 完成后，主 Agent 必须检查是否越权、是否引入无关改�
 - 数据库迁移
 - 部署
 - 任何破坏性清理
+
+## 发布后内容生产
+
+发布后内容生产是页面发布完成后的可选旁路，不是页面发布的硬门禁。只有页面或功能已经进入 `complete`，并且用户明确要求或项目事实源启用 `postReleaseContent` 时，才创建 `07-content/content-production.md`。
+
+Content Agent 按以下模式工作：
+
+- `suggest`：从 Git、代码、方案和验证证据中提炼 3-5 个候选选题。
+- `draft`：运行 `scripts/prepare_post_release_content.sh`，整理可核实事实，生成中文稿和英文稿，完成敏感信息检查并落盘。
+- `publish`：在文章内容审核通过后，按项目事实源指定的内容目录、构建命令和目标环境发布；必须记录预览、Code Review、deployment、验证和回滚点。
+
+默认不得静默公开文章。文章发布失败不回滚页面发布；应保留素材清单、失败阶段和最近成功阶段，支持从中断处重试。详细规则见 `references/post-release-content.md`，执行边界见 `agents/content-agent.md`。
 
 任务切换默认自动衔接：如果当前任务已经完成且没有命中上述硬门禁，主 Agent 必须立即回看 Inbox/Todo 并继续下一项，不得等待用户额外说“继续”。
 
