@@ -27,16 +27,10 @@ Then trigger it in Codex with / 在 Codex 中用以下意图触发：
 
 ## 延伸阅读 / Further reading
 
-一人公司交付工作流 + MCP 工程实践，均来自 [One PC 博客](https://www.peak-lake.com/blog/)：
+相关实践 / Related notes from One PC：
 
-One-person-company delivery workflow and MCP engineering notes from the [One PC blog](https://www.peak-lake.com/blog/):
-
-- [一平台双角色：同时实践 MCP Client 与 MCP Server](https://www.peak-lake.com/blog/mv99wysd/) — 同一套 Node.js 服务向左做 Client、向右做 Server。 / Same Node.js service as MCP Client and Server.
-- [MCP — Model Context Protocol](https://www.peak-lake.com/blog/mv99u875/) — 自定义 MCP Server，让 Cursor 等 Client 直接调用工具。 / Custom MCP Server that Cursor-class clients can call.
-- [一个人，也可以做完一款产品：我的 OPC 软件研发实践](https://www.peak-lake.com/blog/opc-software-practice/) · [EN](https://www.peak-lake.com/en/blog/opc-software-practice/) — 一人公司如何把痛点串成需求到发布。 / How a solo builder ships a full product loop.
-- [Loop Engineering 没有银弹](https://www.peak-lake.com/blog/mslj4f6g/) · [EN](https://www.peak-lake.com/en/blog/mslj4f6g/) — 垂直场景 Skills + spec/TDD，即 opc-skills 的载体。 / Vertical Skills + spec/TDD; this is the opc-skills carrier.
-- [个人站如何获取流量](https://www.peak-lake.com/blog/personal-site-traffic/) · [EN](https://www.peak-lake.com/en/blog/personal-site-traffic/) — 技术 SEO、内容工程、GEO 与双语。 / SEO, content engineering, GEO, and bilingual publishing.
-- [我放弃了运营工作台](https://www.peak-lake.com/blog/mt5oz4db/) · [EN](https://www.peak-lake.com/en/blog/mt5oz4db/) — 能用 Skill 说话做完时，先别造系统。 / If a Skill can finish the job, do not build a console first.
+- [一个人，也可以做完一款产品：我的 OPC 软件研发实践](https://www.peak-lake.com/blog/opc-software-practice/) · [EN](https://www.peak-lake.com/en/blog/opc-software-practice/) — 一人公司如何把痛点做到发布；本仓库是其中的交付流程。 / Solo product loop; this repo is that delivery flow.
+- [Loop Engineering 没有银弹](https://www.peak-lake.com/blog/mslj4f6g/) · [EN](https://www.peak-lake.com/en/blog/mslj4f6g/) — 垂直 Skills + spec/TDD，文中指向本仓库。 / Vertical Skills + spec/TDD; the post links here.
 
 ## Docs / 文档
 
