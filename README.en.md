@@ -1,10 +1,12 @@
 # OPC Skills
 
-[中文说明](README.zh-CN.md) | [语言入口](README.md)
+[中文说明](README.zh-CN.md) | [Hub README](README.md)
 
 Current version: `v0.4.0`
 
-`opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is designed for full delivery loops: clarify the user goal, define the core journey, design the user experience and service contracts, implement in controlled steps, verify with real pages and real clients, and release only after staging evidence, review, and production regression.
+`opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
+
+It is designed for the full delivery loop: clarify the user goal, write the PRD, design UI and architecture, implement in controlled steps, verify with real pages and real clients, integrate, then release only after staging evidence, review, and production regression. After a completed release, it can optionally produce bilingual articles. The short map is in [README.md](README.md); agent rules live in [SKILL.md](SKILL.md).
 
 ## Further reading
 

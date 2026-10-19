@@ -1,12 +1,12 @@
 # OPC Skills
 
-[English README](README.en.md) | [语言入口](README.md)
+[English hub](README.md) | [English README](README.en.md)
 
 当前版本：`v0.4.0`
 
-`opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。
+`opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
-它关注完整交付链路：先对齐用户目标和核心路径，再设计 C 端体验、服务接口和 B 端操作闭环，最后通过真实页面、真实客户端、预发验证和测试报告证明功能可上线。
+它覆盖完整交付链路：目标澄清 → PRD → UI → 架构 → 实现 → 测试 → 联调 → 发布，以及可选的发布后中英文内容。先对齐用户目标和核心路径，再设计 C 端体验、服务接口和 B 端操作闭环，最后用真实页面、真实客户端、预发验证和测试报告证明功能可上线。入口短文见 [README.md](README.md)；完整规则以 [SKILL.md](SKILL.md) 为准。
 
 ## 延伸阅读
 
