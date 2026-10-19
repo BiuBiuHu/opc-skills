@@ -1,10 +1,21 @@
 # OPC Skills
 
-[中文说明](README.zh-CN.md)
+[中文说明](README.zh-CN.md) | [语言入口](README.md)
 
 Current version: `v0.4.0`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is designed for full delivery loops: clarify the user goal, define the core journey, design the user experience and service contracts, implement in controlled steps, verify with real pages and real clients, and release only after staging evidence, review, and production regression.
+
+## Further reading
+
+These posts are from the [One PC blog](https://www.peak-lake.com/en/blog/). They place opc-skills in a one-person-company toolkit: the same delivery workflow for consumer apps and operator consoles, plus MCP and optional post-release content.
+
+- [One platform, two MCP roles: Client + Server in one AI test platform](https://www.peak-lake.com/blog/mv99wysd/) — Same Node.js service acts as MCP Client (calling company-wide tools) and MCP Server (exposing test capabilities to any Agent). Covers Host/Client/Server roles, JSON-RPC shapes, `serverKey` + per-user credentials, MCP-Lite vs Streamable HTTP dialects, gateway-injected auth headers, and aligning with the stateless Streamable HTTP direction.
+- [MCP — Model Context Protocol](https://www.peak-lake.com/blog/mv99u875/) — Why ordinary in-process tools are not enough, and how to expose a custom MCP Server that Cursor-class clients can call. opc-skills treats this kind of protocol work as part of a reviewable full-stack delivery, not a one-off demo.
+- [One Person Can Ship a Product Too: My OPC Software Development Practice](https://www.peak-lake.com/en/blog/opc-software-practice/) — Using Arrange Life as the case, how a solo builder turns a real pain point into requirements, design, implementation, test, release, and operations with AI, coding agents, and Skills. That loop is what opc-skills encodes.
+- [Loop Engineering Has No Silver Bullet: Vertical Skills + spec/TDD](https://www.peak-lake.com/en/blog/mslj4f6g/) — Do not chase one catch-all autonomous loop. The carrier is per-vertical Skills with spec + TDD. The post points at this repository: goal clarification, scoped tests, and release gates.
+- [How to Get Traffic to a Personal Site: SEO, GEO, Content Engineering, and Bilingual](https://www.peak-lake.com/en/blog/personal-site-traffic/) — sitemap/RSS, content engineering, GEO, and Chinese/English publishing for a personal site. Maps to opc-skills' optional post-release content sidecar: a finished page release never implies the article was published.
+- [I Gave Up the Ops Workbench and Generated a Thousand Calendar Images with a Few Sentences](https://www.peak-lake.com/en/blog/mt5oz4db/) — If a Skill can finish the job by talking, do not build a B-side system first. Same cost-protection rule as opc-skills: operator consoles serve an ops loop, they are not a reason to invent extra UI.
 
 ## Recent Updates
 
@@ -122,16 +133,48 @@ opc-skills/
 ├── CONTRIBUTING.md
 ├── SECURITY.md
 ├── agents/
+│   ├── explorer-agent.md
+│   ├── frontend-agent.md
+│   ├── backend-agent.md
+│   ├── qa-agent.md
+│   ├── integration-agent.md
+│   ├── devops-agent.md
 │   └── content-agent.md
-├── docs/
 ├── references/
-│   └── post-release-content.md
+│   ├── agent-workflow.md
+│   ├── auth-login-e2e.md
+│   ├── b-side-ui-guidance.md
+│   ├── document-standard.md
+│   ├── open-source-stack.md
+│   ├── post-release-content.md
+│   ├── release-integrity.md
+│   ├── release-pr-lifecycle.md
+│   ├── subagent-orchestration.md
+│   └── testing-guidance.md
+├── docs/
+│   ├── subagent-optimization-plan.md
+│   └── subagent-runtime-invocation-design.md
 ├── scripts/
 │   ├── check_release_integrity.sh
 │   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
 │   └── start_rnd.sh
 └── templates/
+    ├── architecture-template.md
+    ├── backlog-template.md
+    ├── change-impact-template.md
+    ├── content-production-template.md
+    ├── debug-report-template.md
+    ├── evidence-manifest-template.md
+    ├── implementation-plan-template.md
+    ├── ops-runbook-template.md
+    ├── prd-template.md
+    ├── release-plan-template.md
+    ├── requirement-validation-template.md
+    ├── subagent-result-template.md
+    ├── subagent-task-brief-template.md
+    ├── test-strategy-template.md
+    └── ui-prototype-template.md
 ```
 
 ## Key Principles

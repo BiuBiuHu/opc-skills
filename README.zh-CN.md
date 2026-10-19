@@ -8,6 +8,17 @@
 
 它关注完整交付链路：先对齐用户目标和核心路径，再设计 C 端体验、服务接口和 B 端操作闭环，最后通过真实页面、真实客户端、预发验证和测试报告证明功能可上线。
 
+## 延伸阅读
+
+以下文章来自 [One PC 博客](https://www.peak-lake.com/blog/)，把 opc-skills 放回一人公司场景：同一套交付工作流，既覆盖 C 端应用和配套 B 端工作台，也沉淀 MCP 与发布后内容能力。
+
+- [一平台双角色：同时实践 MCP Client 与 MCP Server](https://www.peak-lake.com/blog/mv99wysd/) — 在一个 AI 自动化测试平台里，同一套 Node.js 服务向左做 MCP Client（调度全公司工具），向右做 MCP Server（把测试能力暴露给任意 Agent）。文中含 Host/Client/Server 三层角色、JSON-RPC 报文、`serverKey` 与凭证隔离、MCP-Lite vs Streamable HTTP 两种方言、网关注入头鉴权，以及无状态化与规范演进对齐的实践总结。
+- [MCP — Model Context Protocol](https://www.peak-lake.com/blog/mv99u875/) — 从普通 Tool 的局限出发，讲清如何把工具抽成独立 MCP Server，让 Cursor 等 Client 直接调用。opc-skills 把这类协议接入放进可审查的全栈交付，而不是一次性 Demo。
+- [一个人，也可以做完一款产品：我的 OPC 软件研发实践](https://www.peak-lake.com/blog/opc-software-practice/) — 以「安排日历」为实践，讲独立开发者如何用 AI、Coding Agent 与 Skills，把真实痛点串成需求、设计、开发、测试、发布和运营。这正是 opc-skills 要固化的一人公司交付工具包。
+- [Loop Engineering 没有银弹：垂直场景的 Skills + spec/TDD 落地实践](https://www.peak-lake.com/blog/mslj4f6g/) — 反对大而全的全自动驾驶；正确载体是垂直场景 Skills，核心是 spec + TDD。文中直接指向本仓库，对应目标澄清、测试范围选择和发布门禁。
+- [个人站如何获取流量：从技术 SEO 到内容工程、多语言的一手实操](https://www.peak-lake.com/blog/personal-site-traffic/) — 个人站的 sitemap/RSS、内容工程、GEO 与中英双语实操。对应 opc-skills 发布后可选的中英文内容生产旁路，页面发布完成不等于文章已公开。
+- [我放弃了运营工作台，用几句话生成了上千张日历图](https://www.peak-lake.com/blog/mt5oz4db/) — 能用 Skill「说话」做完的事，不要先造 B 端系统。呼应 opc-skills 的成本保护：工作台服务运营闭环，但不为「看起来完整」而堆字段和后台。
+
 ## 最近更新
 
 - 将 README 与 `SKILL.md` 的主规则对齐，补充 subagent 的适用边界。
