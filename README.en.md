@@ -67,14 +67,16 @@ Or clone it elsewhere and symlink it into `~/.codex/skills/opc-skills`.
 Use one of these intents in Codex:
 
 ```text
-启动 OPC Skills
-启动 C 端业务应用研发流程
-跑一遍 C 端应用和配套 B 端工作台全流程
-用 opc-skills 分析这个移动端需求
-用 opc-skills 设计这个 C 端功能
-用 opc-skills 设计配套运营工作台
-按这次发布生成中英文技术文章草稿
+Start OPC Skills
+Start the consumer app delivery workflow
+Run the full consumer app + operator console loop
+Use opc-skills to analyze this mobile requirement
+Use opc-skills to design this consumer feature
+Use opc-skills to design the matching ops console
+Generate Chinese and English tech article drafts from this release
 ```
+
+Chinese trigger phrases are listed in [README.zh-CN.md](README.zh-CN.md).
 
 After activation, the main agent reads `SKILL.md` and enters the relevant mode: requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
