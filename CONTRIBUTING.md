@@ -15,7 +15,8 @@
 2. 创建 feature branch。
 3. 修改后运行敏感词扫描。
 4. 运行 `scripts/check_project_coupling.sh`；若要检查某个项目的专用词，使用 `OPC_PROJECT_TERMS='term-a|term-b' scripts/check_project_coupling.sh`。
-5. 提交 PR，并说明变更范围、使用场景和兼容影响。
+5. 若改动了根目录 skill（`SKILL.md`、`agents/`、`references/`、`templates/`、skill 用到的 `scripts/` / `docs/`），先运行 `scripts/sync-plugin-skill.sh` 再提交。合并前运行 `scripts/sync-plugin-skill.sh --check`，避免插件 payload 与根 skill 分叉。不要手改 `plugins/opc-skills/skills/opc-skills/`。
+6. 提交 PR，并说明变更范围、使用场景和兼容影响。
 
 建议扫描命令：
 

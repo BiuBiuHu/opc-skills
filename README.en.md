@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md) | [Hub README](README.md)
 
-Current version: `v0.5.0`
+Current version: `v0.6.0`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 
@@ -20,7 +20,9 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. The CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required. Codex `$skill-installer` copy-paste prompts are in [docs/skills-hub.md](docs/skills-hub.md); this skill is not in the openai curated list yet.
+`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. The CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+
+Optional Codex Agent Plugin install (`codex plugin marketplace add BiuBiuHu/opc-skills`, then `codex plugin add opc-skills@opc-skills`) is documented in [docs/skills-hub.md](docs/skills-hub.md), together with `$skill-installer` prompts. `openai/skills` curated listing is deprecated; this repo is not in the public Plugins Directory.
 
 Manual clone:
 
@@ -58,8 +60,10 @@ Related notes from One PC:
 
 ## Recent Updates
 
+- Packaged a skills-only Agent Plugin at `plugins/opc-skills/` plus `.agents/plugins/marketplace.json`. Install with `codex plugin marketplace add BiuBiuHu/opc-skills` then `codex plugin add opc-skills@opc-skills`. Not listed in the public Plugins Directory.
+- Rewrote `docs/skills-hub.md`: npx/curl first, then `$skill-installer`, then the marketplace; `openai/skills` curated is deprecated.
 - Added the `npx opc-skills` CLI (`install` / `update` / `doctor` / `path`), sharing install rules with `scripts/install.sh`.
-- Added `docs/skills-hub.md` for Codex `$skill-installer` copy-paste install. This skill is not in the openai curated list yet.
+- Added `docs/skills-hub.md` for Codex `$skill-installer` copy-paste install. This skill is not in the openai curated list.
 - Added `scripts/install.sh` one-click install, and moved install docs to the first section after the intro.
 - Aligned README with the main rules in `SKILL.md` and clarified when subagents are appropriate.
 - Added `agents/`, `templates/subagent-task-brief-template.md`, `templates/subagent-result-template.md`, and `references/subagent-orchestration.md`.
@@ -169,12 +173,17 @@ opc-skills/
 │   ├── release-pr-lifecycle.md
 │   ├── subagent-orchestration.md
 │   └── testing-guidance.md
+├── .agents/plugins/marketplace.json
+├── plugins/opc-skills/
+│   ├── plugin.json
+│   └── skills/opc-skills/          # generated from the root skill
 ├── docs/
 │   ├── skills-hub.md
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
 │   ├── install.sh
+│   ├── sync-plugin-skill.sh
 │   ├── check_release_integrity.sh
 │   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh

@@ -2,7 +2,7 @@
 
 **Language:** [中文说明](README.zh-CN.md) · [Full English docs](README.en.md)
 
-Current version: `v0.5.0`
+Current version: `v0.6.0`
 
 `opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
 
@@ -18,7 +18,9 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. Both the CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required. Codex `$skill-installer` copy-paste prompts are in [docs/skills-hub.md](docs/skills-hub.md); this skill is not in the openai curated list yet.
+`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. Both the CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+
+Optional Codex Agent Plugin install (`codex plugin marketplace add BiuBiuHu/opc-skills`, then `codex plugin add opc-skills@opc-skills`) is documented in [docs/skills-hub.md](docs/skills-hub.md), together with `$skill-installer` prompts. `openai/skills` curated listing is deprecated; this repo is not in the public Plugins Directory.
 
 Manual clone:
 
@@ -110,7 +112,8 @@ Related notes from One PC:
 - Release integrity: [references/release-integrity.md](references/release-integrity.md)
 - One-click install: [scripts/install.sh](scripts/install.sh)
 - npm CLI: `npx opc-skills` ([package.json](package.json))
-- Codex `$skill-installer` / Hub notes: [docs/skills-hub.md](docs/skills-hub.md)
+- Codex `$skill-installer`, Agent Plugin marketplace, and Hub notes: [docs/skills-hub.md](docs/skills-hub.md)
+- Agent Plugin package: [plugins/opc-skills/](plugins/opc-skills/)
 - Release integrity check: [scripts/check_release_integrity.sh](scripts/check_release_integrity.sh)
 - Post-release content: [references/post-release-content.md](references/post-release-content.md)
 

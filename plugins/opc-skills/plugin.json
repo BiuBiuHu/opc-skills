@@ -1,0 +1,42 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "opc-skills",
+  "version": "0.6.0",
+  "description": "Reusable skill for planning, building, testing, and releasing consumer apps plus matching operator consoles.",
+  "author": {
+    "name": "One PC / BiuBiuHu",
+    "url": "https://github.com/BiuBiuHu"
+  },
+  "homepage": "https://github.com/BiuBiuHu/opc-skills",
+  "repository": "https://github.com/BiuBiuHu/opc-skills",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "skills",
+    "opc",
+    "cursor",
+    "claude"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "OPC Skills",
+        "shortDescription": "Consumer + ops delivery",
+        "longDescription": "Guides a main agent through a reviewable delivery loop for consumer-facing App, Web, and mini-program work plus the matching operator consoles: clarify the goal, write the PRD, design UI and architecture, implement in controlled steps, verify on real pages and clients, then release only after staging evidence, review, and production regression. Optional bilingual post-release drafts are a side path. Project names, accounts, domains, and deployments stay in each project's own fact sources. This package is skills-only: it does not bundle an MCP server. Install from this repository's marketplace; a public Plugins Directory listing is a later, human-reviewed submission and is not claimed here.",
+        "developerName": "One PC / BiuBiuHu",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Consumer-app delivery",
+          "Operator-console design",
+          "Release integrity"
+        ],
+        "websiteURL": "https://github.com/BiuBiuHu/opc-skills",
+        "defaultPrompt": [
+          "Start OPC Skills",
+          "Use opc-skills to design this consumer feature",
+          "Use opc-skills to design the matching ops console"
+        ]
+      }
+    }
+  }
+}
