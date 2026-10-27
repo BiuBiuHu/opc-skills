@@ -2,9 +2,46 @@
 
 **Language:** [中文说明](README.zh-CN.md) · [Full English docs](README.en.md)
 
-Current version: `v0.4.0`
+Current version: `v0.4.1`
 
 `opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
+
+## Install
+
+One-liner (creates `~/.codex/skills` if needed):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
+```
+
+The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+
+Manual clone:
+
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
+```
+
+Or clone elsewhere and symlink into `~/.codex/skills/opc-skills`.
+
+## Trigger phrases
+
+In Codex, use one of these intents:
+
+```text
+Start OPC Skills
+Start the consumer app delivery workflow
+Run the full consumer app + operator console loop
+Use opc-skills to analyze this mobile requirement
+Use opc-skills to design this consumer feature
+Use opc-skills to design the matching ops console
+Generate Chinese and English tech article drafts from this release
+```
+
+Chinese trigger phrases are listed in [README.zh-CN.md](README.zh-CN.md).
+
+The main agent then reads `SKILL.md` and enters requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
 ## What it is
 
@@ -31,35 +68,6 @@ Default mode is `manual-gated`: documents and plans go to `awaiting-user-review`
 - Chinese-default PRs: new Code / Release / docs PR titles, bodies, and checklists default to Chinese unless repo policy or the user says otherwise
 - Optional bilingual post-release articles via Content Agent (`suggest` / `draft` / `publish`). Page release is never blocked by article work, and articles are not published silently
 - Feature docs written to `docs/<FEATURE_NAME>/`; helpers include `scripts/start_rnd.sh`, `scripts/check_project_coupling.sh`, and `scripts/prepare_post_release_content.sh`
-
-## How to use
-
-### Quick Install
-
-```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
-```
-
-Or clone elsewhere and symlink into `~/.codex/skills/opc-skills`.
-
-### Trigger phrases
-
-In Codex, use one of these intents:
-
-```text
-Start OPC Skills
-Start the consumer app delivery workflow
-Run the full consumer app + operator console loop
-Use opc-skills to analyze this mobile requirement
-Use opc-skills to design this consumer feature
-Use opc-skills to design the matching ops console
-Generate Chinese and English tech article drafts from this release
-```
-
-Chinese trigger phrases are listed in [README.zh-CN.md](README.zh-CN.md).
-
-The main agent then reads `SKILL.md` and enters requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
 ## Workflow snapshot
 
@@ -96,6 +104,7 @@ Related notes from One PC:
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
 - Security policy: [SECURITY.md](SECURITY.md)
 - Release integrity: [references/release-integrity.md](references/release-integrity.md)
+- One-click install: [scripts/install.sh](scripts/install.sh)
 - Release integrity check: [scripts/check_release_integrity.sh](scripts/check_release_integrity.sh)
 - Post-release content: [references/post-release-content.md](references/post-release-content.md)
 

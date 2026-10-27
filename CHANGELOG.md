@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## v0.4.1 - 2026-10-27
+
+### Added
+
+- 增加 `scripts/install.sh` 一键安装：克隆或快进更新到 `~/.codex/skills/opc-skills`；若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，再指向同一目录。缺少 `git` 时立即失败，适合 `curl | bash`。
+
+### Changed
+
+- README 安装说明提前到引言后的第一节：先一键安装，再手动 clone，再触发语。
+- `VERSION` 和 README 当前版本更新为 `0.4.1`。
+
+## v0.4.0
+
 ### Added
 
 - 增加中英文 README：根 `README.md` 作为语言入口，中文说明迁移到 `README.zh-CN.md`，新增 `README.en.md`。

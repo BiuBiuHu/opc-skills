@@ -2,11 +2,46 @@
 
 [English hub](README.md) | [English README](README.en.md)
 
-当前版本：`v0.4.0`
+当前版本：`v0.4.1`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
 它覆盖完整交付链路：目标澄清 → PRD → UI → 架构 → 实现 → 测试 → 联调 → 发布，以及可选的发布后中英文内容。先对齐用户目标和核心路径，再设计 C 端体验、服务接口和 B 端操作闭环，最后用真实页面、真实客户端、预发验证和测试报告证明功能可上线。入口短文见 [README.md](README.md)；完整规则以 [SKILL.md](SKILL.md) 为准。
+
+## 安装
+
+一键安装（会创建 `~/.codex/skills`）：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
+```
+
+脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。
+
+手动安装：
+
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
+```
+
+也可以克隆到其它位置，再软链到 `~/.codex/skills/opc-skills`。
+
+## 触发语
+
+在对话中使用以下意图即可触发：
+
+```text
+启动 OPC Skills
+启动 C 端业务应用研发流程
+跑一遍 C 端应用和配套 B 端工作台全流程
+用 opc-skills 分析这个移动端需求
+用 opc-skills 设计这个 C 端功能
+用 opc-skills 设计配套运营工作台
+按这次发布生成中英文技术文章草稿
+```
+
+触发后，主 Agent 会读取 `SKILL.md`，并按当前任务类型进入需求验证、UI、架构、实现、测试、联调、发布或 `post-release-content` 模式。
 
 ## 延伸阅读
 
@@ -17,6 +52,7 @@
 
 ## 最近更新
 
+- 增加 `scripts/install.sh` 一键安装，并把安装说明提前到引言之后。
 - 将 README 与 `SKILL.md` 的主规则对齐，补充 subagent 的适用边界。
 - 新增 `agents/`、`templates/subagent-task-brief-template.md`、`templates/subagent-result-template.md` 和 `references/subagent-orchestration.md`，明确 skill 不能直接调用 subagent，必须由主 Agent 使用 Runtime 工具执行。
 - 强化 B 类页面、本地 mock、Mermaid 调用图、预发/线上门禁的阅读提示。
@@ -51,28 +87,6 @@
 - 文档落盘：产品、UI、架构、研发、测试、联调和运维结论写入 `docs/<FEATURE_NAME>/`。
 - 内容生产旁路：发布完成后可选生成 `suggest`、`draft` 或 `publish` 内容，不阻塞页面发布，默认不静默公开。
 - Subagent 编排：只有在用户明确允许、任务边界清楚、能证明提速或提质时，才拆分 Explorer、Frontend、Backend、QA/Test、Integration 等子任务。
-
-## 使用方式
-
-将本目录放入 Codex 可发现的 skills 目录，例如：
-
-```text
-~/.codex/skills/opc-skills
-```
-
-在对话中使用以下意图即可触发：
-
-```text
-启动 OPC Skills
-启动 C 端业务应用研发流程
-跑一遍 C 端应用和配套 B 端工作台全流程
-用 opc-skills 分析这个移动端需求
-用 opc-skills 设计这个 C 端功能
-用 opc-skills 设计配套运营工作台
-按这次发布生成中英文技术文章草稿
-```
-
-触发后，主 Agent 会读取 `SKILL.md`，并按当前任务类型进入需求验证、UI、架构、实现、测试、联调、发布或 `post-release-content` 模式。
 
 ## 工作流概览
 
@@ -149,6 +163,7 @@ opc-skills/
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
+│   ├── install.sh
 │   ├── check_release_integrity.sh
 │   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
@@ -222,10 +237,10 @@ opc-skills/
 
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.4.0`。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.4.1`。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.4.0`。
+- 为版本创建 tag，例如 `v0.4.1`。
