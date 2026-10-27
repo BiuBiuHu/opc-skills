@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## v0.5.0 - 2026-10-27
+
+### Added
+
+- 增加可发布的 npm CLI（包名 `opc-skills`）：`npx opc-skills install|update|doctor|path`。无参数时打印帮助和 curl 回退命令。
+- `scripts/install.sh` 增加 `install` / `update` / `doctor` / `path` / `help` 子命令；无参数时仍执行安装，保持 `curl | bash` 行为。CLI 只调用该脚本，避免两套规则分叉。
+- `doctor` 打印 Codex / 可选 Cursor / Claude 路径、是否为 `BiuBiuHu/opc-skills` 的 git checkout、`VERSION`、以及 symlink 是否健康；损坏安装以非零退出。
+- 增加 `docs/skills-hub.md`：官方 Codex `$skill-installer` 的可粘贴提示与 helper 命令、后续 curated listing 检查清单。不声称本仓库已进入 `openai/skills` curated，也不自动向任何 Hub 提交。
+
+### Changed
+
+- README 安装区在 curl 一键安装旁增加 `npx opc-skills install`。
+- `VERSION` 和 README 当前版本更新为 `0.5.0`。
+
 ## v0.4.1 - 2026-10-27
 
 ### Added

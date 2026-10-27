@@ -1,0 +1,36 @@
+{
+  "name": "opc-skills",
+  "version": "0.5.0",
+  "description": "CLI to install, update, and diagnose the BiuBiuHu/opc-skills Codex skill",
+  "bin": {
+    "opc-skills": "bin/opc-skills.js"
+  },
+  "files": [
+    "bin/opc-skills.js",
+    "scripts/install.sh",
+    "VERSION"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BiuBiuHu/opc-skills.git"
+  },
+  "homepage": "https://github.com/BiuBiuHu/opc-skills#readme",
+  "bugs": {
+    "url": "https://github.com/BiuBiuHu/opc-skills/issues"
+  },
+  "keywords": [
+    "codex",
+    "skills",
+    "opc",
+    "cli",
+    "cursor",
+    "claude"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

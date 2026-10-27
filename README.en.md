@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md) | [Hub README](README.md)
 
-Current version: `v0.4.1`
+Current version: `v0.5.0`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 
@@ -13,10 +13,14 @@ It is designed for the full delivery loop: clarify the user goal, write the PRD,
 One-liner (creates `~/.codex/skills` if needed):
 
 ```bash
+npx opc-skills install
+```
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. The CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required. Codex `$skill-installer` copy-paste prompts are in [docs/skills-hub.md](docs/skills-hub.md); this skill is not in the openai curated list yet.
 
 Manual clone:
 
@@ -54,6 +58,8 @@ Related notes from One PC:
 
 ## Recent Updates
 
+- Added the `npx opc-skills` CLI (`install` / `update` / `doctor` / `path`), sharing install rules with `scripts/install.sh`.
+- Added `docs/skills-hub.md` for Codex `$skill-installer` copy-paste install. This skill is not in the openai curated list yet.
 - Added `scripts/install.sh` one-click install, and moved install docs to the first section after the intro.
 - Aligned README with the main rules in `SKILL.md` and clarified when subagents are appropriate.
 - Added `agents/`, `templates/subagent-task-brief-template.md`, `templates/subagent-result-template.md`, and `references/subagent-orchestration.md`.
@@ -138,9 +144,12 @@ opc-skills/
 ├── README.en.md
 ├── VERSION
 ├── CHANGELOG.md
+├── package.json
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── SECURITY.md
+├── bin/
+│   └── opc-skills.js
 ├── agents/
 │   ├── explorer-agent.md
 │   ├── frontend-agent.md
@@ -161,6 +170,7 @@ opc-skills/
 │   ├── subagent-orchestration.md
 │   └── testing-guidance.md
 ├── docs/
+│   ├── skills-hub.md
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
@@ -208,6 +218,14 @@ opc-skills/
 - Subagents are used only when explicitly allowed by the user and when ownership boundaries are clear.
 
 ## Useful Commands
+
+Install or check this skill:
+
+```bash
+npx opc-skills install
+npx opc-skills update
+npx opc-skills doctor
+```
 
 Initialize feature documents from templates:
 

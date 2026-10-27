@@ -2,7 +2,7 @@
 
 [English hub](README.md) | [English README](README.en.md)
 
-当前版本：`v0.4.1`
+当前版本：`v0.5.0`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
@@ -13,10 +13,14 @@
 一键安装（会创建 `~/.codex/skills`）：
 
 ```bash
+npx opc-skills install
+```
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。
+`npx opc-skills update` 会快进更新；`npx opc-skills doctor` 会检查安装路径、`VERSION` 和 symlink。CLI 与 curl 脚本共用 `scripts/install.sh`。脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。Codex `$skill-installer` 的可粘贴提示见 [docs/skills-hub.md](docs/skills-hub.md)；本 skill 尚未进入 openai curated 列表。
 
 手动安装：
 
@@ -52,6 +56,8 @@ git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
 
 ## 最近更新
 
+- 增加 `npx opc-skills` CLI（`install` / `update` / `doctor` / `path`），与 `scripts/install.sh` 共用安装规则。
+- 增加 `docs/skills-hub.md`，记录 Codex `$skill-installer` 可粘贴安装方式；尚未进入 openai curated 列表。
 - 增加 `scripts/install.sh` 一键安装，并把安装说明提前到引言之后。
 - 将 README 与 `SKILL.md` 的主规则对齐，补充 subagent 的适用边界。
 - 新增 `agents/`、`templates/subagent-task-brief-template.md`、`templates/subagent-result-template.md` 和 `references/subagent-orchestration.md`，明确 skill 不能直接调用 subagent，必须由主 Agent 使用 Runtime 工具执行。
@@ -137,9 +143,12 @@ opc-skills/
 ├── README.en.md
 ├── VERSION
 ├── CHANGELOG.md
+├── package.json
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── SECURITY.md
+├── bin/
+│   └── opc-skills.js
 ├── agents/
 │   ├── explorer-agent.md
 │   ├── frontend-agent.md
@@ -160,6 +169,7 @@ opc-skills/
 │   ├── subagent-orchestration.md
 │   └── testing-guidance.md
 ├── docs/
+│   ├── skills-hub.md
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
@@ -210,6 +220,14 @@ opc-skills/
 
 ## 常用命令
 
+安装或检查本 skill：
+
+```bash
+npx opc-skills install
+npx opc-skills update
+npx opc-skills doctor
+```
+
 从模板初始化 feature 文档：
 
 ```bash
@@ -237,10 +255,11 @@ opc-skills/
 
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.4.1`。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.5.0`。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.4.1`。
+- 为版本创建 tag，例如 `v0.5.0`。
+- npm 包名 `opc-skills` 当前可用，但不要在未明确要求时发布到 npm。

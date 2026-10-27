@@ -2,7 +2,7 @@
 
 **Language:** [中文说明](README.zh-CN.md) · [Full English docs](README.en.md)
 
-Current version: `v0.4.1`
+Current version: `v0.5.0`
 
 `opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
 
@@ -11,10 +11,14 @@ Current version: `v0.4.1`
 One-liner (creates `~/.codex/skills` if needed):
 
 ```bash
+npx opc-skills install
+```
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. Both the CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required. Codex `$skill-installer` copy-paste prompts are in [docs/skills-hub.md](docs/skills-hub.md); this skill is not in the openai curated list yet.
 
 Manual clone:
 
@@ -105,6 +109,8 @@ Related notes from One PC:
 - Security policy: [SECURITY.md](SECURITY.md)
 - Release integrity: [references/release-integrity.md](references/release-integrity.md)
 - One-click install: [scripts/install.sh](scripts/install.sh)
+- npm CLI: `npx opc-skills` ([package.json](package.json))
+- Codex `$skill-installer` / Hub notes: [docs/skills-hub.md](docs/skills-hub.md)
 - Release integrity check: [scripts/check_release_integrity.sh](scripts/check_release_integrity.sh)
 - Post-release content: [references/post-release-content.md](references/post-release-content.md)
 
