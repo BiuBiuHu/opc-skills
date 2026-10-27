@@ -2,7 +2,7 @@
 
 [English hub](README.md) | [English README](README.en.md)
 
-当前版本：`v0.5.0`
+当前版本：`v0.6.0`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
@@ -20,7 +20,9 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` 会快进更新；`npx opc-skills doctor` 会检查安装路径、`VERSION` 和 symlink。CLI 与 curl 脚本共用 `scripts/install.sh`。脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。Codex `$skill-installer` 的可粘贴提示见 [docs/skills-hub.md](docs/skills-hub.md)；本 skill 尚未进入 openai curated 列表。
+`npx opc-skills update` 会快进更新；`npx opc-skills doctor` 会检查安装路径、`VERSION` 和 symlink。CLI 与 curl 脚本共用 `scripts/install.sh`。脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。
+
+可选的 Codex Agent Plugin 安装（`codex plugin marketplace add BiuBiuHu/opc-skills`，再 `codex plugin add opc-skills@opc-skills`）以及 `$skill-installer` 提示见 [docs/skills-hub.md](docs/skills-hub.md)。`openai/skills` curated 已弃用；本仓库尚未进入公开 Plugins Directory。
 
 手动安装：
 
@@ -56,8 +58,10 @@ git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
 
 ## 最近更新
 
+- 增加 skills-only Agent Plugin（`plugins/opc-skills/`）和仓库 marketplace（`.agents/plugins/marketplace.json`）。可用 `codex plugin marketplace add BiuBiuHu/opc-skills`，再 `codex plugin add opc-skills@opc-skills`。尚未进入公开 Plugins Directory。
+- 重写 `docs/skills-hub.md`：先 npx/curl，再 `$skill-installer`，再 marketplace；`openai/skills` curated 已弃用。
 - 增加 `npx opc-skills` CLI（`install` / `update` / `doctor` / `path`），与 `scripts/install.sh` 共用安装规则。
-- 增加 `docs/skills-hub.md`，记录 Codex `$skill-installer` 可粘贴安装方式；尚未进入 openai curated 列表。
+- 增加 `docs/skills-hub.md`，记录 Codex `$skill-installer` 可粘贴安装方式；未进入 openai curated 列表。
 - 增加 `scripts/install.sh` 一键安装，并把安装说明提前到引言之后。
 - 将 README 与 `SKILL.md` 的主规则对齐，补充 subagent 的适用边界。
 - 新增 `agents/`、`templates/subagent-task-brief-template.md`、`templates/subagent-result-template.md` 和 `references/subagent-orchestration.md`，明确 skill 不能直接调用 subagent，必须由主 Agent 使用 Runtime 工具执行。
@@ -168,12 +172,17 @@ opc-skills/
 │   ├── release-pr-lifecycle.md
 │   ├── subagent-orchestration.md
 │   └── testing-guidance.md
+├── .agents/plugins/marketplace.json
+├── plugins/opc-skills/
+│   ├── plugin.json
+│   └── skills/opc-skills/          # 由根目录 skill 生成
 ├── docs/
 │   ├── skills-hub.md
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
 │   ├── install.sh
+│   ├── sync-plugin-skill.sh
 │   ├── check_release_integrity.sh
 │   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
@@ -255,11 +264,11 @@ npx opc-skills doctor
 
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.5.0`。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.6.0`。`package.json` 仍为 `0.5.0`，等下次人工 npm publish 再对齐。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.5.0`。
+- 为版本创建 tag，例如 `v0.6.0`。
 - npm 包名 `opc-skills` 当前可用，但不要在未明确要求时发布到 npm。

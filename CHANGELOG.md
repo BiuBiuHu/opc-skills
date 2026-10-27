@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## v0.6.0 - 2026-10-27
+
+### Added
+
+- 将 `opc-skills` 打包为 skills-only Agent Plugin：`plugins/opc-skills/plugin.json` 使用 Agent Plugins 1.0.0 schema，OpenAI 展示字段放在 `extensions.com.openai.interface`。不包含 MCP / apps。
+- 增加仓库级 marketplace：`.agents/plugins/marketplace.json`，`source.path` 指向 `./plugins/opc-skills`，可供 `codex plugin marketplace add BiuBiuHu/opc-skills` 后安装 `opc-skills@opc-skills`。
+- 增加 `scripts/sync-plugin-skill.sh`（含 `--check`）：根目录 skill 仍是唯一事实源，插件 payload 由脚本复制，避免和 Codex skill 安装分叉。
+- 重写 `docs/skills-hub.md`：优先 npx/curl，其次 `$skill-installer`，再次 Agent Plugins marketplace；公开 Plugins Directory 只记录门户提交步骤，供后续人工操作；明确 `openai/skills` curated 已弃用，不要再提 PR。
+
+### Changed
+
+- README 安装区补充 marketplace / Agent Plugin 入口，仍把 curl / npx 放在最前。
+- `VERSION` 更新为 `0.6.0`。`package.json` 仍为 `0.5.0`，本次不 npm publish；下次发布 CLI 时再对齐版本。
+
+### Notes
+
+- 现有 `npx opc-skills install` / `curl | bash` / 根 `SKILL.md` 安装路径不变，仍把本仓库克隆到 `~/.codex/skills/opc-skills`。
+- 未向公开 Plugins Directory 提交，也不声称已上架。
+
 ## v0.5.0 - 2026-10-27
 
 ### Added
