@@ -2,11 +2,48 @@
 
 [中文说明](README.zh-CN.md) | [Hub README](README.md)
 
-Current version: `v0.4.0`
+Current version: `v0.4.1`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 
 It is designed for the full delivery loop: clarify the user goal, write the PRD, design UI and architecture, implement in controlled steps, verify with real pages and real clients, integrate, then release only after staging evidence, review, and production regression. After a completed release, it can optionally produce bilingual articles. The short map is in [README.md](README.md); agent rules live in [SKILL.md](SKILL.md).
+
+## Installation
+
+One-liner (creates `~/.codex/skills` if needed):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
+```
+
+The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+
+Manual clone:
+
+```bash
+mkdir -p ~/.codex/skills
+git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
+```
+
+Or clone it elsewhere and symlink it into `~/.codex/skills/opc-skills`.
+
+## Usage
+
+Use one of these intents in Codex:
+
+```text
+Start OPC Skills
+Start the consumer app delivery workflow
+Run the full consumer app + operator console loop
+Use opc-skills to analyze this mobile requirement
+Use opc-skills to design this consumer feature
+Use opc-skills to design the matching ops console
+Generate Chinese and English tech article drafts from this release
+```
+
+Chinese trigger phrases are listed in [README.zh-CN.md](README.zh-CN.md).
+
+After activation, the main agent reads `SKILL.md` and enters the relevant mode: requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
 ## Further reading
 
@@ -17,6 +54,7 @@ Related notes from One PC:
 
 ## Recent Updates
 
+- Added `scripts/install.sh` one-click install, and moved install docs to the first section after the intro.
 - Aligned README with the main rules in `SKILL.md` and clarified when subagents are appropriate.
 - Added `agents/`, `templates/subagent-task-brief-template.md`, `templates/subagent-result-template.md`, and `references/subagent-orchestration.md`.
 - Clarified that a skill cannot call subagents directly; the main agent must use runtime tools when the user explicitly allows multi-agent work.
@@ -50,35 +88,6 @@ Related notes from One PC:
 - Documentation persistence: product, UI, architecture, engineering, testing, integration, and operations decisions are written to `docs/<FEATURE_NAME>/`.
 - Optional content sidecar: after a completed release, produce `suggest`, `draft`, or `publish` outputs without blocking the page release; publishing is never silent by default.
 - Subagent orchestration: split work only when the user explicitly allows it and the task boundaries are clear enough to improve speed or review quality.
-
-## Installation
-
-Clone this repository into a Codex-discoverable skills directory:
-
-```bash
-mkdir -p ~/.codex/skills
-git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
-```
-
-Or clone it elsewhere and symlink it into `~/.codex/skills/opc-skills`.
-
-## Usage
-
-Use one of these intents in Codex:
-
-```text
-Start OPC Skills
-Start the consumer app delivery workflow
-Run the full consumer app + operator console loop
-Use opc-skills to analyze this mobile requirement
-Use opc-skills to design this consumer feature
-Use opc-skills to design the matching ops console
-Generate Chinese and English tech article drafts from this release
-```
-
-Chinese trigger phrases are listed in [README.zh-CN.md](README.zh-CN.md).
-
-After activation, the main agent reads `SKILL.md` and enters the relevant mode: requirement validation, UI, architecture, implementation, testing, integration, release, or `post-release-content`.
 
 ## Workflow
 
@@ -155,6 +164,7 @@ opc-skills/
 │   ├── subagent-optimization-plan.md
 │   └── subagent-runtime-invocation-design.md
 ├── scripts/
+│   ├── install.sh
 │   ├── check_release_integrity.sh
 │   ├── prepare_post_release_content.sh
 │   ├── check_project_coupling.sh
