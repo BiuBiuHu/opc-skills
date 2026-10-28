@@ -11,6 +11,12 @@
 ## 1. 发布目标与范围
 
 - 用户结果：
+- 部署平台与形态：Vercel / Cloudflare Pages / Workers Static Assets / 其它；Git 构建 / 外部 CI / 直接上传
+- 平台账号/项目与 zone：从项目事实源读取；禁止记录凭据
+- 域名/Route、DNS/proxy/证书现状与回滚快照：
+- 保留后端及代理路径、预览只读约束：
+- 构建来源、source commit、产物摘要、平台 deployment/version：
+- 原平台重复自动构建的处理与恢复方法：
 - 本次变更：
 - 明确不在范围：
 - 成功标准：

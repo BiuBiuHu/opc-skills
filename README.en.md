@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md) | [Hub README](README.md)
 
-Current version: `v0.6.0`
+Current version: `v0.6.1`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 

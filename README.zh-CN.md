@@ -2,7 +2,7 @@
 
 [English hub](README.md) | [English README](README.en.md)
 
-当前版本：`v0.6.0`
+当前版本：`v0.6.1`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
@@ -264,11 +264,11 @@ npx opc-skills doctor
 
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.6.0`。`package.json` 仍为 `0.5.0`，等下次人工 npm publish 再对齐。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.6.1`。`package.json` 仍为 `0.5.0`，等下次人工 npm publish 再对齐。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.6.0`。
+- 为版本创建 tag，例如 `v0.6.1`。
 - npm 包名 `opc-skills` 当前可用，但不要在未明确要求时发布到 npm。
