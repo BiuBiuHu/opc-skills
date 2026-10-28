@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v0.6.1 - 2026-10-28
+
+- 支持 Cloudflare Pages / Workers Static Assets：增加平台选择、静态官网/博客迁移、Route 回源保留后端、配额核对、隔离预览、域名/证书、CI、版本证据与回滚指引。
+- 将预发流程中的 Vercel 硬编码改为目标平台，发布模板补充平台、DNS/proxy、保留 API、产物映射与旧平台自动构建处置。
+- 保留原发布完整性规则，插件 payload 通过同步脚本生成。
+
 ## v0.6.0 - 2026-10-27
 
 ### Added

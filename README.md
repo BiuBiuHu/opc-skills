@@ -2,7 +2,7 @@
 
 **Language:** [中文说明](README.zh-CN.md) · [Full English docs](README.en.md)
 
-Current version: `v0.6.0`
+Current version: `v0.6.1`
 
 `opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
 
@@ -30,6 +30,10 @@ git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
 ```
 
 Or clone elsewhere and symlink into `~/.codex/skills/opc-skills`.
+
+## Deployment platforms
+
+Vercel and Cloudflare are supported. See [Cloudflare deployment](references/cloudflare-deployment.md) for Pages, Workers Static Assets, routing, and migration. For APIs, auth, email, or AI services, [native Workers migration](references/cloudflare-native-workers.md) covers request-driven execution, existing PostgreSQL/Hyperdrive, streaming cleanup, CI, real acceptance, and measured cost. Containers require a reason; moving applications does not imply moving the database. Hosting choice follows the user and project configuration.
 
 ## Trigger phrases
 
