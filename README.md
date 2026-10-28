@@ -33,7 +33,7 @@ Or clone elsewhere and symlink into `~/.codex/skills/opc-skills`.
 
 ## Deployment platforms
 
-Vercel and Cloudflare are supported. For Pages, Workers Static Assets, or a frontend-only migration that keeps the backend in place, see [Cloudflare deployment](references/cloudflare-deployment.md). Hosting choice follows the user and project configuration.
+Vercel and Cloudflare are supported. See [Cloudflare deployment](references/cloudflare-deployment.md) for Pages, Workers Static Assets, routing, and migration. For APIs, auth, email, or AI services, [native Workers migration](references/cloudflare-native-workers.md) covers request-driven execution, existing PostgreSQL/Hyperdrive, streaming cleanup, CI, real acceptance, and measured cost. Containers require a reason; moving applications does not imply moving the database. Hosting choice follows the user and project configuration.
 
 ## Trigger phrases
 

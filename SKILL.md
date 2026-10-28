@@ -1,6 +1,6 @@
 ---
 name: opc-skills
-description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。支持 Vercel / Cloudflare 部署与迁移，擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调、多仓库发布完整性、main/master 归并、worktree 同步门禁和发布后双语内容生产。
+description: 用于规划、设计、研发、测试、部署和运维 C 端业务应用及配套 B 端工作台。支持 Vercel / Cloudflare 静态站与原生 Workers 服务端部署迁移，擅长 App/Web/小程序体验、主服务/API、认证、AI/生成、运营后台、联调、多仓库发布完整性、main/master 归并、worktree 同步门禁和发布后双语内容生产。
 ---
 
 # OPC Skills
@@ -22,7 +22,7 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 
 ## 部署平台选择
 
-先沿用用户指定平台和项目事实源，支持 Vercel、Cloudflare 与其它现有运行环境，不把 Vercel 当成预发或生产的必选平台。用户选择 Cloudflare（含 cloudfare 拼写），或需要迁移静态官网、博客、SPA、Pages/Workers 时，读取 [Cloudflare 部署与迁移](references/cloudflare-deployment.md)。先判断静态资源、边缘代理与后端边界，再选择 Pages 或 Workers Static Assets；用户只迁前端时，保留现有后端、认证、数据库和客户端发布范围。
+先沿用用户指定平台和项目事实源，支持 Vercel、Cloudflare 与其它现有运行环境，不把 Vercel 当成预发或生产的必选平台。用户选择 Cloudflare（含 cloudfare 拼写）时，读取 [Cloudflare 部署与迁移](references/cloudflare-deployment.md)。静态站选择 Pages 或 Workers Static Assets；API、认证、邮件、AI 等服务端读取 [原生 Workers 服务端迁移](references/cloudflare-native-workers.md)，原来按请求运行的服务先验证原生 Workers，不能默认改成常驻容器。数据库是否迁移单独决策；用户只迁前端时，保留现有后端、认证、数据库和客户端发布范围。
 
 ## 核心规则
 
@@ -392,8 +392,8 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
    - 客户端能力矩阵：启用客户端专项门禁时，先列出客户端类型、运行方式、目标环境、关键用户路径、依赖 API、认证方式、缓存/离线/推送/深链等受影响能力。
    - 进程和端口拓扑：确认每个服务只保留一份有效进程，端口无冲突，客户端配置指向正确 API。
    - 环境变量：确认本地、预发、生产的服务 URL、API key、模型名、数据库连接、schema、CORS/ATS/网络安全配置完整且不交叉。
-   - 预发运行时健康：部署后必须直接验证固定预发主服务 alias 的健康接口和本次涉及 API；`READY` 只代表构建完成，不能替代 runtime/API/DB 可用性。Vercel 日志中出现函数启动失败、DB 连接失败、tenant/user not found、CORS preflight 500 或 request status 0 时，优先归因到 runtime/env/DB。
-   - 客户端网关边界：确认客户端环境变量、运行时配置、网络日志和构建产物中没有内部子服务 URL 或生成的 Vercel deployment URL；客户端所有业务 API 都必须指向网关/主服务。
+   - 预发运行时健康：部署后必须直接验证固定预发主服务 alias 的健康接口和本次涉及 API；`READY` 只代表构建完成，不能替代 runtime/API/DB 可用性。云平台运行时日志中出现函数/Worker 启动失败、DB 连接失败、tenant/user not found、CORS preflight 500 或 request status 0 时，优先归因到 runtime/env/DB。
+   - 客户端网关边界：确认客户端环境变量、运行时配置、网络日志和构建产物中没有内部子服务 URL 或生成的临时 deployment URL；客户端所有业务 API 都必须指向网关/主服务。
    - 数据库和迁移：确认目标数据库、schema、表、索引、幂等约束存在，写入路径不会污染其它环境。
    - service-to-service：验证客户端到主服务、主服务到 AI/Worker 服务、AI/Worker 到第三方 API 的链路。
    - 第三方 API：用最小请求验证路径、鉴权、模型/渠道、超时和错误格式，区分代码错误、配置错误、供应商不可用。

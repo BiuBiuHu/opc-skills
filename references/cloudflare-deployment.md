@@ -1,6 +1,6 @@
 # Cloudflare 部署与迁移
 
-适用于用户选择 Cloudflare（含 cloudfare 拼写）、官网/博客/SPA 静态托管，以及 Pages、Workers Static Assets 或边缘代理迁移。先读取本项目事实源与发布方案；真实账号、域名、仓库、项目名和凭据不能写入本参考。
+适用于用户选择 Cloudflare（含 cloudfare 拼写），包括静态官网/博客/SPA、原生 Workers 服务端、Pages 与边缘代理迁移。先读取本项目事实源与发布方案；真实账号、域名、仓库、项目名和凭据不能写入本参考。
 
 ## 平台与运行形态选择
 
@@ -10,8 +10,10 @@
 | 新静态站点、频繁发布 | 评估 Workers Static Assets；可在本地或 CI 构建后由 Wrangler 上传，静态请求默认先命中资源 |
 | SPA | 明确客户端路由 fallback；`single-page-application` 只能用于 SPA，不能用于博客和多页官网 |
 | Astro/Vite 静态博客、MPA | 保留真实 404、canonical、尾斜杠策略、历史重定向、RSS/sitemap、robots/llms 和语言路径 |
-| SSR / Node 后端 | 先验证框架适配、Node API、原生依赖、数据库、连接池、定时任务和 CPU 预算；不能把现有 Node 服务当成静态目录直接上传 |
+| SSR / Node 后端 | 先验证原生 Workers 与框架/Node API、依赖、连接生命周期和 CPU 的兼容性；不能直接上传静态目录，也不默认常驻容器 |
 | 用户只迁前端，保留后端 | 盘点 `/api/*`、OAuth、写作发布、评论、上传和观测路径；明确保留原后端的路由方式，禁止连带改部署或搬运服务端密钥 |
+
+API、认证、邮件、AI 等后端的数据库、流取消、凭据、自动发布及业务验收，继续读取 [原生 Workers 服务端迁移](cloudflare-native-workers.md)。只有明确需要容器能力时才读下文的容器专项；保持原有 serverless 成本模型是运行形态选型的一部分。
 
 配额必须从执行当日官方文档核对。区分 Pages 构建次数、Workers Builds 构建分钟、上传/API 速率、静态请求与 Worker 调用、CPU、文件大小和数量；禁止宣称“免费无限部署”。外部 CI 只是把构建资源移出 Cloudflare，CI 自身和上传仍有额度。
 
@@ -48,12 +50,12 @@ Routes 的同 zone `fetch(request)` 会按 DNS 回到外部源站；Custom Domai
 沿用本 skill 的发布完整性、测试、Code Review 和现有授权规则。用户已明确要求将指定现网站点迁移到 Cloudflare 时，先完成可逆准备、构建、审查和回滚方案；不要因改用 Cloudflare 增加重复平台选择或额外确认。出现范围扩大、付费升级、无法回滚或缺少访问权限时，再说明具体缺口。不要把静态站点迁移扩展为后端、数据库或移动/桌面客户端发布。
 
 1. 备份旧 DNS/proxy、route、alias、部署版本与构建配置，建立保存点。
-2. 从可追踪 commit 构建，先 dry-run，再发布隔离预览。预览开启 `noindex`，关闭生产 telemetry 和写操作。
+2. 从可追踪 commit 构建，先 dry-run，再发布隔离预览。静态预览开启 `noindex`，关闭生产 telemetry 和真实写作/发信；后端在隔离数据与受保护替身内验证受控读写。
 3. 验证首页、各语言、深链接、刷新、静态图片/字体/CSS/JS、404、历史文章跳转、canonical/hreflang、robots、sitemap、RSS，以及保留 API 的只读健康/未授权失败响应。
 4. 代码按既有门禁进入默认分支，冻结精确生产 commit 和构建映射。按批准范围设置生产 route/domain/proxy；不要修改无关域名、后端项目、数据库、R2 或第三方回调。
 5. 用生产固定域名复测，读取平台 version/deployment、检查实际 source commit。`Server: cloudflare` 只能说明经过 CDN，不能单独证明迁移成功。
-6. 核验后续发布链路：写作提交、默认分支 push 或指定 CI 确实发布到 Cloudflare。若原平台仍自动构建，按范围停掉前端重复构建，保留旧部署和 API；停止自动构建与删除项目是不同动作。
-7. 持续回填同一份发布方案和测试报告，逐行说明已迁前端、保留后端、配额及回滚状态。
+6. 核验后续发布链路：写作提交、默认分支 push 或指定 CI 确实发布到 Cloudflare。若原平台仍自动构建，按范围停掉已迁系统的重复构建，保留旧部署及未迁 API；停止自动构建与删除项目是不同动作。
+7. 持续回填同一份发布方案和测试报告，逐行说明各系统已迁/保留决策、配额及回滚状态。
 
 ## 回滚
 
@@ -64,7 +66,7 @@ Routes 的同 zone `fetch(request)` 会按 DNS 回到外部源站；Custom Domai
 
 ## 容器账户能力、性能与费用验证
 
-后端迁移先做隔离的真实部署，核对账户实际允许的调度策略、实例规格和权限。公开文档列出的规格不能直接视为本账号可用；平台拒绝某种策略时，先修订架构与报价，不继续沿用该策略的成本。
+仅当原生 Workers 不满足已确认需求或用户明确选择容器时进入本节。先做隔离的真实部署，核对账户实际允许的调度策略、实例规格和权限。公开文档列出的规格不能直接视为本账号可用；平台拒绝某种策略时，先修订架构与报价，不继续沿用该策略的成本。
 
 - 区分 `default` 与 `durable_object` 调度，策略不可原地修改。后者使用原生 Durable Object Container API；旧 `Container` helper 不适用，配置级 `max_instances` 不适用，需要代码中的受控实例池、准入和预算保护。
 - 根据当前官方约束选择 named/custom 规格。不要假定 basic 或任意CPU/内存组合可用；小规格可能在CPU密集路径显著变慢，自定义规格也有CPU与内存比例要求。

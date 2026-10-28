@@ -12,7 +12,7 @@
 
 ## 必须遵守
 
-- 平台选择服从用户与项目事实源；Cloudflare 部署先读 `references/cloudflare-deployment.md`，区分 Pages、Workers 静态资源与保留后端的 Route 回源，预发不默认限定 Vercel。
+- 平台选择服从用户与项目事实源；Cloudflare 部署先读 `references/cloudflare-deployment.md`，区分 Pages、Workers 静态资源、原生 Workers API 与保留后端的 Route 回源；服务端继续读取 `references/cloudflare-native-workers.md`，按请求运行的服务不默认改成常驻容器，预发不默认限定 Vercel。
 
 - 生产发布最终动作由主 Agent 执行并负责；DevOps Agent 只辅助检查和整理。
 - 发布输入必须来自可追踪 commit、PR/CR、CI 构建产物或明确归档包。
