@@ -62,6 +62,22 @@ Routes 的同 zone `fetch(request)` 会按 DNS 回到外部源站；Custom Domai
 - 保留最近稳定 Worker 版本，可按官方 Wrangler/API 回滚；版本回滚不能代替错误 DNS、绑定或后端状态的修复。
 - 未完成生产域名和自动发布验证时，报告“已准备/已预览”，不得写“迁移完成”。
 
+## 容器账户能力、性能与费用验证
+
+后端迁移先做隔离的真实部署，核对账户实际允许的调度策略、实例规格和权限。公开文档列出的规格不能直接视为本账号可用；平台拒绝某种策略时，先修订架构与报价，不继续沿用该策略的成本。
+
+- 区分 `default` 与 `durable_object` 调度，策略不可原地修改。后者使用原生 Durable Object Container API；旧 `Container` helper 不适用，配置级 `max_instances` 不适用，需要代码中的受控实例池、准入和预算保护。
+- 根据当前官方约束选择 named/custom 规格。不要假定 basic 或任意CPU/内存组合可用；小规格可能在CPU密集路径显著变慢，自定义规格也有CPU与内存比例要求。
+- 静态部署已验证的CLI版本不代表支持新容器API。核对SDK/schema、依赖实际可安装性、Linux架构、启动入口和资源映射，固定已通过验证的版本与lockfile。原生API的image映射更新不自动重启已运行实例；发布和回滚须显式排空/停止/重启目标实例，再核验真实镜像和应用readiness。
+- Node镜像使用提交源码和实际lockfile，明确包含动态bundle、模板、证书等运行资源；对必要写目录做最小权限配置。禁止复制env文件、macOS node_modules或把生产凭据烘焙进镜像。
+- 性能对照记录相同输入/静态字节摘要、依赖版本、资源规格、网络出口、协议、缓存、数据库区域和命中版本。分别统计服务端计算与客户端总耗时；首次观察请求不自动等于受控冷启动，小样本p95不替代容量或长期SLO。
+- 探针被安全策略拒绝时保留失败，记录客户端差异，不伪装指纹；正常浏览器成功不能替代服务间调用或原生客户端验证。
+- 成本分开记录已出账金额、平台计量估计和月费情景。容器计费依据使用 `containersUsageAdaptiveGroups`，不拿应用RSS代替计费资源；扣减共享额度时明确假设。主动休眠的省费方案须同时验证首访时延，不随意假定每天只在线若干小时。
+- 多平台比较时，验证Vercel实际deployment target；首次部署可能被自动设为Production，不能仅靠CLI参数或输出文案判断。只使用专属隔离项目，不改既有项目或生产入口。
+- 试验完成停止并清理本轮创建的临时运行资源和凭据，保留版本、配置摘要、数据与费用证据。清理范围按精确ID/名称校验，不能批量删除账户资源。
+
+官方依据：[调度策略](https://developers.cloudflare.com/containers/configuration/scheduling-policy/)、[原生容器API](https://developers.cloudflare.com/containers/api/durable-object-container/)、[规格约束](https://developers.cloudflare.com/containers/platform/limits/)、[平台计量](https://developers.cloudflare.com/analytics/graphql-api/tutorials/querying-container-metrics/)。执行时重新核对。
+
 ## 官方资料
 
 执行时重新核对（本参考校验于 2026-10-28）：
