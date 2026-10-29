@@ -1,5 +1,7 @@
 # OPC Skills Subagent 优化方案
 
+> 本文保留历史阶段设计；当前工具与授权以[编排准则](../references/subagent-orchestration.md)和[授权规则](../references/authorization.md)为准，历史试运行阶段不增加当前任务的重复审批。
+
 ## 0. 文档状态
 
 - 状态：已应用到 `v0.2.0` 主规则；`v0.2.2` 根据运营工作台实战补充批量确认、产物可用性状态、mock gate 和预发证据边界。

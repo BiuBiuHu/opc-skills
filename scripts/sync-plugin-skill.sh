@@ -39,6 +39,7 @@ SCRIPT_FILES=(
   scripts/check_release_integrity.sh
   scripts/prepare_post_release_content.sh
   scripts/start_rnd.sh
+  scripts/sync-local-skills.py
 )
 
 die() {

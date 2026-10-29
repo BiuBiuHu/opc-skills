@@ -1,6 +1,6 @@
 {
   "name": "opc-skills",
-  "version": "0.5.0",
+  "version": "0.6.2",
   "description": "CLI to install, update, and diagnose the BiuBiuHu/opc-skills Codex skill",
   "bin": {
     "opc-skills": "bin/opc-skills.js"
@@ -8,6 +8,7 @@
   "files": [
     "bin/opc-skills.js",
     "scripts/install.sh",
+    "scripts/sync-local-skills.py",
     "VERSION"
   ],
   "engines": {
@@ -32,5 +33,8 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "test": "python3 -m unittest discover -s tests -v"
   }
 }

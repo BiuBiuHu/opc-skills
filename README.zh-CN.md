@@ -2,7 +2,7 @@
 
 [English hub](README.md) | [English README](README.en.md)
 
-当前版本：`v0.6.1`
+当前版本：`v0.6.2`
 
 `opc-skills` 是一套面向 C 端业务研发的 Codex Skill，擅长开发用户侧 App/Web/小程序，以及配套的 B 端运营工作台。主要给一人公司（OPC）和需要同时交付用户产品与运营工作台的小团队用。
 
@@ -20,7 +20,7 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` 会快进更新；`npx opc-skills doctor` 会检查安装路径、`VERSION` 和 symlink。CLI 与 curl 脚本共用 `scripts/install.sh`。脚本会把本仓库克隆或快进更新到 `~/.codex/skills/opc-skills`。若本机已有 `~/.cursor/skills` 或 `~/.claude/skills`，会再指向同一目录，方便 Cursor / Claude Code 发现。脚本不会凭空创建这些额外目录，也不会读取编辑器配置或密钥。安装需要本机已有 `git`。
+`npx opc-skills update` 从受校验的 Git 源缓存更新安装副本，并同步已有 `.agents`、Cursor 和 Claude 发现目录。各安装的本地规则使用基线三方合并；任一冲突都保持全部安装不变，旧版本有备份。`doctor` 检查来源、版本和本地差异，不再强制安装目录必须有 `.git`。需要 Git 和 Python 3.9+；首次接管、隔离验证及 CLI 是否已发布见[本机安装说明](references/local-installation.md)。
 
 可选的 Codex Agent Plugin 安装（`codex plugin marketplace add BiuBiuHu/opc-skills`，再 `codex plugin add opc-skills@opc-skills`）以及 `$skill-installer` 提示见 [docs/skills-hub.md](docs/skills-hub.md)。`openai/skills` curated 已弃用；本仓库尚未进入公开 Plugins Directory。
 
@@ -120,7 +120,7 @@ git clone https://github.com/BiuBiuHu/opc-skills.git ~/.codex/skills/opc-skills
 -> 可选：选题 / 中英文草稿 / 内容审核 / 文章发布
 ```
 
-默认模式是 `manual-gated`：文档和方案完成后进入 `awaiting-user-review`，用户审核通过后才进入实现、迁移或部署。
+默认规划模式是 `manual-gated`：尚未获得实施授权，或用户明确要求先审方案时等待；已有同范围的实现/修复/指定环境发布授权则复用，不因补写文档重复暂停。
 
 发布后内容生产有三个独立模式：
 
@@ -225,7 +225,7 @@ opc-skills/
 - 文章发布失败不回滚页面发布；文章公开发布必须有独立目标、预览、deployment 和回滚记录。
 - 创建 PR 默认使用中文；除非仓库规范或用户明确要求其它语言。
 - 测试范围必须按改动影响选择；全量测试只作为明确触发条件下的升级选项。
-- subagent 只能在用户明确允许、任务边界清楚、能证明提速或提质时使用；skill 只写规则，主 Agent 通过 `multi_agent_v1.spawn_agent` 执行调用。
+- subagent 只能在用户明确允许、任务边界清楚、能证明提速或提质时使用；skill 只写规则，主 Agent 核对当前会话实际提供的工具 schema 后执行调用，不依赖固定旧接口。
 
 ## 常用命令
 
@@ -264,11 +264,11 @@ npx opc-skills doctor
 
 ## 版本发布
 
-当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.6.1`。`package.json` 仍为 `0.5.0`，等下次人工 npm publish 再对齐。
+当前版本通过 `VERSION` 和 `CHANGELOG.md` 标记。本次发布版本为 `v0.6.2`。`package.json` 已对齐 `0.6.2`，npm 发布仍是独立动作，本 PR 不自动发布。
 
 开源发布建议：
 
 - 为稳定版本创建 GitHub Release。
 - 补充示例任务和输出样例。
-- 为版本创建 tag，例如 `v0.6.1`。
+- 为版本创建 tag，例如 `v0.6.2`。
 - npm 包名 `opc-skills` 当前可用，但不要在未明确要求时发布到 npm。
