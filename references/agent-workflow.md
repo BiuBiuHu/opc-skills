@@ -39,8 +39,8 @@
 13. DevOps Agent 创建或更新运维手册和部署计划。
 14. 生产发布进入 `complete` 后，如果用户或项目事实源启用发布后内容生产，Content Agent 进入 `suggest`、`draft` 或 `publish` 模式；文章生产不改变页面发布状态。
 15. 如果本次已启用 subagent，主 Agent 追加 subagent 使用复盘：启动原因、预期收益、实际收益、产出文件、验证证据、冲突或重复工作。
-16. 文档产出完成后进入 `awaiting-user-review`，等待用户审核。
-17. 只有用户明确审核通过后，研发 Agent 才能开始代码实现，DevOps Agent 才能执行迁移或部署。
+16. 按[授权规则](authorization.md)核对进入实施的许可；尚未获准或用户明确保留方案审核时进入 `awaiting-user-review`，已有有效授权则继续。
+17. 在授权范围内执行；迁移、部署和候选版本仍核对对应技术门禁，不把阶段切换当成新审批。
 
 文档位置、模板映射及整理规则统一见 [文档标准](document-standard.md)。需要编码时按 [实施工作流](implementation-workflow.md) 执行；需要联调时按 [客户端与跨服务联调](client-integration.md) 执行；发布按 [完整性](release-integrity.md) 和 [PR 生命周期](release-pr-lifecycle.md) 执行。
 
@@ -50,16 +50,9 @@
 
 ## 关卡
 
-`manual-gated` 模式下，以下动作必须先等待用户确认：
+授权与重复确认唯一维护于[授权规则](authorization.md)。保留用户明确指定的方案审核、生产范围/候选评审和高风险动作边界；已经批准的同一动作不为读取文档、实施或回填证据再确认。
 
-- 文档产出后进入代码实现
-- 删除或归档已有文档
-- 代码实现
-- 数据库迁移
-- 部署
-- 任何破坏性清理
-
-`full-auto` 只有用户明确要求时启用；用户已有“文档生成后先审核”等关卡时仍优先遵守。即使 full-auto，生产发布仍保留预发报告和 CR/code review，不从未提交工作区部署，不先发布后补 CR。
+`full-auto` 仍需明确选择，且不覆盖用户指定的审核关卡和生产发布技术要求。
 
 ## Inbox 与任务衔接
 

@@ -2,7 +2,7 @@
 
 **Language:** [中文说明](README.zh-CN.md) · [Full English docs](README.en.md)
 
-Current version: `v0.6.1`
+Current version: `v0.6.2`
 
 `opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
 
@@ -18,7 +18,7 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. Both the CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+`npx opc-skills update` uses a verified Git source cache and synchronizes the installed skill snapshots. Existing `.agents`, Cursor and Claude skill surfaces are included; per-install local edits use a verified baseline and three-way merge. Any conflict leaves all installations unchanged, with backups retained. `doctor` checks provenance, versions and local overrides rather than requiring `.git` in the installed directory. Git and Python 3.9+ are required; see [local installation](references/local-installation.md) for adoption, isolated tests and current CLI availability.
 
 Optional Codex Agent Plugin install (`codex plugin marketplace add BiuBiuHu/opc-skills`, then `codex plugin add opc-skills@opc-skills`) is documented in [docs/skills-hub.md](docs/skills-hub.md), together with `$skill-installer` prompts. `openai/skills` curated listing is deprecated; this repo is not in the public Plugins Directory.
 
@@ -61,7 +61,7 @@ A reusable Codex Skill that walks the main agent through a reviewable delivery l
 
 It covers user-side App / Web / mini-program / desktop work, the matching ops, review, config, and support consoles, and the primary API / auth / worker path behind them. The skill keeps reusable methods, gates, templates, and role placeholders. Project names, accounts, domains, service aliases, and deployments stay in the project's own fact sources.
 
-Default mode is `manual-gated`: documents and plans go to `awaiting-user-review` before implementation, migration, or deploy.
+Default planning mode is `manual-gated`; wait when implementation is not yet authorized or the user explicitly requires a plan review. Reuse valid authorization for the same scope instead of asking again after writing documents.
 
 ## Who it's for
 

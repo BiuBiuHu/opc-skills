@@ -8,6 +8,15 @@
 
 评审状态只能为 `awaiting-review`、`approved` 或 `rejected`。系统范围、候选 commit、迁移、环境、顺序、alias 或构建映射变化后必须重新评审。发布状态按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> complete` 推进；任一门禁失败时保持 `blocked` 或 `partially-released`。
 
+### 已有授权与缺口
+
+- 用户指令/批准来源与日期：
+- 已批准的动作、环境、系统、数据与费用边界：
+- 授权对应的方案版本/冻结候选：
+- 本次沿用的有效批准：
+- 新增或改变而需确认的部分（无则继续技术检查，不重复问）：
+- 授权判断：`references/authorization.md`；纯证据回填不重置批准，候选/范围变化仍重新评审。
+
 ## 1. 发布目标与范围
 
 - 用户结果：

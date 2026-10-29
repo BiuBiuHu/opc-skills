@@ -15,7 +15,7 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 
 ## 工作模式
 
-- `manual-gated`：默认模式。先产出文档和计划，文档完成后停在 `awaiting-user-review`，实施、迁移、部署、删除前等待用户确认。
+- `manual-gated`：默认规划模式；尚未获准实施或用户明确要求先审方案时等待审核。已有实施、修复或指定环境发布授权时，按[授权规则](references/authorization.md)继续，不因补写文档重复暂停。
 - `full-auto`：仅当用户明确说 `全自动`、`full-auto`、`不需要确认` 时启用；但如果用户已要求“文档审核后才能编码”，则本次 feature 必须遵守审核关卡。
 - `implementation-loop`：当需求、架构和验收标准已经明确，且用户要求“开始编码”“往下推进”“实现一下”时启用。跳过不必要的重新调研，但必须先做项目发现、变更影响分析、保存点、实现、验证、修复、复验和证据记录。
 - `bugfix-fast-path`：当用户描述线上/预发/本地 bug、截图问题、报错、性能卡顿、交互异常或回归问题时启用。只要求完成复现、定位、修复、回归和证据闭环；除非 bug 暴露出产品或架构缺口，否则不强制补全完整 PRD/UI/架构流程。
@@ -30,7 +30,7 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 
 1. **保护已有成果。** 改代码、重构、迁移、部署或批量修改前先建立保存点。新需求从同步后的默认分支创建，逐受影响仓库核对；同步失败停止实现，不丢弃用户改动。详见[实施准备](references/implementation-workflow.md#保存点与分支准备)。
 2. **从业务结果出发。** 目标、角色、核心闭环、批量范围、成本和验收不明确时先澄清，不以字段或页面清单替代目标。完整需求按[阶段工作流](references/agent-workflow.md)推进。
-3. **沿用模式与审核关卡。** 默认 manual-gated；文档审核、实现、迁移、部署、删除等按现有模式执行。full-auto 需要明确授权，不能越过本 feature 已有审核要求；结构拆分不改变这些边界。
+3. **授权只核对缺口。** 按[统一授权规则](references/authorization.md)复用当前目标/范围/环境的有效批准；补文档或换阶段不重问。明确的方案先审、范围/风险扩大、冻结候选变化和缺失生产授权仍需处理，技术门禁不能被授权替代。
 4. **隔离项目事实。** 本 skill 只放通用方法；真实仓库、域名、账号、部署与数据库配置从项目事实源读取，不带入通用 skill 或客户端包。所有方案、架构决策、UI 原型、测试计划和评审结论落盘到 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/`，按[文档标准](references/document-standard.md)维护唯一主文档。
 5. **保持分层与身份归属。** 客户端只调用主服务/网关，内部服务走受控服务间调用；第三方 provider 与身份规则归统一认证服务。完整边界见[架构职责](references/role-catalog.md#5-架构-agent)。
 6. **先调研、后实现、再验证。** 非平凡实现先查成熟方案；按保存点、小步修改、最小验证、失败归因、修复复验、自审和证据记录闭环。测试范围按调用链与风险选择，不默认全量。
@@ -47,6 +47,7 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 
 | 当前任务或条件 | 读取内容 |
 |---|---|
+| 模式选择、已有批准、需要确认的缺口 | [统一授权判断](references/authorization.md) |
 | 新需求、完整产品流程、目标不清 | [阶段工作流](references/agent-workflow.md)，再读[角色目录](references/role-catalog.md)中本阶段职责 |
 | implementation-loop / full-auto 的研发阶段 | [实施工作流](references/implementation-workflow.md)，变更影响按[对应角色](references/role-catalog.md#6-变更影响-agent)核对 |
 | bugfix-fast-path | [Bug 快速路径](references/implementation-workflow.md#bug-快速路径)；涉及认证再读认证专项 |
@@ -62,6 +63,7 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 | release-gated、共享环境部署、回滚或发布核销 | [发布完整性](references/release-integrity.md)和[Code/Release PR 生命周期](references/release-pr-lifecycle.md)，两者都需读取 |
 | 创建或主动重写 PR | [PR 创建语言](references/release-pr-lifecycle.md#pr-创建语言)；发布 PR 同时执行完整发布指引 |
 | 获准使用可执行 subagent | [编排准则](references/subagent-orchestration.md)、对应 `agents/<role>-agent.md` 和任务包/结果模板 |
+| 安装、更新、诊断本机 OPC Skills | [本机同步与来源检查](references/local-installation.md) |
 | post-release-content | [内容生产](references/post-release-content.md)与[Content Agent](agents/content-agent.md) |
 
 角色文件用于职责与 prompt spec，不会自动运行；完整概念角色见目录，执行提示见 `agents/`。需要实现前后端时按实际角色选择，不把角色目录作为每次任务的必读整包。

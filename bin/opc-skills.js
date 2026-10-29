@@ -18,15 +18,16 @@ Usage:
   npx opc-skills <command>
 
 Commands:
-  install, update  Clone or fast-forward into ~/.codex/skills/opc-skills
-  doctor           Print install paths, VERSION, git identity, and symlink health
+  install, update  Update a verified source and synchronize skill installations
+  doctor           Check source provenance, baselines, versions, and local overrides
   path             Print the primary Codex path
   help             Show this help
   version          Print this CLI version
 
-If ~/.cursor/skills or ~/.claude/skills already exist, install also
-symlinks there. Extra parent dirs are never created. git is required.
-No editor config or secrets are read.
+Existing ~/.agents/skills, ~/.cursor/skills and ~/.claude/skills are synchronized.
+Local edits are three-way merged; conflicts leave all installations unchanged.
+Options: --root PATH, --source CLEAN_GIT_REPO, --base PRIOR_REF.
+git and Python 3.9+ are required. No editor settings or credential stores are loaded.
 
 This CLI wraps scripts/install.sh so curl|bash and npx stay aligned.
 
@@ -43,12 +44,12 @@ function fail(message) {
   process.exit(1);
 }
 
-function runInstallSh(command) {
+function runInstallSh(command, options = []) {
   if (!fs.existsSync(INSTALL_SH)) {
     fail(`install script not found at ${INSTALL_SH}`);
   }
 
-  const result = spawnSync('bash', [INSTALL_SH, command], { stdio: 'inherit' });
+  const result = spawnSync('bash', [INSTALL_SH, command, ...options], { stdio: 'inherit' });
   if (result.error) {
     if (result.error.code === 'ENOENT') {
       process.stderr.write(
@@ -82,10 +83,10 @@ if (command === 'version' || command === '-v' || command === '--version') {
 }
 
 const allowed = new Set(['install', 'update', 'doctor', 'path']);
-if (args.length !== 1 || !allowed.has(command)) {
+if (!allowed.has(command)) {
   process.stderr.write(`error: unknown command: ${args.join(' ')}\n\n`);
   printHelp();
   process.exit(1);
 }
 
-runInstallSh(command);
+runInstallSh(command, args.slice(1));

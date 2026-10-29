@@ -1,6 +1,6 @@
 # Subagent Task Brief
 
-> 主 Agent 在调用 `multi_agent_v1.spawn_agent` 前填写。本文件是模板，不会自动启动 subagent。
+> 主 Agent 在确认授权与实际运行时创建工具 schema 后、调用前填写。本文件是模板，不会自动启动 subagent。
 
 ## 角色
 

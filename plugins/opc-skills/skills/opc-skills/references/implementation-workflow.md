@@ -1,6 +1,6 @@
 # 实施与 Bug 修复工作流
 
-用于 implementation-loop、full-auto 的研发阶段及 bugfix-fast-path。按本次模式读取相关章节；模式授权与审核关卡仍由 [Agent 工作流](agent-workflow.md#关卡) 规定。
+用于 implementation-loop、full-auto 的研发阶段及 bugfix-fast-path。按本次模式读取相关章节；授权与审核缺口统一按[授权规则](authorization.md)判断；同一实现/修复授权不因更新文档重复确认。
 
 ## 保存点与分支准备
 

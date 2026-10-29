@@ -4,7 +4,7 @@ This is a distribution checklist, not a claim that `opc-skills` is listed in any
 
 Install order for this repo:
 
-1. **Preferred:** `npx opc-skills` or `curl` (git checkout under `~/.codex/skills/opc-skills`)
+1. **Preferred:** `npx opc-skills` or `curl` (verified source cache and managed installation snapshots)
 2. **Inside Codex:** `$skill-installer` from this GitHub repository
 3. **Agent Plugin:** add this repo as a marketplace, then install `opc-skills@opc-skills`
 4. **Public Plugins Directory:** human + workspace portal submit later. Do not auto-submit.
@@ -20,15 +20,15 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-Those paths clone or fast-forward a git checkout into `~/.codex/skills/opc-skills`. Use `npx opc-skills update` / `doctor` afterwards. The skill **is the repository root** (`SKILL.md` at `/`). This is unchanged by the Agent Plugin packaging.
+The updated installer keeps a clean source cache and synchronizes managed snapshots, preserving local overrides with verified baselines and three-way merge. Existing `.agents`, Cursor and Claude discovery directories are included. It requires Git and Python 3.9+. See [local installation](../references/local-installation.md).
 
-`npx opc-skills` on npm is currently `opc-skills@0.5.0`. The CLI only wraps `scripts/install.sh` and does not need a same-day publish for the plugin files in this repository. A later human publish can bump `package.json` to match `VERSION`.
+The CLI package in this branch includes the new helper. Merging a PR does not publish npm; old published CLI versions still have the old behavior. Use a verified checkout's `bash scripts/install.sh` until the matching CLI is published.
 
 ## 2. Official Codex path: `$skill-installer` from GitHub
 
 Codex ships a built-in system skill, `$skill-installer`. It installs into `$CODEX_HOME/skills` (normally `~/.codex/skills`) from a GitHub repo / path, including a repo whose `SKILL.md` is at the root.
 
-`opc-skills` is that root-skill case. The installer helper aborts if the destination directory already exists, and it **copies files** (zip download, git sparse-checkout fallback). That copy is **not** a git checkout, so `npx opc-skills doctor` will report it as broken until you replace it with curl / npx. Prefer curl / npx when you want `update` to `git pull --ff-only`.
+`opc-skills` is that root-skill case. The installer helper aborts if the destination directory already exists, and it **copies files** (zip download, git sparse-checkout fallback). That copy has no synchronization baseline. The updated installer can adopt it with an explicitly reviewed prior `--base` commit; it does not discard local changes. Managed copies subsequently pass doctor without `.git`.
 
 Do **not** use a curated name-only install such as `$skill-installer opc-skills`. That used to look in [openai/skills](https://github.com/openai/skills) `skills/.curated`, which is deprecated and does not list this repo.
 
@@ -107,7 +107,7 @@ Then start a new Codex session. In ChatGPT desktop / Work mode: restart the app,
 
 The marketplace entry points `source.path` at `./plugins/opc-skills` (resolved from the marketplace root, which is the repository root). Policy is `AVAILABLE` + `ON_INSTALL`. Category is `Developer Tools`.
 
-This install is **in addition to**, not a replacement for, the curl / npx skill checkout. A plugin install does not create `~/.codex/skills/opc-skills`. Keep using curl / npx when you want `doctor` / `update` against a git checkout.
+This install is **in addition to**, not a replacement for, the curl / npx skill checkout. A plugin install does not create `~/.codex/skills/opc-skills`. Keep using curl / npx for managed `doctor` / `update`; marketplace caches remain owned by the plugin host.
 
 ### Single source of truth
 

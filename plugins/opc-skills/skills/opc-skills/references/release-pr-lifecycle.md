@@ -13,7 +13,7 @@
 
 把代码评审、发布方案审批、共享环境部署、真实验证和发布证据合并拆成不同动作。任何时刻都要让用户知道：当前对象是哪一个 PR、目标环境是什么、现在需要批准还是 merge、完成后会发生什么。
 
-发布前同时读取 `references/release-integrity.md`。Release PR 不仅核对主服务和客户端，还必须承载双向影响闭包、逐系统发布/不发布证据、默认分支 merge commit、deployment 映射和 worktree 归位结果。
+发布前同时读取 [授权规则](authorization.md)与 `references/release-integrity.md`。Release PR 不仅核对主服务和客户端，还必须承载双向影响闭包、逐系统发布/不发布证据、默认分支 merge commit、deployment 映射和 worktree 归位结果。
 
 ## 2. 对象定义
 
@@ -38,14 +38,14 @@
    - Preview 允许使用可追踪的 PR head，在 release plan 中写明 head commit、构建来源和不先 merge Code PR 的理由。
    - Production 必须先 merge 所有关联仓库的 Code PR，再从各自远端默认分支读取精确 merge commit。
    - Production deployment 必须与默认分支 merge commit 相同，或提供源码 commit、构建任务和产物摘要之间的可验证映射。
-3. 从同步后的主分支创建 release 分支，创建 Release PR；初始 release plan 为 `awaiting-review`。
-4. 读取并核对项目 runtime entry inventory，向用户展示候选 commit、真实登录/BFF/callback/回跳入口、目标环境、发布矩阵、数据动作、验证路径和回滚点，请求批准 release plan。不要请求 merge Release PR。
-5. 用户明确批准后，把 release plan 更新为 `approved` 并提交到仍为 open 的 Release PR。
+3. 从同步后的主分支创建 release 分支与 Release PR；未获批准时方案为 `awaiting-review`，已有有效范围/环境/候选批准时直接引用来源并记录 `approved`。
+4. 读取并核对项目 runtime entry inventory，向用户展示候选 commit、真实登录/BFF/callback/回跳入口、目标环境、发布矩阵、数据动作、验证路径和回滚点，只对缺少或失效的授权请求批准；已有效批准的同一方案不重问。不要请求 merge Release PR。
+5. 将用户本次批准或沿用的有效批准来源写入方案，记录 `approved` 并提交到仍为 open 的 Release PR；不能自行签发批准。
 6. 从已提交、可追踪的候选部署 Preview，记录 deployment ID/URL；不要先 merge Release PR。
 7. 在固定 Preview 入口执行真实 E2E、API、DB、日志和观察窗口验证，并持续回填同一个 Release PR。
 8. Preview 全部通过后，把验证证据回填仍保持 open 的 Release PR，并明确进入 Production 候选冻结；此时需要 review/merge 的对象是各关联仓库的 Code PR，不是 Release PR。
 9. Preview 通过后，将所有包含代码或配置候选的 Code PR 合并到各仓库默认分支，冻结精确 merge commit；merge 结果改变候选时更新 Production release plan 并重新审批。
-10. Production 使用单独的 release plan 版本、审批、deployment、回归和核销。Preview 的批准不能自动授权 Production；按依赖优先顺序先部署内部服务和主服务，再发布或放量客户端。
+10. Production 使用单独的 release plan 版本、审批、deployment、回归和核销。Preview 的批准不能自动授权 Production；若会话已有明确且仍有效的 Production 批准，引用它而不重复询问；按依赖优先顺序先部署内部服务和主服务，再发布或放量客户端。
 11. Production 低流量时执行无破坏性合成探针；仅有 `0` 条错误日志不算观察通过。客户端产物完成但依赖服务或跨系统契约未核销时，Release Train 保持 open。
 12. 最终核销每个仓库的默认分支 merge commit、deployment/产物 commit、真实用户验证、合成探针、DB after、日志窗口和 alias/deployment 漂移；适用证据完整后才 merge Release PR。
 13. Release PR merge 后逐仓库确认远端默认分支包含候选 merge commit，运行 `scripts/check_release_integrity.sh`，再切回默认分支执行 `git pull --ff-only`，并核对 `git worktree list --porcelain`。默认分支 worktree 未与远端一致或有未提交改动时，保持 blocked；切换本地分支不能替代 Code PR 合并或部署版本核对。

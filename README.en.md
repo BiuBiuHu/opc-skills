@@ -2,7 +2,7 @@
 
 [中文说明](README.zh-CN.md) | [Hub README](README.md)
 
-Current version: `v0.6.1`
+Current version: `v0.6.2`
 
 `opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 
@@ -20,7 +20,7 @@ npx opc-skills install
 curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash
 ```
 
-`npx opc-skills update` refreshes the checkout. `npx opc-skills doctor` prints install paths, `VERSION`, and symlink health. The CLI and the curl script share `scripts/install.sh`. The script clones or fast-forwards [this repository](https://github.com/BiuBiuHu/opc-skills) into `~/.codex/skills/opc-skills`. If `~/.cursor/skills` or `~/.claude/skills` already exists, it also points those paths at the same checkout. It does not create those extra parent directories, and it does not read editor config or secrets. `git` is required.
+`npx opc-skills update` uses a verified Git source cache and synchronizes the installed skill snapshots. Existing `.agents`, Cursor and Claude skill surfaces are included; per-install local edits use a verified baseline and three-way merge. Any conflict leaves all installations unchanged, with backups retained. `doctor` checks provenance, versions and local overrides rather than requiring `.git` in the installed directory. Git and Python 3.9+ are required; see [local installation](references/local-installation.md) for adoption, isolated tests and current CLI availability.
 
 Optional Codex Agent Plugin install (`codex plugin marketplace add BiuBiuHu/opc-skills`, then `codex plugin add opc-skills@opc-skills`) is documented in [docs/skills-hub.md](docs/skills-hub.md), together with `$skill-installer` prompts. `openai/skills` curated listing is deprecated; this repo is not in the public Plugins Directory.
 
@@ -121,7 +121,7 @@ Goal clarification
 -> Optional: topic suggestions / bilingual drafts / content review / article publishing
 ```
 
-The default mode is `manual-gated`: the agent writes documents and plans first, then waits in `awaiting-user-review` before implementation, migration, or deployment.
+The default planning mode is `manual-gated`; it waits for missing authorization or an explicit plan-review gate, and reuses existing implementation/release authorization for the same scope.
 
 Post-release content has three independent modes:
 

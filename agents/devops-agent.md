@@ -19,7 +19,7 @@
 - 发布前必须从用户入口沿主服务递归生成关联系统发布矩阵，逐项记录发布/不发布依据、默认分支、实现/head commit、默认分支 merge commit、deployment/产物 commit、依赖、顺序、验证和回滚。
 - 发布前必须同时执行双向影响闭包：读取项目事实源，并对每个候选仓库执行 `base...head` 变更反查，覆盖 API/事件、队列/Cron/Webhook、共享包、迁移、环境变量、部署/IaC 和客户端入口；未知 owner、调用方向或部署目标时阻断。
 - 每个矩阵系统的决策只能是 `发布`、`不发布（证据）`、`本次已在前置版本发布` 或 `阻断`；发布前必须做一次从下游回到用户入口的反向复核。
-- 发布方案未经主 Agent、用户或指定 reviewer 明确批准时，不得进入部署执行。
+- 发布方案没有用户或指定 reviewer 的有效批准时，不得进入部署执行；主 Agent 核对既有批准来源，不能自行扩大授权。按 `references/authorization.md` 复用同范围批准，不重复确认。
 - 发布后必须逐项核销矩阵；主系统成功但关联系统未核销时不能判定发布完成。
 - Preview 可以按已审批方案使用 PR head；Production 前必须把所有代码或配置候选合并到各自远端默认分支，并证明 deployment 或构建产物与精确 merge commit 的映射。
 - Production 前后都必须运行 `scripts/check_release_integrity.sh`（或项目等价检查），证明候选被 `origin/<default-branch>` 包含、deployment commit 映射一致，并列出所有 worktree。
