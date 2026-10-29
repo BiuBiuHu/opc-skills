@@ -5,125 +5,13 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 
 # OPC Skills
 
-这是 C 端业务应用与配套 B 端工作台的统一研发入口。使用时必须先识别本次用户指定或当前正在处理的项目根目录。
+C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定或当前最相关的项目根目录，再按任务选择模式和参考文件。
 
-## 触发方式
+## 触发与范围
 
-当用户说出以下意图时，使用本工作流：
-
-- `启动 OPC Skills`
-- `启动 C 端业务应用研发流程`
-- `一键启动 C 端应用研发`
-- `跑一遍 C 端应用和配套 B 端工作台全流程`
-- 要求规划、设计、开发、测试、部署或运维 App、Web、小程序等 C 端应用
-- 要求为 C 端业务补齐运营、审核、配置、发布、客服排错或内容生成工作台
-- 当本次需求明确涉及客户端应用时，要求对当前业务做客户端联调、前后端联调、移动端联调、App 联调、真机或模拟器验证
-- 页面或功能发布完成后，要求生成技术文章、发布复盘、中文/英文内容或 SEO/GEO 内容
-
-## 部署平台选择
-
-先沿用用户指定平台和项目事实源，支持 Vercel、Cloudflare 与其它现有运行环境，不把 Vercel 当成预发或生产的必选平台。用户选择 Cloudflare（含 cloudfare 拼写）时，读取 [Cloudflare 部署与迁移](references/cloudflare-deployment.md)。静态站选择 Pages 或 Workers Static Assets；API、认证、邮件、AI 等服务端读取 [原生 Workers 服务端迁移](references/cloudflare-native-workers.md)，原来按请求运行的服务先验证原生 Workers，不能默认改成常驻容器。数据库是否迁移单独决策；用户只迁前端时，保留现有后端、认证、数据库和客户端发布范围。
-
-## 核心规则
-
-**先保存代码，再改代码。** 任何进入新一轮实现、重构、迁移、部署或批量修改前，必须先为当前工作区建立明确保存点。优先使用 Git commit；如果暂时不能提交，必须说明原因，并使用 stash、补丁文件或其它可回滚备份方式保存当前状态。禁止在未保存当前成果的情况下继续叠加新改动。
-
-**新需求必须从同步后的主分支创建。** 进入新需求实现前，必须先识别项目 Git 根目录、当前分支、远端默认分支和工作区状态。工作区有改动时，先提交或使用带说明的 stash/补丁建立保存点，并记录保存点标识；不得丢弃或覆盖用户改动。随后切回远端默认主分支（通常为 `master` 或 `main`），执行 `git pull --ff-only`，确认本地与远端一致后，再从该主分支创建并切换到新的需求分支。新分支名必须包含稳定的 feature name；若主分支同步失败、存在未解决冲突、远端不可达或无法确认目标分支，必须停止实现并记录阻塞原因，不得从旧需求分支直接开工。多仓库需求必须对每个受影响仓库分别执行并记录该流程；不受影响的仓库不得为了形式切换分支。
-
-**通用 Skill 与项目事实必须隔离。** `opc-skills` 只保存跨项目可复用的方法、角色、门禁、模板和参数化示例，不保存任何具体业务项目的事实。项目名、真实仓库名或绝对路径、账号/邮箱、域名、云项目、服务别名、deployment ID、数据库 host/schema、密钥变量值、业务专用状态机和单一产品特例，必须写入对应项目仓库的 README、架构文档、runtime entry inventory、测试数据说明或运维手册。通用文档需要表达调用关系时，只使用 `<CLIENT_APP>`、`<PRIMARY_API>`、`<AUTH_SERVICE>`、`<WORKER>` 等角色占位符；需要真实值执行时，先读取项目事实源，禁止从 skill、历史聊天或示例猜测。
-
-**目标澄清不可跳过。** 在 PRD、UI、架构、编码或部署前，必须先对齐用户真正想完成的业务结果，而不是只复述功能点。若目标、角色、操作闭环、时间范围、成本约束或验收方式不清楚，必须先用少量关键问题反问用户，直到双方对目标达成一致。目标澄清至少要回答：谁在什么场景下完成什么结果；核心工作单元是什么；一次操作面向单条、某天、某周、某月还是批量；成功标准是什么；哪些成本、时延、质量和环境约束不能突破；失败后如何重试、回滚或返工。未完成目标澄清时，不得把字段清单、接口清单或页面草图当成需求。
-
-**C 端业务以用户路径为主线。** C 端需求必须先定义用户、入口、场景、核心路径、完成结果和失败恢复，而不是先拆页面或字段。若需要配套 B 端工作台，必须说明工作台如何支撑配置、审核、生成、发布、排错或返工。
-
-**AI/生成类需求必须成本分层。** 当需求涉及 LLM、生图、视频、批量生成、投放或审核时，必须先拆成低成本可审阶段和高成本执行阶段。默认顺序是：生成/预览提示词或计划 -> 人工或规则审核 -> 批量生成昂贵产物 -> 缓存/对象存储复用 -> 按最小粒度返工。不得默认每次查看、刷新、重新发布或客户端加载都重新生成昂贵产物。文档和 UI 必须明确缓存键、对象存储位置、幂等策略、最小重生粒度、批量生成上限和成本保护。
-
-**昂贵批量操作必须一次确认、可解释、可跳过。** B 类页面中的批量生图、批量发送、批量发布、批量扣费、批量修改等昂贵或高风险动作，禁止做成“批量确认后再逐条弹确认”的嵌套确认流；必须在一个确认弹窗中展示范围、已选数量、已缓存/将跳过数量、会产生新成本的数量、失败重试策略、覆盖策略和不可逆副作用。默认策略必须跳过已有缓存或处理中项；强制覆盖必须以“强制重生/强制覆盖”命名并二次明确。状态文案必须区分“任务成功”和“产物可用”：例如生图任务 `succeeded` 但没有 `imageUrl` 时，应显示“OSS 未命中/缺图片”，不得显示成已完成。
-
-**B 类运营页面以效率为第一目标。** 管理后台、审核台、运营台、批量生成台等 B 类页面必须服务高效判断和高效操作，而不是展示数据库字段。B 类页面默认做减法：当前判断、比较、批量选择和下一步操作不需要的内容，不要展示；已由筛选条件、页面上下文或批量任务确定的信息，不要在每行重复展示；低频审计信息、原始 JSON、完整长文本、完整提示词、调试日志和说明性文案不得常驻在主流程里，必须收进抽屉、弹窗、hover、展开行或日志页。B 类页面必须先定义“总分下钻”信息层级：集合总览页用于发现哪个对象需要处理，对象工作台用于处理该对象，分组/时间维度页用于集中处理一组明细，单项抽屉用于低频详情和最小粒度返工；不得把所有层级的信息塞进一个巨型页面。表格只保留决策字段和行动字段；图片、状态、异常、成本和进度应直接视觉化；hover/点击用于查看大图或长内容；详情抽屉只承载完整提示词、原始 JSON、错误日志等低频信息。长列表必须有分页、每页条数、总数、排序/筛选状态和加载/空/错态；数据量大或行高固定时必须评估服务端分页/排序/筛选或虚拟滚动。空值必须是可行动异常，例如“缺图片”“缺提示词”“缺少关键快照字段”，不能只显示 `-`。设计、原型、实现或 review B 类页面前，必须读取 `references/b-side-ui-guidance.md`，并先沉淀开源 skills/组件调研结论、信息层级与下钻决策、信息裁剪决策、ASCII 草图和 mock 验证点。
-
-**B 类页面必须先用本地 mock 跑通交互，再部署目标平台预发。** 管理后台、运营台、审核台、批量生成台等 B 类页面在接真实预发环境前，必须先用本地 mock 数据或 Playwright route mock/MSW/dev fixture 做交互闭环。mock 数据要覆盖成功、空、慢、错、长文案、缺字段、多状态、批量范围和单条返工；验证目标不是“组件能渲染”，而是操作者能在一个连续工作流中高效完成任务：上下文不丢、下一步动作清楚、P0 决策信息不被藏进详情、行内可视对象可直接判断、昂贵操作不会被误触发。mock 验证应尽量沉淀为仓库内可复跑脚本、测试文件或明确命令；如果只能临时跑 Playwright/浏览器脚本，测试报告必须写清脚本位置、断言、mock 数据覆盖和不可复跑风险。mock 验证失败时禁止部署到目标平台；mock 验证通过后，必须提交代码，再部署预发，并用真实 API/数据库/对象存储复跑同一关键路径。预发证据必须区分“能进入登录页/应用壳”和“功能页真实 API/OSS/数据库链路通过”，不得用前者替代后者。mock 证据和预发证据都要写入测试报告。
-
-**发布必须先预发、再线上，并且必须有测试报告和 Code Review。** 任何生产发布前必须完成以下门禁，缺一不可：
-
-- 发布目标确认门禁：当用户只说“发布”“部署”“上线”“发一下”等，没有明确说明目标环境时，必须先停下来询问“发布到预发还是线上？”。禁止自行默认预发、默认线上或同时发布两个环境。只有用户明确指定目标环境后，才能执行对应部署流程。
-- 禁止本地工作区直接部署：不支持、也不得执行“从未提交本地工作区直接打包部署”。无论预发还是线上，部署输入必须来自可追踪的 Git commit、PR/CR 分支、CI 构建产物或明确归档的构建包。工作区存在未提交改动时，必须先停止部署，要求完成 commit/CR 或选择明确的回滚/暂存策略。禁止用 `vercel deploy`、手动上传、压缩包等方式把未提交代码直接发布到任何共享环境。
-- 代码保存门禁：发布前相关改动必须已经 commit，并能通过 commit hash、分支名、PR/CR 或构建产物追溯。若用户要求紧急修复，也必须先创建 hotfix 分支并提交，再按预发验证、CR/审批、生产发布执行；不得“先线上发布后补提交”。
-- 预发门禁：必须先部署到预发环境，且确认预发项目、预发域名、预发 API、预发数据库/schema、预发下游服务没有混用生产环境。
-- 测试报告门禁：预发通过后，必须产出或更新测试报告，记录测试环境、账号、版本/deployment、用例、命令、结果、失败项和证据路径。报告建议写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/test-report.md`；若项目已有固定测试报告路径，沿用项目路径。
-- Code Review 门禁：生产发布前必须发起 CR/PR 或生成 code review 记录，说明变更范围、风险点、验证结果、回滚方案和 reviewer/审批状态。记录建议写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/code-review.md`；若使用 GitHub/GitLab PR，最终回复必须给出 PR/CR 链接。
-- 线上发布门禁：只有预发验证通过、测试报告完成、CR/PR 已创建或已审核后，才能部署生产。生产部署后必须做线上 smoke test，并把生产 deployment、线上域名、验证结果和残留风险补回测试报告或运维记录。
-- 环境隔离门禁：所有部署命令必须明确目标环境和目标项目。禁止在未确认 Vercel/云项目 link、deployment target、环境变量、数据库 host/schema 的情况下执行发布。预发与线上部署记录必须分别列出，不得用同一条结果混写。
-- 真实入口清单门禁：项目真实域名、登录入口、主服务/BFF、Auth 服务入口、第三方 provider callback、业务回跳、固定 alias 和 deployment 快照不得写入通用 skill；必须从项目文档仓库的 `runtime-entry-inventory.md` 或等价入口清单读取。发布前逐项核对客户端实际入口、BFF URL、provider callback URL、callback alias、目标云项目、deployment ID、commit、target、DB/schema 和回滚点；每个 callback 域名必须单独 `inspect`，不能只检查同一项目的默认 Production alias。将本次候选复制到 `release-plan.md` 冻结；alias、deployment、commit 或入口变化后重新审批。若项目没有入口清单，先在项目文档仓库建立，不得把临时聊天记录当作长期事实源。
-- 低流量生产观察门禁：当生产用户少、功能未开量或观察窗口内自然请求不足时，`0` 条错误日志只能说明“未观察到错误”，不能证明链路健康。必须使用受控、可重复、无破坏性的合成探针主动覆盖本次主链路和相邻高风险路径，同时检查 runtime 日志；探针不得重复触发付费、发送、绑定、解绑、迁移或其它不可逆副作用。探针账号、凭据和 token 不得写入仓库或报告。
-- Release PR 最终核销门禁：涉及生产用户路径、数据写入或第三方回调时，最终核销至少包含真实用户或受控真实账号验证、合成探针、DB after/副作用检查、日志观察窗口和 alias/deployment 漂移检查。缺少任一适用证据时 Release PR 保持 open；不适用项必须写明理由，不能静默跳过。
-- 线上失败暂停门禁：用户报告线上失败或 P0/P1 探针失败后，立即暂停 Release PR 合并、观察核销和后续切流。先从客户端实际 URL、请求 host、callback URL、runtime 日志和云平台 inspect 定位请求真实命中的 project/deployment/commit，再判断代码、环境、数据或第三方根因；禁止在未确认命中版本时继续改业务代码或宣布观察通过。
-- 生产候选默认分支门禁：Preview 可以按已审批方案使用可追踪的 PR head；进入 Production 前，发布矩阵中所有包含代码或配置候选的仓库都必须先合并 Code PR 到各自远端默认分支，并记录精确 merge commit。Production deployment 必须直接来自该 merge commit，或来自能提供源码 commit、构建任务和产物摘要映射的可追踪构建产物；无法证明映射时不得发布。客户端包、灰度包或商店构建即使已上传，也只表示单个产物完成；依赖服务尚未部署、默认分支尚未归并或跨系统契约尚未通过时，完整 Release Train 必须保持 open。
-- 发布后跨仓库归位：Production 发布核销并合并 Release PR 后，逐一确认所有受影响仓库的远端默认分支包含本次候选 merge commit，再将本地工作区切回对应默认分支并执行 `git pull --ff-only`；记录远端默认分支、merge commit、deployment commit、本地/远端 HEAD 和工作区状态。若有未提交用户改动，先保存或说明，不得为归位而丢弃改动。本地切回默认分支不能替代 Code PR 合并或 deployment commit 核对。
-
-**每次共享环境发布必须先完成发布方案评审，禁止只发布眼前仓库。** 任何预发、生产、灰度、TestFlight、Worker 或多服务发布，在执行部署前都必须创建或更新 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/06-ops/release-plan.md`，并使用 `templates/release-plan-template.md`。发布方案必须读取 `references/release-integrity.md`，从用户入口沿真实调用链递归盘点客户端、主服务、认证、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方配置；同时从每个候选仓库的 `base...head` 变更反向扫描 API、事件、队列、Webhook、共享包、迁移、环境变量、部署/IaC 和定时任务，形成“关联系统发布矩阵”。“客户端不直连内部服务”不能作为排除主服务下游依赖的理由。矩阵中的每个系统都必须明确仓库、默认分支、云项目、域名、当前版本、实现/head commit、默认分支 merge commit、deployment/产物 commit、是否已归并默认分支、发布决策、判断依据、依赖、顺序、环境变量、数据迁移、验证和回滚；每个系统的决策只能是“发布”“不发布（证据）”“本次已在前置版本发布”或“阻断”，不能留空、待定或只写“依赖上游”。没有改动的系统也必须以“不发布 + 证据”记录，禁止因未列出而默认遗漏。发布前必须做一次从下游回到用户入口的反向闭包复核，孤立行、未确认 owner、未知调用方向或未知部署目标都阻断。评审状态只能为 `awaiting-review`、`approved` 或 `rejected`；未取得用户或指定 reviewer 的明确 `approved` 前禁止部署。候选 commit、系统范围、迁移、环境或发布顺序发生变化时，原审批失效，必须重新评审。部署完成后必须把实际 deployment、commit、smoke、监控和回滚点回填发布方案，并逐项核销矩阵，不能只报告客户端或主系统成功。
-
-**发布完整性与主干归位是同一条硬门禁。** 发布按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> complete` 推进，不得跳过状态。Production 绝不允许从 feature/hotfix 分支、未合并 PR、未提交工作区或无法映射到远端默认分支 merge commit 的构建发布；“先线上发布、之后再补 main/master”视为无效发布。部署前和部署后都必须对每个受影响仓库运行 `scripts/check_release_integrity.sh`（或项目等价检查），证明候选 commit 被 `origin/<default-branch>` 包含、deployment 源码 commit 与候选一致，并列出所有 Git worktree。默认分支 worktree 必须和远端 HEAD 一致且干净；其它 worktree 若落后或有未提交改动，必须先保存并记录，禁止 reset/checkout/强制覆盖。发现漏发、候选漂移、默认分支未合并、deployment 映射不一致、默认分支 worktree 落后/脏或无法确认远端状态时，状态保持 `blocked`，暂停切流和 Release PR 核销，按 `references/release-integrity.md` 修复、回滚或重新审批；不得用重新部署、切换本地分支或刷新页面掩盖。
-
-**代码 PR、Release PR、方案审批和部署必须分流表达。** 发布前必须读取 `references/release-pr-lifecycle.md`，明确当前讨论的是 Code PR 还是 Release PR，以及用户当前需要执行的是 review/merge、批准 release plan、验证 Preview 还是批准 Production。Release PR 默认在 Preview 验证期间保持 open：release plan 获得 `approved` 后即可按方案部署 Preview，不要求先 merge Release PR；Preview 通过并回填 deployment、E2E、DB、监控和回滚证据后，才评审是否 merge Release PR。禁止只说“先 merge”“继续”或“发布吧”而不指出 PR 编号、PR 类型、目标环境和下一动作。
-
-**创建 PR 默认使用中文。** 创建 Code PR、Release PR、文档 PR 或其它 Pull Request 时，标题、正文标题、变更说明、验证结果、风险、回滚方案和检查清单默认全部使用中文。代码标识、命令、路径、commit hash、API 名称和产品专有名词可保留原文。只有仓库贡献规范明确强制其它语言，或用户明确指定其它语言时才例外，并在创建前说明原因。PR 创建后必须回读标题和正文，确认没有遗留英文模板或无意义的中英混排；该规则只约束新建或本次主动重写的 PR，不要求未经授权批量修改历史 PR。
-
-**生产发布后必须完成线上回归，回归通过前禁止宣布发布完成。** 线上回归必须基于固定生产域名和受控生产测试账号，覆盖本次变更、所有已发布关联系统的契约、P0 核心用户路径、相邻高风险路径、环境隔离、数据库/队列副作用和关键失败路径；不能用 health check、构建 Ready 或单页 smoke 代替。测试用例、命令、结果、截图/API/日志证据必须写回 `05-testing/test-report.md` 和 `06-ops/release-plan.md`。任一 P0/P1 回归失败时，立即停止后续切流和发布核销，按发布方案回滚受影响系统，完成根因修复后重新走预发、发布评审、生产部署和线上回归。只有矩阵系统全部核销、线上回归通过并完成观察窗口，发布状态才能标记为 `complete`。
-
-**发布后内容生产是可选旁路，不是发布硬门禁。** 当页面或功能进入 `complete` 后，主 Agent 必须检查项目是否启用 `postReleaseContent`，并主动提供 `suggest`、`draft`、`publish` 三种选项。`suggest` 只输出 3-5 个候选选题；`draft` 从 Git、代码、方案、测试和发布证据采集素材，生成中文和英文稿并落盘；`publish` 只有在目标站点、内容目录、构建命令和独立文章发布门禁明确后才能执行。文章生产不得阻塞页面发布，文章发布也不得反向替代页面发布核销；默认不得因页面发布完成而静默公开文章。详细规则见 `references/post-release-content.md`，角色定义见 `agents/content-agent.md`。
-
-**零散想法先进入 Inbox，不直接开发。** 当用户说“先记下来”“后面再开发”或临时给出产品想法时，只记录到轻量草稿清单，不启动正式 PRD/架构/编码流程。当前任务完成后，如果没有命中必须停下的硬门禁，必须立刻回看 Inbox/Todo：评估清单事项与当前工作、已提交代码和已完成任务的相关性；选择一个后续任务；然后按 OPC Skills 正式研发流程继续执行，包括开新分支、编写技术方案和测试方案、实施、端到端联调和测试用例。不得等待用户再说“继续”。只有当下一步会进入用户审核、迁移、部署、删除或其它明确确认关卡时才暂停。
-
-**功能页证据闭环，不用间接证据替代验收。** 当本次改动涉及 UI、交互、客户端页面、移动端 Tab、Web 路由、弹窗、列表、表单、布局、图片、图表或可视状态时，完成标准必须包含“进入被改功能的真实页面并验证”。禁止用以下证据替代功能验收：仅类型检查通过、仅构建成功、仅安装成功、仅应用启动成功、停留在默认首页截图、停留在错误 Tab 截图、只看运行日志没有看页面、只验证相邻页面或抽象组件。改了哪个页面或交互，就必须导航到那个页面或交互状态；如果用户给了截图指出问题，必须在同一页面、同一状态、同类设备视口下截图对比。截图或运行时快照发现未修复时，必须继续修复，不得报告完成。
-
-**验证码登录必须自动化闭环。** 当发布或修复涉及邮箱验证码登录、注册、OAuth 回跳后的 token 交换、登录态持久化或客户端登录入口时，发布前必须在真实客户端环境完成自动化端到端测试。移动端必须优先使用 iOS Simulator 或 Android Emulator 自动操作登录页，并使用项目事实源中约定的受控测试账号；验证码可从受控服务端日志、数据库中的验证码 hash、邮件服务日志或测试工具中取得，不得以“无法登录邮箱”为理由跳过验证。测试必须覆盖：发送验证码、冷却/Loading、输入正确验证码、verify、token exchange、userinfo/current user、进入登录后首页、token 持久化、冷启动恢复和用户身份一致性；失败时必须定位到客户端、网关、认证服务、数据库或第三方服务的具体层级，并修复后复验。断言必须使用稳定业务结果，不能用按钮消失、Loading 出现、接口 2xx、构建成功、上传 TestFlight 或包内容检查替代真实登录闭环。认证/登录类任务必须先读取 `references/auth-login-e2e.md`。
-
-**登录/预发故障必须先验运行时、环境和数据库。** 当用户报告登录失败、账号密码正确但被拒、验证码/OAuth/绑定异常、预发登录不可用、前端提示和真实凭据不一致时，禁止先默认是登录业务代码问题。必须先完成认证故障前置三分法：第一，确认客户端实际请求的主服务域名、固定 alias、deployment id、commit 和构建时间，排除旧构建/缓存/alias 未切；第二，直接请求主服务健康接口和目标认证接口，并读取 runtime 日志，确认服务进程是否启动、是否 5xx、是否 CORS/网络失败；第三，按项目事实源脱敏检查目标环境标识、DB host/schema、下游认证服务 URL 和只读数据库连接，确认预发没有混用生产且数据库租户、用户和 schema 可用。只有当服务运行时、环境边界和数据库连接都健康，才能继续改登录校验、UI 文案或账号迁移逻辑；若 runtime/DB/env 已失败，必须先停在环境修复和证据记录，不得继续叠加无关代码。认证/登录类排障必须读取 `references/auth-login-e2e.md` 的“预发/运行时前置排查”。
-
-**客户端只进主服务，不直连内部子服务。** C 端业务项目必须采用分层架构：移动端、Web、小程序、桌面端和 SDK 只能调用项目指定的网关/主服务/API server；不得直接访问认证、AI、Worker、数据、邮件、对象存储 API 或临时 deployment URL。主服务负责客户端契约、鉴权代理、用户上下文、CORS/网络边界、环境路由、降级与错误格式；内部服务只接受主服务或受控 service-to-service 调用。各环境的真实服务名和内部地址从项目事实源读取，只能进入服务端配置，不能进入客户端包或客户端 `.env`。
-
-**第三方身份能力必须统一接入。** 项目指定的统一认证服务是 OAuth/OIDC provider 接入和身份归属规则的唯一 owner。Provider 的 client ID、client secret、callback URL、JWKS、token 签发密钥和校验逻辑只属于认证服务端配置；客户端和业务服务不得各自保存 provider secret、直连 provider callback 或重复实现绑定逻辑。网关/主服务可以做路由转发、鉴权上下文、错误归一和环境隔离，但不承载 provider secret。具体认证服务名、provider、callback 和账号策略从项目事实源读取。
-
-**编码前必须先查成熟开源方案。** 进入非平凡功能、交互、性能、基础设施、AI、认证、支付、搜索、图片/视频、缓存、队列、图表、编辑器、地图、上传下载、部署或测试自动化实现前，必须先搜索并评估可复用的开源项目、官方 SDK、成熟组件或行业通用方案。优先查看官方文档、GitHub/维护者文档、npm/包管理信息和现有项目依赖；对比维护状态、版本兼容、现有技术栈匹配、集成成本、性能、可访问性、回滚风险和自研替代成本。UI、手势、动画、图片加载、缓存和性能类问题禁止直接手写方案，除非调研后明确说明没有合适库或引入成本高于收益。调研结论写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/00-research/competitor-research.md`；bugfix fast-path 可写入 `04-engineering/debug-report.md` 或 `implementation-plan.md` 的开源调研小节。需要详细选型准则时读取 `references/open-source-stack.md`。
-
-**Subagent 必须带来明确收益。** `opc-skills` 定义 Agent 职责和门禁，但不自动触发 subagent；`SKILL.md` 不能通过 shell、hooks 或脚本启动 subagent。真正调用 subagent 必须由主 Agent 在运行时使用 Codex Runtime 工具 `multi_agent_v1.spawn_agent` 执行，并且仅在用户明确允许 subagent、多 Agent 或并行执行时使用。启动 subagent 前必须说明预期收益：是否能并行提速、降低遗漏、提高审查质量或隔离专业上下文；必须定义 ownership：可读范围、可写文件、禁止修改范围、输出要求和验收方式。小 bug、单文件修改、目标不清、写范围重叠、需要生产发布/数据库迁移/环境变量修改/破坏性清理的任务不得拆给 subagent。主 Agent 始终保留目标澄清、架构最终决策、跨层边界、发布门禁、结果审查、集成和最终汇报责任。需要实际调用时，必须先读取 `references/subagent-orchestration.md`，再读取对应 `agents/<role>-agent.md` 和 `templates/subagent-task-brief-template.md`。详细执行准则见 `docs/subagent-optimization-plan.md`、`docs/subagent-runtime-invocation-design.md` 和 `references/agent-workflow.md`。
-
-所有方案、架构决策、UI 原型、测试计划、评审结论都必须落盘到：
-
-```text
-<PROJECT_ROOT>/docs/<FEATURE_NAME>/
-```
-
-不要只把产品或技术决策留在聊天记录里。
-
-`<PROJECT_ROOT>` 的判定规则：
-
-- 如果用户明确指定项目目录，则以该目录为项目根目录。
-- 如果用户没有指定项目目录，则以当前工作目录中最匹配本次任务的项目目录为项目根目录。
-- 如果当前工作目录本身就是项目根目录，则直接使用当前目录。
-- 不允许把文档写死到某个固定项目名下面；最终回复必须列出实际写入路径。
-
-`<FEATURE_NAME>` 的判定规则：
-
-- 每次新需求必须先定义一个稳定、可读、英文 kebab-case 的 feature name，例如 `account-linking`。
-- 如果用户明确给出 feature name，则使用用户给出的名称。
-- 如果用户没有给出，Agent 必须根据需求内容自行命名，并在开始写文档前声明。
-- 同一需求的 PRD、UI 原型、技术架构、实施计划、Backlog、测试策略、运维手册都必须写到同一个 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/` 目录下。
-- 不允许把本次需求文档分散写入多个 feature 目录。
-
-产品和技术文档必须遵守以下规则：
-
-- 每类文档只保留一份主文档，不保留多份互相竞争的 PRD、架构方案或 UI 原型。
-- 后续变化在主文档内部做版本化迭代。
-- 每个版本必须说明：改了什么、为什么改、替代了哪个旧决策、影响是什么。
-- 不再要求所有文档机械套用 SMART 和 5W2H。产品 PRD 可以用 SMART/5W2H 做快速校验；架构、UI、研发、测试、运维文档必须优先写清本环节真正需要的判断、边界、方案、证据和风险。
-- 如果使用 SMART/5W2H，只能作为辅助检查，不能替代正文。禁止为了填模板写空泛表格。
-- 旧文档只有在内容合并完成后才归档或删除。
-- 每个主文档都必须优先基于 `templates/` 目录中的对应模板创建或更新。
-- 文档生成或更新完成后，必须进入 `awaiting-user-review` 状态，等待用户审核。
-- 用户审核通过前，不允许开始代码实现、数据库迁移、部署、删除、归档或破坏性清理。
-- 只有用户明确说出“审核通过”“开始编码”“开始实施”“执行迁移”“部署”等批准语义，才能进入对应执行阶段。
+- 支持 `启动 OPC Skills`、`启动 C 端业务应用研发流程`、`一键启动 C 端应用研发`、`跑一遍 C 端应用和配套 B 端工作台全流程`。
+- 处理 App/Web/小程序的规划、设计、研发、测试、发布、运维及配套配置、审核、运营、排错工作台。
+- 客户端、前后端、真机/模拟器联调按本次影响范围启用；发布后文章与双语 SEO/GEO 内容是可选旁路。
 
 ## 工作模式
 
@@ -136,483 +24,55 @@ description: 用于规划、设计、研发、测试、部署和运维 C 端业�
 - `post-release-content`：当页面或功能已经完成生产发布，且用户或项目配置启用文章生产时使用。只处理素材采集、选题、中文/英文稿、SEO/GEO、配图计划和文章落盘/发布，不重新执行页面发布门禁。
 - `architecture-review`：当用户要求检查架构、调用关系、分层、服务腐化或 Agent 产物质量时启用。重点审查依赖方向、服务边界、数据所有权、调用图和防腐化规则。
 
-## Subagent 执行模型
-
-`opc-skills` 中的产品、UI、架构、研发、QA、联调和 DevOps Agent 默认是概念 Agent，用于定义职责、产物和质量门禁；它们不等于一定要启动可执行 subagent。
-
-`SKILL.md` 只能规定调用规则，不能直接启动 subagent。满足门禁后，主 Agent 必须按以下顺序执行：读取 `references/subagent-orchestration.md` -> 读取对应 `agents/<role>-agent.md` -> 填写 `templates/subagent-task-brief-template.md` -> 调用 `multi_agent_v1.spawn_agent` -> 需要结果时调用 `multi_agent_v1.wait_agent` -> 审查输出并按 `templates/subagent-result-template.md` 复核。
-
-只有满足以下门禁，主 Agent 才能调用 subagent：
-
-1. 用户明确允许 subagent、多 Agent 或并行执行。
-2. 子任务能独立完成，并且能并行推进或明显提高审查质量。
-3. 文件或职责 ownership 清楚，不会和其它 worker 写入范围重叠。
-4. 子任务输出能被主 Agent 快速验收和集成。
-5. 子任务不涉及生产发布、数据库迁移、环境变量修改、回滚或破坏性清理。
-
-推荐的可执行 subagent：
-
-- `Explorer Agent`：只读探索代码影响面、接口、数据模型、开源方案和历史文档。
-- `Frontend Agent`：实现 Web/RN 页面、B 类表格、筛选、分页、抽屉、批量工具条、本地 mock 和前端测试。
-- `Backend Agent`：实现主服务/BFF/API 契约、权限、用户上下文、分页、幂等、重试和后端测试。
-- `Data/Migration Agent`：设计 schema、索引、迁移和回滚脚本；不得直接执行生产迁移。
-- `QA/Test Agent`：设计测试策略、测试用例、自动化断言和失败路径；不得把测试通过当成发布通过。
-- `Integration Agent`：检查前后端联调、环境拓扑、API contract 和证据汇总；不得执行生产发布。
-
-主 Agent 启动 subagent 前必须写清：目标、上下文、ownership、输出要求、禁止事项、预期收益和验收方式。subagent 完成后必须检查是否越权、是否引入无关改动、是否违反分层边界、是否有可复验证据，并记录实际收益、冲突和下次是否继续使用同类 subagent。
-
-角色定义文件只作为 prompt spec 使用，不会自动运行：
-
-- `agents/explorer-agent.md`
-- `agents/frontend-agent.md`
-- `agents/backend-agent.md`
-- `agents/qa-agent.md`
-- `agents/integration-agent.md`
-- `agents/devops-agent.md`
-
-## Agent 角色
-
-本工作流使用以下概念 Agent。概念 Agent 是方法论角色；是否启动可执行 subagent 必须遵守上一节门禁。
-
-所有 Agent 的共同要求：
-
-- 产物必须服务当前 feature 的真实端到端目标，不能只完成局部模块。
-- 每个 Agent 在输出前必须复核目标澄清结论；如果发现当前方案偏离用户目标，要先退回澄清或需求验证，而不是继续细化错误方向。
-- 发现边界不清、跨层直连、职责混乱、共享状态滥用或环境混用时，必须在对应文档中明确标出风险和修正方案。
-- 架构、研发和联调结论必须能被后续 Agent 复用，不允许只写聊天摘要。
-- 各 Agent 必须写本环节该想清楚的内容。不要为了统一模板牺牲信息密度；不要把每份文档都写成同一套泛泛摘要。
-
-1. 需求验证 Agent
-   - 负责在 PRD、UI、架构或编码前检查需求是否能被执行和验收。
-   - 必须先做目标澄清：用用户自己的业务结果复述目标，并确认主要操作闭环、批量范围、成本约束和验收证据。用户目标不清时必须反问，不得自行假设。
-   - 必须识别歧义、冲突、隐藏假设、权限差异、数据来源、环境差异、异常路径、边界条件、非功能要求和不可验证的验收标准。
-   - 必须把每条关键需求映射到可证明的验收证据：测试用例、截图、接口响应、日志、数据库记录、预发验证或线上 smoke test。
-   - 如果需求是常见成熟能力，要求竞品调研 Agent 先补调研；如果需求是内部运营/业务流程，重点验证角色、状态机、数据闭环、预发/线上差异和运营动作。
-   - AI/生成类需求必须显式验证成本链路：提示词预览、审核、昂贵生成、缓存复用、对象存储、批量上限和最小返工粒度。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/01-product/requirement-validation.md`。若只是小 bug，可把验证结论写入 debug report，不强制新建 PRD。
-
-2. 竞品调研 Agent
-   - 负责竞品、行业通用方案、开源/商业平台能力、风险案例和可采纳决策。
-   - 调研必须优先使用官方文档、标准文档、可信技术博客或竞品公开产品文档；需要列出来源链接、调研日期、可比方案、适用性、拒绝理由和采纳决策。
-   - 当需求涉及认证、支付、消息、协作、搜索、AI、监控、部署、数据迁移、账号体系等成熟通用能力时，必须先补充竞品/通用方案调研，再写 PRD 和架构。
-   - 当需求涉及客户端交互、手势、动画、图片加载、缓存、虚拟列表、图表、编辑器或其它成熟组件领域时，必须调研 React Native/Flutter/Web 等对应生态的成熟开源组件，说明复用、自研或局部借鉴的选择。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/00-research/competitor-research.md`。
-
-3. 产品 Agent
-   - 负责 PRD、角色、场景、范围、指标。
-   - PRD 必须先写清用户目标和核心工作流，不能从功能模块或字段列表开始。目标要能解释为什么需要这些页面、按钮、状态和数据。
-   - 对 B 类运营需求，PRD 必须定义决策单元、批量范围、操作闭环、异常处理、返工方式和成本/时效约束。例如“快速生成某批产物、先审低成本预览再执行昂贵生成、可按单项重新生成”这类目标必须成为流程主线。
-   - PRD 必须回答：用户是谁、问题是什么、核心流程是什么、哪些在范围内/外、验收标准是什么、优先级和里程碑是什么。SMART/5W2H 仅作为可选检查工具。
-   - PRD 的验收标准必须来自需求验证 Agent 的结论，能追踪到具体测试或联调证据。不能只写“体验良好”“功能正常”“智能生成”等不可验证表述。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/01-product/PRD.md`。
-
-4. UI Agent
-   - 负责 Markdown 原型、页面流、交互状态。
-   - UI 原型必须先声明页面类型和效率目标。B 类运营页面默认采用“筛选上下文 + 高密度决策表 + 批量操作 + 详情抽屉”的信息结构；只有明确理由时才采用卡片流或展示型布局。
-   - 设计 B 类页面前，必须读取 `references/b-side-ui-guidance.md`，并先用 `find-skills` 或开源调研确认是否有可借鉴的后台表格、筛选、批量操作、详情抽屉、虚拟列表、图片预览或审计流程模式；调研结论必须转化为本页面的采纳/拒绝决策，禁止只列外部链接或照搬外部 skill 原文。
-   - B 类 UI 原型必须先定义总分下钻层级：是否需要“全部对象总览页”；从总览到对象工作台、分组明细、单项详情的路径是什么；每一层回答什么问题、保留哪些字段、隐藏哪些低频信息、提供哪些操作。若不设计集合总览页，必须说明为什么当前业务只有一个对象或入口已由上游确定。
-   - 对新建、重做或复杂改造的 B 类页面，UI 原型必须先给出 ASCII 草图，用低成本方式展示首屏布局、筛选区、主表/矩阵、批量工具条、详情抽屉和关键弹窗。每张 ASCII 草图下面必须直接跟对应基础交互路径和副作用约束，不得把交互说明拆到远离草图的独立章节：用户从哪个入口进入、如何筛选和定位对象、如何进入下钻层级、如何执行主操作、成功后页面如何更新、失败后如何重试或回退。至少覆盖新建路径、查看路径、批量处理路径、单项详情路径、异常处理路径和发布/确认路径；简单页面可说明不需要 ASCII 草图或不适用某条路径的原因。
-   - 对 B 类页面，禁止把 P0/P1 决策字段藏进详情。也禁止把非决策必需内容常驻展示：已筛选出来的上下文字段不要重复占列表列；完整提示词、原始 JSON、日志、长说明和低频审计字段默认进入抽屉、hover、展开行或独立详情页。图片等可视判断对象应直接出现在行内，支持 hover/点击大图；操作列固定在右侧；异常和缺字段要直接暴露。长列表原型必须包含分页/总数/每页条数；需要跨页选择或批量操作时必须说明选择保持、批量工具条、清空选择和失败回显。
-   - 对 B 类交互，UI 原型必须包含本地 mock 验证场景：典型数据、空态、错误态、长内容、多状态、批量范围、单条返工和昂贵操作确认。原型要说明哪些状态在本地 mock 先验收，哪些状态必须到目标平台预发用真实接口复验。
-   - UI 原型必须回答：信息架构、页面入口、主流程、表单字段、列表列、详情状态、空/错/慢状态、权限状态和关键交互反馈。不要套产品指标模板。
-   - B 类 UI 原型必须包含“外部参考取舍”小节，写清候选来源、采纳内容、拒绝内容和本地化规则；采纳内容必须落到列、筛选、分页、批量操作、行内图片、详情抽屉、状态反馈或验证点。
-   - 需要时复用 `ui-ux-pro-max` 做设计系统与交互质量补充，复用 `ant-design` 做后台表格/表单/分页/ProComponents 选型，复用 `ui-audit` 做发布前 UI 审计；外部 skill 只能作为查询和审计入口，核心规则必须以 `opc-skills` 的中文约束为准。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`。
-
-5. 架构 Agent
-   - 负责开源选型、自研边界、模块架构、数据模型、API。
-   - 必须先参考产品和 UI 需求，再做技术选型。
-   - 架构方案必须包含“开源选型与自研边界”结论；若选择自研，必须说明已调研的开源方案、拒绝理由和后续替换路径。
-   - 基础原则：必须定义清晰的分层架构，防止服务腐化。至少说明客户端层、网关/主服务层、领域服务层、AI/Worker/子服务层、数据层、对象存储/第三方层的职责边界；不适用的层要明确说明原因。
-   - 基础原则：必须识别并阻止反向依赖、跨层直连、前端绕过主服务调用内部子服务、子服务承载用户鉴权、数据库被多个服务随意写入、业务规则散落在 UI 或脚本中的腐化风险。
-   - 基础原则：每个模块必须有清晰 owner 和变更边界。主服务负责鉴权、用户上下文、环境隔离、对外契约和降级；内部子服务只提供受控能力；数据层只通过明确仓储/服务访问。
-   - 必须显式校验项目事实源定义的前端访问边界：客户端只调用网关/主服务，认证、AI、邮件、Worker、对象存储等内部能力由主服务代理或编排。第三方身份 provider 只在统一认证服务接入一次，业务服务只复用认证能力，不复制 provider secret 或 OAuth 逻辑。
-   - 架构文档必须说明架构之间的调用关系：客户端、后台、网关/主服务、子服务、数据库、对象存储、队列/任务、第三方 API 之间谁调用谁、同步还是异步、鉴权方式、关键入参/出参、数据落点、失败传播和重试/回滚边界。禁止只列模块清单而不写调用链。
-   - 架构文档必须明确前端访问边界：Web、移动端、小程序、桌面端等客户端默认只能调用网关/主服务/API server，不得直接调用内部子服务（如 AI service、Worker、数据服务）。如果确需直连，必须在架构文档中单独说明原因、鉴权、CORS/网络边界和风险接受。
-   - 架构调用关系必须提供 Mermaid 调用图，优先使用 `flowchart LR` 或 `sequenceDiagram`。图中必须覆盖关键客户端、后台、服务端、数据库、对象存储和第三方 API，并在节点或连线标签中体现关键接口、鉴权、同步/异步、数据读写和失败边界。不要再用大表格重复 Mermaid 已表达的调用链。
-   - 架构文档必须有架构图。除调用图外，复杂需求还应提供一张分层架构图，说明层之间允许的依赖方向和禁止的绕行路径。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/03-architecture/architecture.md`。
-
-6. 变更影响 Agent
-   - 负责编码前的影响面分析，防止多仓库、多服务、多环境联动时遗漏。
-   - 必须列出受影响 repo、模块、页面、API、数据表、迁移、环境变量、缓存、队列、定时任务、对象存储、第三方服务、客户端版本和发布环境。
-   - 必须说明接口契约是否变化、是否兼容旧客户端、是否需要数据迁移、是否需要 feature flag、回滚方式是什么。
-   - 必须明确哪些风险由代码验证，哪些由联调验证，哪些由发布门禁验证。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/change-impact.md`，也可合并进 implementation plan 的独立章节。
-
-7. 研发 Agent
-   - 负责实施计划、任务拆分和代码修改。
-   - 实施计划必须回答：改哪些仓库/模块/文件、迁移怎么做、接口契约怎么变、兼容策略、保存点、任务顺序、回滚点和每阶段退出条件。
-   - 除非有明确理由，否则必须复用 `<PROJECT_ROOT>/` 中已有客户端、API、数据库、任务处理和基础设施代码。
-   - 当 UI 缺少关键数据时，必须先检查主服务/BFF/内部服务是否未透传字段，不能只在前端用占位符掩盖。AI/生成类实现必须保护昂贵操作，优先实现提示词预览、审核和缓存复用，再触发图片/视频等高成本生成。
-   - B 类页面实现必须先建立本地 mock 验证入口。优先使用 Playwright route mock、MSW、dev fixture 或项目既有 mock 层构造稳定数据，不依赖真实预发数据边改边猜；mock 中必须包含正常、空、失败、长内容、缺字段、处理中、已完成但产物缺失、批量确认和单条返工状态。mock 验证通过前不得部署目标平台；如果项目还没有 checked-in Playwright/MSW gate，必须至少在本次 feature 文档中记录可复跑命令、脚本路径或缺口，不得只写“本地看过”。
-   - 编码前必须完成项目发现：识别包管理器、启动命令、测试命令、lint/typecheck 命令、dev server、端口、环境变量样例、现有测试、当前分支和未提交改动。
-   - 研发必须采用执行闭环：保存点 -> 小步修改 -> 运行最小验证 -> 读取失败 -> 修复 -> 复验 -> 更新证据。不能只改代码不验证，不能把构建通过当作功能通过。
-   - 测试范围必须由“改动文件 + 直接调用方/被调用方 + 共享契约 + 风险”确定。先列出受影响调用链，再选择最小充分测试集；不得因为测试命令方便或习惯性做法而默认执行无关的全量测试。
-   - 默认验证层级按以下顺序递进：改动模块的直接回归测试；受影响调用方/被调用方的契约或集成测试；改动涉及的 typecheck、lint、build；只有在发布门禁、跨模块公共基础设施变更、无法可靠筛选影响范围或用户明确要求时，才执行全量测试。未执行的测试必须记录“不适用/未执行”及原因和残余风险。
-   - 完成前必须做本地 diff 自审：检查无关改动、分层边界、权限/隐私、错误处理、性能风险、迁移安全、预发/线上配置差异和测试缺口。
-   - 自动执行证据写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/evidence-manifest.md`；code review 自审写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/code-review.md`。
-
-8. Bug Triage Agent
-   - 负责 bug 复现、定位、修复路径和回归验证，是 `bugfix-fast-path` 的主 Agent。
-   - 必须先记录：环境、版本/commit、账号/权限、操作步骤、期望结果、实际结果、截图/日志/API 响应、是否可稳定复现。
-   - 必须定位归因层级：客户端、Web 前端、主服务/网关、内部子服务、数据库、缓存、对象存储、第三方、配置、发布环境或旧构建/缓存。
-   - 能写自动化失败用例时，应先补失败测试；不能自动化时，必须写清人工复现步骤和最小证据。
-   - 修复后必须验证原问题、相邻路径、回归风险和环境差异；UI/客户端 bug 必须进入真实功能页或同类设备状态截图验证。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/04-engineering/debug-report.md`。小 bug 可只产出 debug report、evidence manifest 和 test report。
-
-9. QA Agent
-   - 负责测试范围、测试用例、执行报告。
-   - QA 设计测试前必须先做变更影响映射：按改动文件识别直接行为、调用方/被调用方、共享状态和外部依赖，并在测试策略中写明“必测、条件扩展、明确不测”三类范围。
-   - QA 必须优先给出最小充分测试集，而不是默认全量回归。共享 API、认证、存储、缓存、路由、序列化、基础组件等公共边界变更，才按调用链扩展到相邻契约和集成测试；与调用链无关的 UI、领域模块或工具测试不得仅因同一仓库存在而执行。
-   - 全量测试只能作为发布门禁、跨模块公共基础设施变更、影响范围无法可靠切分或用户明确要求时的升级选项。执行全量测试时，报告必须说明触发条件、预期覆盖的风险，以及哪些结果与本次变更无直接关系。
-   - 测试文档必须回答：哪些行为要被证明、用什么证据证明、覆盖哪些失败路径、哪些环境要跑、哪些命令/截图/API 响应作为证据。不要只写测试类型清单。
-   - QA 必须验证目标闭环，而不是只验证控件存在。B 类页面必须用截图或自动化断言证明：筛选上下文不冗余、关键决策字段列表可见、行内可视对象可直接判断、批量操作可用、单条返工可用、异常状态可行动。
-   - B 类页面测试必须分两层：先本地 mock 交互验收，再预发真实链路验收。本地 mock 验收检查信息架构、状态流转、操作路径、错误/空/慢状态、批量确认不嵌套、处理中项不可重复提交、产物缺失状态和昂贵操作保护；预发验收检查真实 API、数据库、对象存储、权限、环境隔离和缓存命中。两层证据缺一不可；仅证明预发登录页可打开不是功能页预发验收。
-   - AI/生成类测试必须覆盖成本保护：提示词预览不触发昂贵生成，审核后才生成图片/视频，OSS/缓存命中不重复生成，按天/单条重生不会误触发整批重生。
-   - 必须建立从需求到测试的追踪：每条 P0/P1 验收标准至少对应一个 test case 或联调证据；无法测试的验收标准必须退回需求验证 Agent 重写。
-   - 测试文档必须按系统拆分说明怎么测：客户端、主服务/网关、领域/内部服务、数据层、第三方、运维/发布。没有涉及的系统要明确写“不适用”和原因。
-   - 测试用例必须具备执行指导性。P0 case 必须写清 `id`、目标系统、优先级、前置数据、操作步骤、期望结果、不能发生的副作用、证据和自动化/人工方式。禁止只写“测试登录”“测试绑定”“测试接口正常”这类抽象条目。
-   - 测试设计必须参考行业通用方法：风险驱动测试、需求到用例可追踪、等价类、边界值、决策表、状态迁移、错误猜测；认证/OAuth/API 类需求必须参考 OWASP ASVS 和 OAuth Security BCP 的安全验证思路。
-   - 当需要编写或审查测试策略时，先读取 `references/testing-guidance.md`，并把适用规则落到 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/test-strategy.md`。
-   - 当需求涉及登录、注册、验证码、OAuth、绑定/解绑、token 刷新、会话持久化或账号合并时，必须同时读取 `references/auth-login-e2e.md`，并把认证状态矩阵写入测试策略或测试用例。
-   - 优先复用 `test-agent-orchestrator`、`test-case-designer`、`test-execution-runner`。
-
-10. 联调 Agent
-   - 负责研发完成后的本地、预发、生产联调门禁。
-   - 必须验证本次需求涉及的客户端、后端、AI/Worker/第三方服务、数据库、对象存储、环境变量和端口拓扑是否一致。
-   - 只有当项目包含客户端应用且本次改动影响客户端，或用户明确要求客户端联调时，才启用客户端专项门禁。
-   - 客户端包括 Web 控制台、移动端 App、桌面端或小程序；启用时必须按项目实际客户端类型选择联调路径。
-   - 当客户端登录依赖邮箱验证码、OAuth 或 token exchange 时，必须按 `references/auth-login-e2e.md` 完成真实客户端闭环。验证码应从统一认证服务的可观测证据获取，例如目标环境数据库的验证码 hash 反查、受控日志或测试邮件平台；必须记录验证码来源、请求 URL、响应状态、稳定登录后页面证据、token 持久化证据、冷启动恢复证据和失败层级。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/integration-report.md`。
-
-11. DevOps Agent
-   - 负责部署、可观测性、Worker 运维、节点健康、客户端发布和运维手册。
-   - 运维手册必须回答：环境隔离、发布门禁、回滚方案、关键配置、巡检命令、告警分级、故障归因和数据/对象存储安全边界。
-   - 负责执行发布门禁：先预发部署，再预发测试报告，再 CR/PR 或 code review 记录，最后生产发布、线上 smoke、线上回归和观察窗口核销。
-   - 生产发布前必须核对目标项目、域名、环境变量、数据库 host/schema、下游服务 URL 和回滚方案；发布后必须记录 deployment URL、固定域名、验证命令、验证账号、结果和残留风险。
-   - 当发布目标涉及 iOS、TestFlight、App Store Connect、App Store 正式提交、IPA、archive/exportArchive 或 Apple 签名时，必须调用 `ios-release`；旧的 `ios-testflight-release` 仅作为兼容入口。
-
-12. Content Agent
-   - 负责生产发布完成后的可选文章生产：素材采集、选题、双语写作、去 AI 味、SEO/GEO、配图计划和落盘。
-   - 只能使用 Git、代码、项目文档、测试报告、发布方案和脱敏证据；不得凭记忆补数字、版本、时间线、根因或用户数据。
-   - 文章不得包含账号、token、secret、内部域名、deployment URL、数据库 host/schema、客户数据或未脱敏截图。
-   - 默认只生成选题或草稿；文章公开发布必须有独立目标、预览、Code Review、部署和回滚证据。
-   - 文章发布失败不回滚页面发布；保留素材清单和失败阶段，支持从最近成功阶段重试。
-   - 产物写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/07-content/`，或写入项目事实源指定的博客内容目录。
-
-## 一键工作流
-
-启动工作流后：
-
-1. 识别并声明本次 `<PROJECT_ROOT>` 和 `<FEATURE_NAME>`，然后读取当前项目材料：
-   - `<PROJECT_ROOT>/README.md` 或项目说明文件
-   - 当前 PRD
-   - 当前 Markdown UI 原型
-   - 当前技术架构
-   - 当前开源选型与自研边界
-
-2. 在新增内容前，先把同一 feature 下的散落文档合并到主文档：
-   - PRD：`docs/01-product/PRD.md`
-   - 需求验证：`docs/01-product/requirement-validation.md`
-   - UI 原型：`docs/02-ui/markdown-prototype.md`
-   - 技术架构：`docs/03-architecture/architecture.md`
-   - 实施计划：`docs/04-engineering/implementation-plan.md`
-   - 变更影响：`docs/04-engineering/change-impact.md`
-   - 调试报告：`docs/04-engineering/debug-report.md`
-   - 证据清单：`docs/04-engineering/evidence-manifest.md`
-   - Backlog：`docs/04-engineering/backlog.md`
-   - 测试策略：`docs/05-testing/test-strategy.md`
-   - 运维手册：`docs/06-ops/ops-runbook.md`
-   - 竞品调研：`docs/00-research/competitor-research.md`
-
-3. 更新或产出以下文档：
-   - `docs/<FEATURE_NAME>/00-research/competitor-research.md`
-   - `docs/<FEATURE_NAME>/01-product/requirement-validation.md`
-   - `docs/<FEATURE_NAME>/01-product/PRD.md`
-   - `docs/<FEATURE_NAME>/02-ui/markdown-prototype.md`
-   - `docs/<FEATURE_NAME>/03-architecture/architecture.md`
-   - `docs/<FEATURE_NAME>/04-engineering/change-impact.md`
-   - `docs/<FEATURE_NAME>/04-engineering/implementation-plan.md`
-   - `docs/<FEATURE_NAME>/04-engineering/debug-report.md`
-   - `docs/<FEATURE_NAME>/04-engineering/evidence-manifest.md`
-   - `docs/<FEATURE_NAME>/04-engineering/code-review.md`
-   - `docs/<FEATURE_NAME>/04-engineering/backlog.md`
-   - `docs/<FEATURE_NAME>/05-testing/test-strategy.md`
-   - `docs/<FEATURE_NAME>/05-testing/test-cases.json`
-   - `docs/<FEATURE_NAME>/05-testing/integration-report.md`
-   - `docs/<FEATURE_NAME>/06-ops/release-plan.md`
-   - `docs/<FEATURE_NAME>/06-ops/ops-runbook.md`
-   - `docs/<FEATURE_NAME>/07-content/content-production.md`（启用发布后内容生产时）
-
-   生成或更新这些文档时，必须优先使用以下模板：
-   - `templates/prd-template.md`
-   - `templates/requirement-validation-template.md`
-   - `templates/ui-prototype-template.md`
-   - `templates/architecture-template.md`
-   - `templates/change-impact-template.md`
-   - `templates/implementation-plan-template.md`
-   - `templates/debug-report-template.md`
-   - `templates/evidence-manifest-template.md`
-   - `templates/backlog-template.md`
-   - `templates/test-strategy-template.md`
-   - `templates/release-plan-template.md`
-   - `templates/ops-runbook-template.md`
-   - `templates/content-production-template.md`（启用发布后内容生产时）
-
-4. 编码前必须执行研发准备门禁，并把结论写入 `docs/<FEATURE_NAME>/04-engineering/implementation-plan.md`、`change-impact.md` 或 `debug-report.md`：
-   - 目标澄清：确认用户目标、核心工作流、批量范围、成本约束、返工粒度和验收证据已写入需求验证或 PRD；未确认时先反问用户。
-   - 需求可执行性：验收标准必须可测试、可截图、可接口验证或可日志/数据验证；不可验证的表述必须先改写。
-   - 开源方案调研：先查可复用开源项目、官方 SDK 或成熟组件，记录候选方案、来源、兼容性、引入成本、风险和采纳/拒绝理由。没有调研结论前，不得开始非平凡代码实现。
-   - 项目发现：识别相关 repo、包管理器、启动命令、测试命令、lint/typecheck 命令、dev server、端口、环境变量样例、当前分支、未提交改动和已有测试。
-   - 保存点：确认当前代码已有 commit、stash、补丁或其它可回滚保存点；记录保存点标识、原分支、主分支同步结果和新需求分支。
-   - 分支准备：先切回远端默认主分支并 `git pull --ff-only`，确认同步成功后再创建需求分支；主分支同步失败时不得开始实现。
-   - 变更影响：列出受影响模块、API、数据、缓存、任务、环境、客户端版本、预发/线上配置和回滚路径。
-   - 任务切分：每个任务必须有明确文件/模块范围、验证方式、退出条件和失败后处理动作。
-   - 自动执行循环：每轮实现后必须运行最小验证；失败时先读错误和日志，再修复并复验；不能在失败未解释时继续叠加无关改动。
-   - 证据清单：每次关键命令、页面截图、接口响应、日志、数据库检查、模拟器/浏览器验证都必须记录到 evidence manifest；未能执行的验证必须说明原因和风险。
-
-5. 当启用 `bugfix-fast-path` 时，执行以下 bug 修复门禁：
-   - 复现门禁：记录环境、版本/commit、账号/权限、操作步骤、期望结果、实际结果、截图/日志/API 响应和复现稳定性。
-   - 定位门禁：明确归因层级，先排除旧包、缓存、错误环境、配置混用和服务未重启，再判断代码问题。
-   - 认证前置门禁：登录、注册、验证码、OAuth、绑定、账号迁移或预发认证问题，必须先完成主服务 runtime、平台 alias/deployment、环境变量、DB host/schema、下游认证服务和客户端实际请求目标检查；任何一项失败时，先修环境/配置，不得先改业务登录代码。
-   - 最小修复门禁：只修改与 bug 相关的代码和测试；需要扩大范围时必须说明原因。
-   - 回归门禁：验证原 bug、相邻路径、失败路径和预发/线上差异；客户端/UI bug 必须进入真实功能页或同类设备状态截图验证。
-   - 根因记录：`debug-report.md` 必须写清根因、修复点、验证证据、未覆盖风险和后续建议。
-
-6. 研发完成后必须执行本地自审门禁：
-   - 查看 diff，确认没有无关文件、临时日志、密钥、调试开关、错误环境 URL 或生成产物误入。
-   - 检查分层边界，尤其是客户端不得直连内部子服务，内部子服务不得承载用户登录态判断。
-   - 检查错误处理、权限、隐私、性能、缓存、迁移安全和兼容性。
-   - 检查需求验收标准是否已映射到测试报告、联调报告或 evidence manifest。
-   - 自审结论写入 `docs/<FEATURE_NAME>/04-engineering/code-review.md`；正式 PR/CR 可引用该文件。
-
-7. 研发完成后必须执行联调门禁，并把结果写入 `docs/<FEATURE_NAME>/05-testing/integration-report.md`。联调门禁至少包含：
-   - 客户端范围判定：先判断本次需求是否涉及 Web 控制台、移动 App、桌面端、小程序或外部 SDK；若不涉及，报告中明确写“客户端专项门禁不适用”及原因。
-   - 客户端能力矩阵：启用客户端专项门禁时，先列出客户端类型、运行方式、目标环境、关键用户路径、依赖 API、认证方式、缓存/离线/推送/深链等受影响能力。
-   - 进程和端口拓扑：确认每个服务只保留一份有效进程，端口无冲突，客户端配置指向正确 API。
-   - 环境变量：确认本地、预发、生产的服务 URL、API key、模型名、数据库连接、schema、CORS/ATS/网络安全配置完整且不交叉。
-   - 预发运行时健康：部署后必须直接验证固定预发主服务 alias 的健康接口和本次涉及 API；`READY` 只代表构建完成，不能替代 runtime/API/DB 可用性。云平台运行时日志中出现函数/Worker 启动失败、DB 连接失败、tenant/user not found、CORS preflight 500 或 request status 0 时，优先归因到 runtime/env/DB。
-   - 客户端网关边界：确认客户端环境变量、运行时配置、网络日志和构建产物中没有内部子服务 URL 或生成的临时 deployment URL；客户端所有业务 API 都必须指向网关/主服务。
-   - 数据库和迁移：确认目标数据库、schema、表、索引、幂等约束存在，写入路径不会污染其它环境。
-   - service-to-service：验证客户端到主服务、主服务到 AI/Worker 服务、AI/Worker 到第三方 API 的链路。
-   - 第三方 API：用最小请求验证路径、鉴权、模型/渠道、超时和错误格式，区分代码错误、配置错误、供应商不可用。
-   - Web 客户端 smoke test：仅当本次需求涉及 Web 控制台时执行，验证关键页面能打开、登录态有效、主流程能触发、轮询/等待动画/错误态可见。
-   - Web B 类页面 smoke test：必须先在本地 dev server 使用 mock 数据完成同一页面、同一状态、同一主流程的截图/断言验收；通过后再部署或检查目标平台预发，并用真实 API 复跑关键路径。不得用预发真实数据不可控作为跳过本地交互验证的理由。
-   - 移动端客户端 smoke test：仅当本次需求涉及 React Native、Expo、iOS、Android、Flutter 或小程序客户端时执行，必须构建或启动对应客户端，验证 API baseURL、登录态、核心页面、主流程、加载态、错误态、缓存/离线队列和环境切换；iOS 优先使用模拟器构建安装验证，React Native/Expo 优先复用 `react-native-dev`，小程序优先复用对应小程序 skill。
-   - 认证/登录专项验证：当本次改动触及认证链路时，必须额外验证 token exchange 后 current user、token 持久化、刷新/续期、退出、冷启动恢复、用户身份一致性和错误回退路径；不得只验证发送验证码或 OAuth 跳转成功。
-   - 客户端契约验证：客户端专项门禁启用时，必须核对接口字段、错误码、分页/轮询/超时、鉴权刷新、schema 兼容和空/错/慢三类状态，避免只验证 happy path。
-   - 客户端发布形态：仅在客户端专项门禁启用时执行，区分 Metro/dev server、Debug 包、Release 包、TestFlight/灰度包或生产包，确认用户看到的是最新构建而不是旧缓存。若发布或验证目标包含 iOS/TestFlight/App Store，使用 `ios-release` 执行签名、归档、导出、上传和 App Store Connect/TestFlight 配置检查。
-   - 客户端证据：仅在客户端专项门禁启用时要求，联调报告必须记录客户端类型、运行方式、设备/浏览器、版本号或构建号、API 环境、验证命令、关键截图或日志路径。
-   - 功能页截图验收：仅在客户端专项门禁启用且本次改动涉及 UI/交互时执行。必须先列出本次实际修改的页面、Tab、路由或弹窗，再逐一进入对应功能页截图或采集运行时 UI 快照。验收截图必须覆盖用户指出的问题状态，例如指定 Tab、指定日期、指定列表项、指定空态/错误态/加载态、指定表单字段或指定底部安全区。若截图不在目标功能页，或截图无法证明问题已修复，则该项为失败，必须继续修复。
-   - 失败归因：每个失败项必须给出归因层级（前端、主服务、子服务、数据库、配置、第三方、沙箱/网络）和下一步处理动作。
-
-8. 如果用户要求“发布”“上线”“部署线上”“准备发布”或类似生产发布意图，必须执行生产发布门禁：
-   - 先确认目标环境：如果用户没有明确说预发、线上、production、prod、preview、staging 等目标环境，必须先询问用户，不得执行部署命令。
-   - 确认代码保存状态：列出当前分支、commit、工作区是否干净。若存在未提交改动，必须停止发布并先要求提交、暂存或回滚；禁止从本地未提交工作区部署。
-   - 生成关联系统发布矩阵：从用户入口沿客户端、主服务及其内部下游递归检查 Auth、AI、邮件、Worker/Cron、后台、数据库、对象存储和第三方，逐项判断是否发布；所有“不发布”项必须给出 commit/config/API 契约未变化等证据。
-   - 完成双向影响闭包：除入口向下游递归外，对每个候选仓库执行 `base...head` 变更反查，覆盖代码调用、API/事件契约、队列/Cron/Webhook、共享包、迁移、环境变量、部署/IaC 和客户端入口；存在未知依赖、未知 owner 或未知部署目标时阻断，不得猜测“不影响”。
-   - 评审发布方案：把系统范围、候选 commit、部署顺序、依赖、迁移、环境、验证、监控和回滚写入 `06-ops/release-plan.md`；状态为 `approved` 前不得执行任何共享环境部署。方案变化后必须重新评审。
-   - 确认 CR 状态：若尚未发 CR/PR，先创建或生成 code review 记录；未经用户明确授权，不得跳过。
-   - 确认 PR 生命周期：按 `references/release-pr-lifecycle.md` 分别报告 Code PR 和 Release PR 的编号、状态与下一动作；Release PR 在 Preview 验证前保持 open，不能要求用户先 merge 它再部署 Preview。
-   - 部署预发：明确预发项目、预发域名、预发 API、预发数据库/schema 和预发下游服务；部署完成后记录 deployment URL。
-   - 执行预发测试：至少覆盖本次变更涉及的核心路径、失败路径和环境隔离检查；输出 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/05-testing/test-report.md` 或项目既有测试报告。
-   - 评审测试结果：若测试报告存在失败项，必须先修复或由用户明确接受风险；不得把失败报告当作发布通过。
-   - 冻结生产候选：把所有包含代码或配置候选的 Code PR 合并到各仓库远端默认分支，记录精确 merge commit，并更新发布矩阵；先运行 `scripts/check_release_integrity.sh`，证明候选已被 `origin/<default-branch>` 包含。merge commit 与已审批候选不一致时重新审批 Production release plan。
-   - 部署生产：明确生产项目、生产域名、生产 API、生产数据库/schema 和生产下游服务；按依赖优先顺序先部署并验证下游服务和主服务，再发布或放量客户端；每个 deployment/构建产物记录其源码 commit 和默认分支 merge commit。禁止从 feature/hotfix head 或未合并 PR 直接部署线上。
-   - 线上 smoke test：先验证线上关键页面/API/后台任务可用；若生产发布包含数据库迁移，必须记录迁移命令、目标 host/schema、迁移结果和回滚方式。
-   - 线上回归门禁：smoke 通过后，使用固定生产域名和受控生产账号执行本次需求、P0 核心路径、关联系统契约、相邻高风险路径和失败路径回归；结果与证据写回测试报告和发布方案。P0/P1 失败必须回滚并重新走完整发布链路，不能带失败核销发布。
-   - 发布核销：逐项确认发布矩阵中的系统已发布或按评审结论跳过，记录默认分支 merge commit、实际 deployment/产物 commit、版本、固定域名、smoke、线上回归、监控和回滚点；客户端产物完成但依赖服务未核销时保持 Release Train open，发现漏项、版本无法追溯或回归失败时停止后续流量切换。
-   - 跨仓库归位：确认远端默认分支包含本次 merge commit，再逐仓库切回默认分支并 `git pull --ff-only`；运行 `git worktree list --porcelain` 核对所有 worktree，记录每个 worktree 的路径、分支、HEAD、脏状态和处理结果。默认分支 worktree 未与远端一致或存在未提交改动时，保持阻断，不得强制覆盖。
-   - 最终回复必须列出：发布方案及审批状态、关联系统核销结果、各仓库默认分支 merge commit 与 deployment/产物 commit、预发 deployment、测试报告路径、CR/PR 或 code review 路径、生产 deployment、线上 smoke、线上回归结果、跨仓库归位、观察窗口和未解决风险。
-   - 发布完成后可选内容生产：若用户或项目配置启用 `postReleaseContent`，进入 `post-release-content` 模式，运行素材准备脚本，读取 `references/post-release-content.md`，生成或更新 `07-content/content-production.md`；内容生产不改变页面发布状态。
-
-### 客户端专项联调方案
-
-只有当客户端专项门禁启用时，联调 Agent 执行以下步骤：
-
-1. 识别客户端形态：Web、React Native/Expo、原生 iOS、原生 Android、Flutter、小程序、桌面端或 SDK。
-2. 识别运行形态：dev server、Debug 包、Release 包、TestFlight/灰度包、生产包、浏览器会话或真机。
-3. 识别环境绑定：API baseURL、WebSocket/SSE 地址、对象存储域名、认证回调、CORS/ATS/网络安全策略和 feature flags。
-4. 设计最小闭环：登录/鉴权、核心列表或详情、创建/更新/删除、长任务触发与轮询、错误态、空态、加载态、缓存或离线恢复。
-5. 选择验证工具：Web 优先 Playwright 或浏览器自动化；React Native/Expo 优先 `react-native-dev`；iOS 优先 XcodeBuildMCP 模拟器构建安装；小程序优先对应小程序 skill；无法自动化时必须记录人工验证步骤和证据。
-6. 输出联调矩阵：每个客户端类型一行，包含环境、入口、命令、设备、版本、验证路径、结果、证据和失败归因。
-7. 确认新旧构建：客户端问题必须先排除旧 bundle、旧包、错误环境、缓存登录态和代理配置，再归因到业务代码。
-8. 执行功能页验收：对每个被改功能执行“导航到目标页面/状态 -> 截图或快照 -> 对照验收点 -> 不通过继续修复”的闭环。不得把默认首页、错误 Tab、构建日志、安装成功或非目标页面截图记为通过证据。
-9. 执行认证闭环：若涉及登录/注册/OAuth/token，按 `references/auth-login-e2e.md` 验证稳定业务断言、服务端消费证据、客户端持久化、冷启动恢复和用户身份一致性。
-
-10. 在 `manual-gated` 模式下，实施代码、迁移数据库、部署、删除或归档文档前必须等待用户确认。
-
-11. 文档产出完成后，最终回复必须明确当前状态为 `awaiting-user-review`，并列出待用户审核的文档路径。
-
-12. 在 `full-auto` 模式下，可以继续完成实施、验证和报告，但仍需记录所有产物路径；如果本次需求已有审核关卡约束，则不得越过用户审核。即使是 `full-auto`，生产发布仍必须保留预发测试报告和 CR/code review 记录；不得从未提交本地工作区直接部署，也不得先发布后补 CR。
-
-## 文档质量规则
-
-所有主文档必须包含：
-
-1. 版本历史
-   - 版本号
-   - 日期
-   - 变更内容
-   - 变更原因
-   - 决策影响
-
-2. 当前决策
-   - 当前采用的方案
-   - 被拒绝的替代方案
-   - 未解决问题
-
-3. 环节核心内容
-   - 竞品调研：来源链接、对比维度、通用模式、适用性、采纳/拒绝决策和风险。
-   - 需求验证：歧义、冲突、隐藏假设、状态机、权限、数据来源、环境差异、异常路径、边界条件和验收证据映射。
-   - PRD：场景、范围、用户、流程、验收标准。
-   - UI 原型：页面结构、入口、交互、状态、字段和权限。
-   - 架构：分层、调用图、数据模型、API、边界、防腐化约束。
-   - 变更影响：受影响 repo、模块、API、数据、配置、缓存、任务、客户端版本、环境、回滚和兼容策略。
-   - 实施计划/Backlog：项目发现、改动清单、顺序、迁移、兼容、风险、退出条件和自动执行循环。
-   - Bug 调试：复现、定位、归因、最小修复、回归、根因、证据和残余风险。
-   - 证据清单：命令、页面、截图、接口响应、日志、数据库检查、设备/浏览器、结果和未执行原因。
-   - 测试：用例、命令、数据、断言、截图/API/日志证据和失败路径。
-   - 测试用例必须从“测什么、哪个系统测、怎么测、具体 case、证据是什么”五个维度写清楚，并覆盖成功路径、失败路径、边界路径和不能发生的副作用。
-   - 运维：环境、配置、发布、回滚、巡检、告警和故障处理；发布方案还必须包含双向影响闭包、逐系统发布/不发布证据、候选与默认分支一致性、deployment 映射和 worktree 归位证据。
-
-4. 架构调用关系
-   - 适用于 `03-architecture/architecture.md`。
-   - 必须包含分层架构图，使用 Mermaid 画出客户端层、主服务层、内部子服务层、数据层、对象存储/第三方层，以及允许的依赖方向。
-   - 必须包含至少一个调用关系章节，说明用户操作或系统任务从入口到最终数据/副作用的完整链路。
-   - 必须包含 Mermaid 调用图，使用 fenced code block：```` ```mermaid ````。调用图要画出主要模块和关键调用方向，不得只用文字或表格代替。
-   - 每条关键链路必须在 Mermaid 图中体现调用方、被调用方、协议或接口、鉴权方式、同步/异步属性和核心数据对象；失败处理和可观测证据可用简短要点说明。避免使用“调用链表格”作为主要表达。
-   - Mermaid 图必须画出前端访问边界：客户端 -> 网关/主服务 -> 内部子服务。不得把客户端直接连到内部子服务，除非该直连是明确设计决策并写明风险。
-   - 如果存在 Web、移动端、后台、服务端、AI/Worker、数据库、对象存储或第三方 API，必须逐一纳入调用关系或明确说明不适用。
-
-5. 架构防腐化检查
-   - 适用于 `03-architecture/architecture.md`，必要时也写入 `04-engineering/implementation-plan.md`。
-   - 必须列出至少 3 条本 feature 的防腐化约束，例如“前端不得直连内部子服务”“主服务是唯一外部契约入口”“内部子服务不持有用户登录态判断”“跨环境 URL 不得兜底到生产”“临时脚本不得成为业务入口”。
-   - 每条约束必须能在代码、配置、测试或联调报告中被验证。
-
-6. 需求到验证追踪
-   - 适用于 `01-product/requirement-validation.md`、`01-product/PRD.md`、`05-testing/test-cases.json`、`05-testing/test-report.md` 和 `04-engineering/evidence-manifest.md`。
-   - 每条 P0/P1 需求必须有稳定 ID，例如 `REQ-FEATURE-001`。
-   - PRD 验收标准、测试用例、联调报告和证据清单必须引用这些 ID。
-   - 如果某条需求无法映射到可执行测试或证据，必须退回需求验证阶段重写，不能靠“人工感觉通过”验收。
-
-7. 自动开发执行质量
-   - 适用于 `implementation-loop`、`full-auto` 和用户明确要求直接开发的场景。
-   - 必须先发现项目命令和现有约束，再修改代码。
-   - 必须小步提交验证证据：每次关键变更后至少运行一个与变更相关的最小验证命令或功能页验证。
-   - 每轮验证前必须根据改动文件和调用链选择测试范围，并在最终报告中列出已执行、条件扩展、明确未执行的测试。全量测试不是默认完成条件；只有满足 QA Agent 规定的升级条件时才执行。
-   - 失败必须归因后再改；禁止在没有解释失败的情况下继续增加新代码。
-   - 最终报告必须说明哪些验证通过、哪些没跑、为什么没跑、残余风险是什么。
-
-8. Bug 修复质量
-   - 适用于 `bugfix-fast-path`。
-   - 必须先复现或说明无法复现的原因和替代证据。
-   - 必须区分代码 bug、配置问题、旧构建/缓存、环境混用、第三方异常和数据问题。
-   - 修复必须有回归证据，UI/客户端问题必须有真实功能页截图或运行时快照。
-   - Debug report 必须能让后续 Agent 不看聊天记录也理解问题、根因、修复和验证结果。
-
-主文档应简洁但完整。历史决策放在版本历史里，不要散落到重复文档中。
-
-## 模板规则
-
-所有主文档都必须对应一个模板。
-
-Agent 在读写文档时：
-
-1. 先读取对应模板。
-2. 再读取当前主文档。
-3. 判断主文档是否缺少模板中的约束项。
-4. 缺项时优先补齐，而不是自由发挥新增结构。
-
-如果用户没有特别要求，不要随意改变主文档的顶层结构。
-
-## 可复用 Skills
-
-- `find-skills`：查找可借鉴的开源 agent skills；B 类页面、复杂交互、表格/筛选/批量操作和 UI 审计前优先使用
-- `ui-ux-pro-max`：产品界面、设计系统、颜色、排版、响应式、可访问性和交互质量补充；B 类页面只能作为增强，不得替代效率目标和信息裁剪
-- `ant-design`：Ant Design、Ant Design Pro、ProComponents、Table、Pagination、Form、权限路由和后台组件选型
-- `ui-audit`：Web UI 发布前审计，覆盖可访问性、交互、表单、排版、布局、性能、动效和文案
-- `test-agent-orchestrator`：测试工作流入口
-- `test-case-designer`：测试计划和测试用例设计
-- `test-execution-runner`：测试执行和报告
-- `ios-release`：iOS 客户端发布，覆盖 TestFlight、App Store Connect、App Store 提审、签名、archive/exportArchive 和 IPA 上传；`ios-testflight-release` 只作为旧名称兼容入口
-- `blog-writing`：文章素材采集、选题、双语写作、去 AI 味、SEO/GEO 和博客落盘；项目存在该 skill 时可复用，但必须先过滤项目专属路径和事实
-- Cloudflare：用户选择 Cloudflare 时使用 `references/cloudflare-deployment.md`，按现有工具选择 Wrangler、API 或已登录浏览器
-- `deploy-to-vercel` 或 `vercel-deploy`：当前端明确选择 Vercel 时使用，不覆盖用户的平台选择
-
-## 开源策略
-
-不要默认所有模块都自研。
-
-默认技术取向：
-
-- 浏览器自动化：Playwright / Crawlee
-- MVP 任务队列：Postgres 任务队列
-- 平台化工作流：Temporal 或 Kestra
-- 结构化数据库：PostgreSQL
-- 证据和文件存储：MinIO
-- 可观测性：OpenTelemetry + Prometheus + Grafana + Loki
-- 认证授权：Keycloak
-- 后台 UI：Ant Design Pro / Refine
-
-只自研项目差异化部分：
-
-- 产品专属领域规则与状态机
-- 无成熟方案可复用的第三方适配器
-- 项目专属证据、审核与风控流程
-- 产品核心交互和差异化体验
-
-## 文档命名
-
-统一使用以下主文档结构：
-
-```text
-<PROJECT_ROOT>/docs/<FEATURE_NAME>/
-├── 00-research/competitor-research.md
-├── 01-product/requirement-validation.md
-├── 01-product/PRD.md
-├── 02-ui/markdown-prototype.md
-├── 03-architecture/architecture.md
-├── 04-engineering/change-impact.md
-├── 04-engineering/implementation-plan.md
-├── 04-engineering/debug-report.md
-├── 04-engineering/evidence-manifest.md
-├── 04-engineering/code-review.md
-├── 04-engineering/backlog.md
-├── 05-testing/test-strategy.md
-├── 05-testing/test-cases.json
-├── 05-testing/test-report.md
-├── 05-testing/integration-report.md
-├── 06-ops/release-plan.md
-├── 06-ops/ops-runbook.md
-└── 07-content/content-production.md  # 启用发布后内容生产时
-```
-
-除非用户明确要求创建附录或历史归档，否则不要新增顶层产品方案、技术架构方案或 UI 原型文档。
-
-示例：
-
-```text
-example-project/docs/example-feature/
-├── 00-research/competitor-research.md
-├── 01-product/requirement-validation.md
-├── 01-product/PRD.md
-├── 02-ui/markdown-prototype.md
-├── 03-architecture/architecture.md
-├── 04-engineering/change-impact.md
-├── 04-engineering/implementation-plan.md
-├── 04-engineering/debug-report.md
-├── 04-engineering/evidence-manifest.md
-├── 04-engineering/code-review.md
-├── 04-engineering/backlog.md
-├── 05-testing/test-strategy.md
-├── 05-testing/test-cases.json
-├── 05-testing/test-report.md
-├── 05-testing/integration-report.md
-├── 06-ops/ops-runbook.md
-└── 07-content/content-production.md  # 启用发布后内容生产时
-```
+## 关键约束
+
+以下是入口摘要，执行细节按下一节读取；reference 中的既有要求仍然适用。
+
+1. **保护已有成果。** 改代码、重构、迁移、部署或批量修改前先建立保存点。新需求从同步后的默认分支创建，逐受影响仓库核对；同步失败停止实现，不丢弃用户改动。详见[实施准备](references/implementation-workflow.md#保存点与分支准备)。
+2. **从业务结果出发。** 目标、角色、核心闭环、批量范围、成本和验收不明确时先澄清，不以字段或页面清单替代目标。完整需求按[阶段工作流](references/agent-workflow.md)推进。
+3. **沿用模式与审核关卡。** 默认 manual-gated；文档审核、实现、迁移、部署、删除等按现有模式执行。full-auto 需要明确授权，不能越过本 feature 已有审核要求；结构拆分不改变这些边界。
+4. **隔离项目事实。** 本 skill 只放通用方法；真实仓库、域名、账号、部署与数据库配置从项目事实源读取，不带入通用 skill 或客户端包。所有方案、架构决策、UI 原型、测试计划和评审结论落盘到 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/`，按[文档标准](references/document-standard.md)维护唯一主文档。
+5. **保持分层与身份归属。** 客户端只调用主服务/网关，内部服务走受控服务间调用；第三方 provider 与身份规则归统一认证服务。完整边界见[架构职责](references/role-catalog.md#5-架构-agent)。
+6. **先调研、后实现、再验证。** 非平凡实现先查成熟方案；按保存点、小步修改、最小验证、失败归因、修复复验、自审和证据记录闭环。测试范围按调用链与风险选择，不默认全量。
+7. **验证真实功能。** UI 改动进入被改页面和对应状态验收；认证覆盖真实客户端完整登录、持久化、冷启动和身份一致性。构建、安装、Ready、health 或接口 2xx 不替代业务闭环。
+8. **保护高成本操作。** AI/生成先低成本预览、审核，再执行昂贵生成并复用缓存；B 类页面先本地 mock 验收，再预发真实链路；批量确认、跳过和返工约束不能省略。
+9. **发布单独核销。** 明确目标环境与已提交来源，先预发、测试报告和 CR，再按批准方案上线。Production 候选先归并默认分支；发布矩阵、真实入口、回归、观察窗口和 worktree 归位缺项时不能宣告完整发布。失败停止切流及核销，按方案回滚。
+10. **Subagent 按授权启动。** 概念角色不自动启动 subagent；仅用户明确允许且收益、ownership、验收清楚时由主 Agent 用 Runtime 工具调用，不能用 shell/hooks 启动。主 Agent 保留架构、集成、发布和最终汇报责任。
+11. **PR 默认中文。** 创建或主动重写 PR 时按[PR 语言规则](references/release-pr-lifecycle.md#pr-创建语言)执行并回读；仓库规范或用户明确指定其它语言时才例外。
+12. **任务与内容衔接保持原规则。** 零散想法先记 Inbox；任务完成后按[Inbox 与任务衔接](references/agent-workflow.md#inbox-与任务衔接)处理。生产完成时检查发布后内容配置，按可选内容旁路提供 suggest/draft/publish，不静默公开文章。
+
+## 按需读取
+
+先按模式读取对应章节，再按本次影响触发专项；不要预先打开所有 references、角色或模板。涉及下列条件时，对应文件是执行入口，不是可略过的推荐阅读。
+
+| 当前任务或条件 | 读取内容 |
+|---|---|
+| 新需求、完整产品流程、目标不清 | [阶段工作流](references/agent-workflow.md)，再读[角色目录](references/role-catalog.md)中本阶段职责 |
+| implementation-loop / full-auto 的研发阶段 | [实施工作流](references/implementation-workflow.md)，变更影响按[对应角色](references/role-catalog.md#6-变更影响-agent)核对 |
+| bugfix-fast-path | [Bug 快速路径](references/implementation-workflow.md#bug-快速路径)；涉及认证再读认证专项 |
+| validation-only | 只读取被验证领域的对应参考，输出验证/风险，不进入编码 |
+| architecture-review、API 分层、身份或数据所有权 | [架构职责](references/role-catalog.md#5-架构-agent)与[架构文档质量](references/document-standard.md#质量要求) |
+| 产出或整理产品/技术文档 | [文档标准及模板索引](references/document-standard.md)，只打开对应模板 |
+| 设计或审查测试策略、用例、报告 | [测试指导](references/testing-guidance.md)，认证测试同时读下一行 |
+| 登录、验证码、OAuth、绑定/解绑、token、持久化或认证故障 | [认证 E2E 与运行时前置排查](references/auth-login-e2e.md)；身份 owner 仍遵守架构职责 |
+| 跨服务联调、改动影响客户端或明确要求客户端联调 | [联调范围、运行时、设备与功能页验收](references/client-integration.md) |
+| B 类页面设计、实现、review 或验收 | [运营页面设计、批量确认、本地 mock 与预发](references/b-side-ui-guidance.md) |
+| AI、生成、批量昂贵产物 | [成本分层](references/agent-workflow.md#ai生成成本)，涉及运营页面再读 B 类专项 |
+| 非平凡实现、开源选型或组件复用 | [开源技术栈与可复用 Skills](references/open-source-stack.md) |
+| release-gated、共享环境部署、回滚或发布核销 | [发布完整性](references/release-integrity.md)和[Code/Release PR 生命周期](references/release-pr-lifecycle.md)，两者都需读取 |
+| 创建或主动重写 PR | [PR 创建语言](references/release-pr-lifecycle.md#pr-创建语言)；发布 PR 同时执行完整发布指引 |
+| 获准使用可执行 subagent | [编排准则](references/subagent-orchestration.md)、对应 `agents/<role>-agent.md` 和任务包/结果模板 |
+| post-release-content | [内容生产](references/post-release-content.md)与[Content Agent](agents/content-agent.md) |
+
+角色文件用于职责与 prompt spec，不会自动运行；完整概念角色见目录，执行提示见 `agents/`。需要实现前后端时按实际角色选择，不把角色目录作为每次任务的必读整包。
+
+## 部署平台选择
+
+平台服从用户与项目事实源，支持 Vercel、Cloudflare 和已有环境，预发不默认限定 Vercel。
+
+- Cloudflare（含 cloudfare 拼写）：读[部署与迁移](references/cloudflare-deployment.md)。静态站按情况选 Pages / Workers Static Assets；API、认证、邮件、AI 等后端再读[原生 Workers 服务端迁移](references/cloudflare-native-workers.md)。原来按请求运行的服务先验证原生 Workers，不默认改成常驻容器；数据库迁移单独决策。
+- Vercel：明确选择 Vercel 的前端使用可用的 `deploy-to-vercel` / `vercel-deploy` skill，不覆盖用户的平台选择。
+- 只迁前端时保留原后端、认证、数据库和客户端发布范围；任何共享环境发布仍执行上表发布指引。
 
 ## 最终回复格式
 

@@ -2,7 +2,7 @@
 
 ## 编码前开源调研门禁
 
-非平凡实现前必须先调研成熟开源项目、官方 SDK 或行业通用方案，尤其是 UI 交互、手势、动画、图片/视频、缓存、虚拟列表、编辑器、图表、地图、认证、支付、搜索、队列、监控和测试自动化。
+**编码前必须先查成熟开源方案。** 进入非平凡功能、交互、性能、基础设施、AI、认证、支付、搜索、图片/视频、缓存、队列、图表、编辑器、地图、上传下载、部署或测试自动化实现前，必须先搜索并评估可复用的开源项目、官方 SDK、成熟组件或行业通用方案。优先查看官方文档、GitHub/维护者文档、npm/包管理信息和现有项目依赖；对比维护状态、版本兼容、现有技术栈匹配、集成成本、性能、可访问性、回滚风险和自研替代成本。UI、手势、动画、图片加载、缓存和性能类问题禁止直接手写方案，除非调研后明确说明没有合适库或引入成本高于收益。调研结论写入 `<PROJECT_ROOT>/docs/<FEATURE_NAME>/00-research/competitor-research.md`；bugfix fast-path 可写入 `04-engineering/debug-report.md` 或 `implementation-plan.md` 的开源调研小节。需要详细选型准则时读取 [open-source-stack.md](open-source-stack.md)。
 
 调研必须记录：
 
@@ -61,3 +61,42 @@ MVP 阶段：
 - 对象存储
 - IAM 认证授权
 - 指标和日志平台
+
+## 通用技术取向
+
+
+不要默认所有模块都自研。
+
+默认技术取向：
+
+- 浏览器自动化：Playwright / Crawlee
+- MVP 任务队列：Postgres 任务队列
+- 平台化工作流：Temporal 或 Kestra
+- 结构化数据库：PostgreSQL
+- 证据和文件存储：MinIO
+- 可观测性：OpenTelemetry + Prometheus + Grafana + Loki
+- 认证授权：Keycloak
+- 后台 UI：Ant Design Pro / Refine
+
+只自研项目差异化部分：
+
+- 产品专属领域规则与状态机
+- 无成熟方案可复用的第三方适配器
+- 项目专属证据、审核与风控流程
+- 产品核心交互和差异化体验
+
+
+## 可复用 Skills
+
+
+- `find-skills`：查找可借鉴的开源 agent skills；B 类页面、复杂交互、表格/筛选/批量操作和 UI 审计前优先使用
+- `ui-ux-pro-max`：产品界面、设计系统、颜色、排版、响应式、可访问性和交互质量补充；B 类页面只能作为增强，不得替代效率目标和信息裁剪
+- `ant-design`：Ant Design、Ant Design Pro、ProComponents、Table、Pagination、Form、权限路由和后台组件选型
+- `ui-audit`：Web UI 发布前审计，覆盖可访问性、交互、表单、排版、布局、性能、动效和文案
+- `test-agent-orchestrator`：测试工作流入口
+- `test-case-designer`：测试计划和测试用例设计
+- `test-execution-runner`：测试执行和报告
+- `ios-release`：iOS 客户端发布，覆盖 TestFlight、App Store Connect、App Store 提审、签名、archive/exportArchive 和 IPA 上传；`ios-testflight-release` 只作为旧名称兼容入口
+- `blog-writing`：文章素材采集、选题、双语写作、去 AI 味、SEO/GEO 和博客落盘；项目存在该 skill 时可复用，但必须先过滤项目专属路径和事实
+- Cloudflare：用户选择 Cloudflare 时使用 [cloudflare-deployment.md](cloudflare-deployment.md)，按现有工具选择 Wrangler、API 或已登录浏览器
+- `deploy-to-vercel` 或 `vercel-deploy`：当前端明确选择 Vercel 时使用，不覆盖用户的平台选择

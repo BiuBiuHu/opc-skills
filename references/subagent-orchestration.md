@@ -45,6 +45,8 @@ npm run spawn-agent
 
 ## 3. 主 Agent 的实际执行步骤
 
+仅在用户明确允许且任务能独立完成、收益明确、ownership 不重叠、产出能快速验收时调用。不能通过 shell/hooks 启动。主 Agent 负责架构、集成、发布及汇报；不得将生产发布、迁移执行、环境变量修改、回滚或破坏性清理拆给 subagent。详细角色文件及任务包在调用前读取。
+
 1. 判断用户是否明确允许 subagent、多 Agent 或并行执行。
 2. 判断任务是否值得拆：能并行提速、降低遗漏、提高审查质量或隔离专业上下文。
 3. 选择角色文件，例如 `agents/frontend-agent.md`。
@@ -52,7 +54,7 @@ npm run spawn-agent
 5. 调用 `multi_agent_v1.spawn_agent`。
 6. 主 Agent 继续做不重叠工作，不要原地空等。
 7. 需要结果时调用 `multi_agent_v1.wait_agent`。
-8. 审查 subagent 输出，检查 ownership、无关改动、分层边界和验证证据。
+8. 按 `templates/subagent-result-template.md` 审查输出，检查 ownership、无关改动、分层边界和验证证据。
 9. 需要补充信息时用 `send_input`；任务完成后用 `close_agent`。
 
 ## 4. 具体调用例子
@@ -143,3 +145,9 @@ input:
 - 最终对用户汇报。
 
 subagent 是提高速度和覆盖面的执行单元，不是责任转移。
+
+## 结果复核
+
+主 Agent 启动 subagent 前必须写清：目标、上下文、ownership、输出要求、禁止事项、预期收益和验收方式。subagent 完成后必须检查是否越权、是否引入无关改动、是否违反分层边界、是否有可复验证据，并记录实际收益、冲突和下次是否继续使用同类 subagent。
+
+角色定义只作为 prompt spec，不会自动运行。Explorer、Frontend、Backend、Data/Migration、QA/Test、Integration 的推荐职责见 [工作流角色](role-catalog.md) 和对应 `agents/` 文件；Data/Migration 不得执行生产迁移。

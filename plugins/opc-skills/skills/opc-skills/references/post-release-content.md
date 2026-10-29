@@ -152,3 +152,7 @@ lang: zh-CN
 9. 只有进入 `publish` 后，才执行博客构建、预览、Code Review、部署和发布后验证。
 
 内容生产失败时保留已生成的素材清单和失败原因，允许从最近一个成功阶段重试，不重复执行已经完成的昂贵步骤。
+
+## 发布完成时的入口检查
+
+**发布后内容生产是可选旁路，不是发布硬门禁。** 当页面或功能进入 `complete` 后，主 Agent 必须检查项目是否启用 `postReleaseContent`，并主动提供 `suggest`、`draft`、`publish` 三种选项。`suggest` 只输出 3-5 个候选选题；`draft` 从 Git、代码、方案、测试和发布证据采集素材，生成中文和英文稿并落盘；`publish` 只有在目标站点、内容目录、构建命令和独立文章发布门禁明确后才能执行。文章生产不得阻塞页面发布，文章发布也不得反向替代页面发布核销；默认不得因页面发布完成而静默公开文章。详细规则见 [post-release-content.md](post-release-content.md)，角色定义见 `agents/content-agent.md`。
