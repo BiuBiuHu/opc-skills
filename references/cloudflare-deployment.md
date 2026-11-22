@@ -35,6 +35,8 @@ API、认证、邮件、AI 等后端的数据库、流取消、凭据、自动�
 
 Routes 的同 zone `fetch(request)` 会按 DNS 回到外部源站；Custom Domain 自身就是源站，同样的回源写法可能再次进入 Worker。设计回源时必须明确是哪种路由，避免循环。预览域名与生产域名不能盲目互相 fetch；必须验证实际线上路径。不能将受 Vercel Deployment Protection 保护的默认 deployment URL 当作公开后端而不测试，也不能擅自关闭原访问保护。
 
+预发入口遵守[预发域名规则](preview-domains.md)，使用可读的`workers.dev`或`pages.dev`地址；本节Custom Domain操作适用于生产或当前任务明确授权的例外。
+
 ## 配置和构建
 
 - 检查 `assets.directory`、`binding`、`compatibility_date`、`main`、`workers_dev` 与显式环境。预览配置不携带生产 routes/custom domains；生产域名切换只在预览验证之后执行。
