@@ -72,6 +72,8 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 
 平台服从用户与项目事实源，支持 Vercel、Cloudflare 和已有环境，预发不默认限定 Vercel。
 
+预发入口统一使用平台原生域名，名称简短可读并标明 `preview`，不绑定业务自有域名；Cloudflare 与 Vercel 均遵守[预发域名规则](references/preview-domains.md)。部署前按该规则核对真实环境与访问保护。
+
 - Cloudflare（含 cloudfare 拼写）：读[部署与迁移](references/cloudflare-deployment.md)。静态站按情况选 Pages / Workers Static Assets；API、认证、邮件、AI 等后端再读[原生 Workers 服务端迁移](references/cloudflare-native-workers.md)。原来按请求运行的服务先验证原生 Workers，不默认改成常驻容器；数据库迁移单独决策。
 - Vercel：明确选择 Vercel 的前端使用可用的 `deploy-to-vercel` / `vercel-deploy` skill，不覆盖用户的平台选择。
 - 只迁前端时保留原后端、认证、数据库和客户端发布范围；任何共享环境发布仍执行上表发布指引。

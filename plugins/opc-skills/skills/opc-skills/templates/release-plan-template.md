@@ -20,6 +20,8 @@
 ## 1. 发布目标与范围
 
 - 用户结果：
+- 预发原生主入口 / 唯一deployment URL / 实际target / 访问保护：
+- 域名规则核对：`references/preview-domains.md`；自定义域名例外须记录本次明确指令。
 - 部署平台与形态：Vercel / Cloudflare Pages / Workers Static Assets / 原生 Workers API / Containers（选型依据）/ 其它；Git 构建 / 外部 CI / 直接上传
 - 平台账号/项目与 zone：从项目事实源读取；禁止记录凭据
 - 域名/Route、DNS/proxy/证书现状与回滚快照：
