@@ -60,6 +60,7 @@ C 端业务应用与配套 B 端工作台的研发入口。先识别用户指定
 | B 类页面设计、实现、review 或验收 | [运营页面设计、批量确认、本地 mock 与预发](references/b-side-ui-guidance.md) |
 | AI、生成、批量昂贵产物 | [成本分层](references/agent-workflow.md#ai生成成本)，涉及运营页面再读 B 类专项 |
 | 非平凡实现、开源选型或组件复用 | [开源技术栈与可复用 Skills](references/open-source-stack.md) |
+| 选择发布版本号、准备版本更新或冻结候选 | [大/中/小版本规则](references/release-versioning.md)；按完整功能范围判断级别 |
 | release-gated、共享环境部署、回滚或发布核销 | [发布完整性](references/release-integrity.md)和[Code/Release PR 生命周期](references/release-pr-lifecycle.md)，两者都需读取 |
 | 创建或主动重写 PR | [PR 创建语言](references/release-pr-lifecycle.md#pr-创建语言)；发布 PR 同时执行完整发布指引 |
 | 获准使用可执行 subagent | [编排准则](references/subagent-orchestration.md)、对应 `agents/<role>-agent.md` 和任务包/结果模板 |

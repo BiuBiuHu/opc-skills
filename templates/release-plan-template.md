@@ -8,6 +8,15 @@
 
 评审状态只能为 `awaiting-review`、`approved` 或 `rejected`。系统范围、候选 commit、迁移、环境、顺序、alias 或构建映射变化后必须重新评审。发布状态按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> complete` 推进；任一门禁失败时保持 `blocked` 或 `partially-released`。
 
+### 产品版本决策
+
+- 上一正式版本 / 目标版本：
+- 级别：MAJOR（大版本）/ MINOR（中版本）/ PATCH（小版本）
+- 相对上一正式版本的完整变更与级别理由：
+- 兼容性与迁移影响 / `0.x` 或项目约定：
+- 包/原生元数据/构建号/更新清单/tag/更新说明/官网一致性：
+- 判断规则：`references/release-versioning.md`
+
 ### 已有授权与缺口
 
 - 用户指令/批准来源与日期：
