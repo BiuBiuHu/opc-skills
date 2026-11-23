@@ -87,6 +87,8 @@ discovered
 
 ## 3. 部署前候选冻结
 
+先按[版本号规则](release-versioning.md)记录上一正式版本、目标版本、升级级别与判断依据；新增模块/完整能力不能默认只升 PATCH。核对应用包、原生元数据、更新清单、tag、说明与官网入口的一致性，再冻结候选。
+
 - 共享环境部署输入必须是已提交且可追踪的 commit、Code PR、CI 构建产物或归档包；工作区有未提交改动时阻断。
 - Preview 可以使用已审批的 PR head，但必须写明候选 head commit 和不先合并的理由。
 - Production 必须先合并所有代码/生产配置候选的 Code PR，再部署精确 merge commit 或可验证映射的构建产物。不得“先线上发布，之后再补 main/master”。
