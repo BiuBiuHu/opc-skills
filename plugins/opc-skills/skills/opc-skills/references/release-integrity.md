@@ -39,6 +39,7 @@ discovered
 -> production-deployed
 -> post-release-reconciled
 -> worktrees-synchronized
+-> worktrees-cleaned
 -> complete
 ```
 
@@ -47,6 +48,7 @@ discovered
 - `default-branch-merged`：所有包含本次代码或生产配置候选的仓库，Code PR 已合入各自远端默认分支，并记录精确 merge commit。
 - `post-release-reconciled`：矩阵每一行都有实际 deployment/产物、源码 commit、固定入口、验证、监控和回滚点。
 - `worktrees-synchronized`：默认分支的远端和本地 worktree 已核对；其它 worktree 的落后或脏状态已处理或明确阻断。
+- `worktrees-cleaned`：本次已合并、已用完且满足安全条件的工作树已移除；需保留项有具体理由，且已核对其它需求的工作树未被本次清理改变。
 
 `complete` 不是“主服务部署成功”的同义词。任一系统、默认分支、deployment 映射或 worktree 未核销，都必须保持 `blocked` 或 `partially-released`。
 
@@ -107,6 +109,16 @@ discovered
 
 默认分支未合并、deployment 映射不一致、默认分支 worktree 落后/脏、或无法确认远端状态时，发布状态保持 `blocked`，并明确下一动作；禁止以切换本地分支、刷新页面或重新部署掩盖问题。
 
+### 发布后工作树清理
+
+发布后清理是核销的默认步骤，不等待用户再次提醒。生产验证、观察窗口和 Release PR 合并完成，并核对远端默认分支与本地归位结果后，再清理本次已用完的工作树；预发仍待验收或后续发布需使用的工作树继续保留。
+
+1. **先确定归属。** 从本次创建记录和发布方案列出精确路径白名单，记录仓库、用途、分支与 HEAD。不能根据目录名、分支前缀或“已经合并”批量认领；主仓库、默认分支工作树、其它需求、共享或归属不明的工作树不清理，也不为完成本次清理改写其它需求的分支或文件。
+2. **核实可恢复与干净状态。** 更新远端引用，用 `git merge-base --is-ancestor HEAD origin/<default-branch>` 核对工作树的提交已进入远端默认分支，同时检查 tracked、untracked 和 ignored 文件。提交归属不明或未合并时保留；squash/rebase 场景若祖先检查不通过，需另行证明改动和远端提交的对应关系，否则保留。`git status` 干净不能证明 ignored 文件可丢弃。签名包、回滚材料、唯一测试证据和私有配置先保存在工作树外的适当位置并验证完整性；只删除确认可再生成的依赖、构建和缓存。
+3. **检查是否仍在使用。** 核对该路径的运行服务、验收客户端和编辑状态；仅结束本次任务启动、已完成且无待保存内容的实例。不擅自关闭其它任务的进程；仍在使用、脏状态、需要后续开发或无法证明安全时保留并记录具体原因，不强制处理。
+4. **按精确路径移除。** 先离开目标目录，再从保留的仓库工作树执行 `git worktree remove <path>`。不使用 `--force`、目录通配删除或全局 `git worktree prune` 绕过保护；应用管理的工作树遵循其管理机制。移除失败时停止处理该项并保留原因；工作树清理不附带删除本地/远端分支、tag、发布资源或生产数据。
+5. **复核与留证。** 对比清理前后的 `git worktree list --porcelain`，确认只移除了白名单中的路径，其它工作树的注册、分支和 HEAD 未因清理变化。将逐项移除/保留结果、合并依据、产物留存位置及清理前后清单保存到工作树外的项目运维证据目录，并在发布方案中关联。满足条件的本次工作树应清理完；安全保留项有证据和原因即可核销，不能为了状态通过强制删除。
+
 ## 5. 失败处理
 
 - 发现漏发系统：暂停后续切流和 Release PR 核销，补齐矩阵，重新审批候选和顺序；已发布系统按回滚方案处理。
@@ -122,6 +134,7 @@ discovered
 - 每个仓库的 Code PR、默认分支 merge commit、deployment/产物 commit 和映射证据；
 - 每个环境的 project、固定域名/alias、target、数据库/schema 和实际 deployment；
 - `check_release_integrity.sh` 输出、worktree 列表、`git pull --ff-only` 结果和脏状态处理；
+- 本次工作树清理白名单、合并证明、逐项移除/保留原因、产物留存位置与其它需求未变的前后核对；
 - 漏发/漂移/失败时的阻断、回滚、修复和复验记录。
 
 ## 7. 最终汇报

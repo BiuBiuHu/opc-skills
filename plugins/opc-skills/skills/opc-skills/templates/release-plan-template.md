@@ -6,7 +6,7 @@
 |----------|------|----------|----------|----------|----------|----------|
 | v0.1 | YYYY-MM-DD | 预发/生产 | commit/tag | 待定 | awaiting-review | 待定 |
 
-评审状态只能为 `awaiting-review`、`approved` 或 `rejected`。系统范围、候选 commit、迁移、环境、顺序、alias 或构建映射变化后必须重新评审。发布状态按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> complete` 推进；任一门禁失败时保持 `blocked` 或 `partially-released`。
+评审状态只能为 `awaiting-review`、`approved` 或 `rejected`。系统范围、候选 commit、迁移、环境、顺序、alias 或构建映射变化后必须重新评审。发布状态按 `discovered -> impact-mapped -> release-plan-approved -> candidate-frozen -> preview-verified -> default-branch-merged -> production-deployed -> post-release-reconciled -> worktrees-synchronized -> worktrees-cleaned -> complete` 推进；任一门禁失败时保持 `blocked` 或 `partially-released`。
 
 ### 产品版本决策
 
@@ -149,7 +149,7 @@ Production 默认按依赖优先顺序发布：先数据/内部服务，再主�
 - 线上回归结果：
 - 残余风险：
 - 客户端/单系统产物状态：不得代替完整 Release Train 状态。
-- 最终发布结论：只有全部系统核销、默认分支与 deployment commit 可追溯、线上回归通过且观察窗口完成后才能填写 `complete`。
+- 最终发布结论：只有全部系统核销、默认分支与 deployment commit 可追溯、线上回归通过、观察窗口完成且本次工作树清理核销后才能填写 `complete`。
 
 ### 8.2 完整性检查
 
@@ -163,3 +163,15 @@ Production 默认按依赖优先顺序发布：先数据/内部服务，再主�
 | 仓库 | Worktree 路径 | 分支 | 默认分支 | 候选 merge commit 已在远端 | deployment/产物 commit | `git pull --ff-only` | 本地/远端 HEAD | 工作区状态 | 归位结果 |
 |------|---------------|------|----------|---------------------------|------------------------|-----------------------|---------------|------------|----------|
 |  |  |  |  | 是/否 |  | 通过/失败/不适用 |  | clean/dirty | 待核销 |
+
+### 8.3 发布后工作树清理
+
+按[清理规则](../references/release-integrity.md#发布后工作树清理)执行；仅列入有本次任务归属证据的精确路径。预发待验收、其它需求、默认分支及仍在使用的工作树保留。
+
+| 仓库/精确路径 | 本次用途/归属依据 | 分支/HEAD | 远端合并依据 | tracked/untracked/ignored 检查与产物留存位置 | 运行实例/后续用途 | 移除结果或保留原因 |
+|---------------|------------------|-----------|--------------|-------------------------------------------|------------------|--------------------|
+|  |  |  |  |  |  | 待核销 |
+
+- 清理前后清单及逐项结果的持久证据路径（工作树外）：
+- 其它需求的工作树注册、分支及 HEAD 未因本次清理变化：通过/不通过
+- 本次满足条件的工作树已移除，安全保留项已注明具体原因：通过/不通过

@@ -49,6 +49,7 @@
 11. Production 低流量时执行无破坏性合成探针；仅有 `0` 条错误日志不算观察通过。客户端产物完成但依赖服务或跨系统契约未核销时，Release Train 保持 open。
 12. 最终核销每个仓库的默认分支 merge commit、deployment/产物 commit、真实用户验证、合成探针、DB after、日志窗口和 alias/deployment 漂移；适用证据完整后才 merge Release PR。
 13. Release PR merge 后逐仓库确认远端默认分支包含候选 merge commit，运行 `scripts/check_release_integrity.sh`，再切回默认分支执行 `git pull --ff-only`，并核对 `git worktree list --porcelain`。默认分支 worktree 未与远端一致或有未提交改动时，保持 blocked；切换本地分支不能替代 Code PR 合并或部署版本核对。
+14. 按[发布后工作树清理](release-integrity.md#发布后工作树清理)移除本次已合并、已用完且安全的工作树，保留其它需求和仍在使用的工作树。核对清理前后清单，归档移除/保留结果与产物留存位置，再将状态推进到 `worktrees-cleaned -> complete`。清理证据保存在被移除工作树之外，不因补记清理结果反复新建发布工作树。
 
 ## 4. 失败分支
 
