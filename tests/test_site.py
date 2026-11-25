@@ -77,6 +77,9 @@ ALLOWED_PHRASES = tuple(
             "spec",
             "TDD",
             "P0/P1",
+            "MAJOR",
+            "MINOR",
+            "PATCH",
             "B-side",
             "C",
             "QA",
@@ -100,6 +103,8 @@ EN_MARKETING_ON_ZH = (
     "This page is the product introduction",
     "Upgrade an existing install",
     "Keep it current",
+    "When shipping a product",
+    "Version from the change",
 )
 
 ZH_MARKETING_ON_EN = (
@@ -294,21 +299,24 @@ class SiteTests(unittest.TestCase):
         source = (SITE / "preview.py").read_text(encoding="utf-8")
         self.assertIn('/opc-skills', source)
 
-    def test_upgrade_path_is_explicit_and_not_automatic(self):
+    def test_release_version_is_planned_from_change_type(self):
         en = EN_PAGE.read_text(encoding="utf-8")
         zh = ZH_PAGE.read_text(encoding="utf-8")
-        self.assertIn("npx opc-skills update", en)
         self.assertIn(
-            "Upgrade an existing install to the latest version with one command",
+            "When shipping a product, the skill plans the version from the change type",
             en,
         )
-        self.assertIn("not an unattended or background auto-update", en)
+        self.assertIn("MAJOR", en)
+        self.assertIn("MINOR", en)
+        self.assertIn("PATCH", en)
         self.assertNotIn("automatic background updates", en)
         self.assertNotIn("automatic version bumping", en)
-        self.assertIn("npx opc-skills update", zh)
-        self.assertIn("一条命令即可把已安装的 skill 升到最新版本", zh)
-        self.assertIn("不会在后台自动跑", zh)
-        self.assertNotIn("自动升级", zh)
+        self.assertNotIn("Upgrade an existing install to the latest version with one command", en)
+        self.assertIn("发布产品时，skill 按这次用户可见变更的类型规划版本", zh)
+        self.assertIn("MAJOR", zh)
+        self.assertIn("MINOR", zh)
+        self.assertIn("PATCH", zh)
+        self.assertNotIn("一条命令即可把已安装的 skill 升到最新版本", zh)
 
     def test_language_guard_detects_mixed_copy(self):
         self.assertTrue(

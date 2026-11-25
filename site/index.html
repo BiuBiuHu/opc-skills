@@ -148,7 +148,7 @@
           <li>
             <span class="idx">08</span>
             <h3>Release</h3>
-            <p>Staging evidence, review, release-plan sign-off, production smoke, then production-domain regression.</p>
+            <p>Staging evidence, review, a version planned from the change type, release-plan sign-off, production smoke, then production-domain regression.</p>
           </li>
           <li>
             <span class="idx">09</span>
@@ -180,8 +180,8 @@
               <span>Reference plus a check script for candidate commit, deployment commit, default-branch merge, and worktree reconciliation.</span>
             </li>
             <li>
-              <strong>One-command upgrade</strong>
-              <span>Upgrade an existing install to the latest version with one command. Local edits use a verified baseline and three-way merge; a conflict leaves every install unchanged and keeps backups.</span>
+              <strong>Version from the change</strong>
+              <span>When shipping a product, the skill plans the version from the change type (<code>MAJOR</code> / <code>MINOR</code> / <code>PATCH</code>). It uses the complete user-visible change against the last formal version, not commit count, debug rounds, or packaging times. Mixed changes take the highest level. If you name a version, or the project already has rules, those come first and are recorded in the release plan.</span>
             </li>
             <li>
               <strong>Install surfaces</strong>
@@ -213,7 +213,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="install-title">Install</h2>
-          <p>Git and Python 3.9+ are required. The one-liner creates <code>~/.codex/skills</code> if needed. After install, one command upgrades the installed skill to the latest version. <code>doctor</code> checks provenance, versions, and local overrides.</p>
+          <p>Git and Python 3.9+ are required. The one-liner creates <code>~/.codex/skills</code> if needed. Use update to refresh an existing install; use doctor to check provenance, versions, and local overrides.</p>
         </div>
         <div class="terminals">
           <div class="terminal">
@@ -232,19 +232,11 @@
             </div>
             <pre><code>curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash</code></pre>
           </div>
-          <div class="terminal terminal-upgrade">
-            <div class="terminal-bar">
-              <span>upgrade</span>
-              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-              <button class="copy" type="button" data-copy="npx opc-skills update">Copy</button>
-            </div>
-            <pre><code>npx opc-skills update</code></pre>
-          </div>
         </div>
         <div class="install-notes">
           <article class="note">
-            <h3>Upgrade an existing install</h3>
-            <p><code>npx opc-skills update</code> refreshes an existing install from a verified Git source cache and syncs already-present <code>.agents</code>, Cursor, and Claude skill surfaces. Per-install local edits use a verified baseline and three-way merge. Any conflict leaves all installations unchanged; backups are retained. You run this command yourself: it is not an unattended or background auto-update, and a product release does not overwrite the global skill. <code>npx opc-skills doctor</code> checks provenance, versions, and local overrides, and does not require <code>.git</code> in the installed directory.</p>
+            <h3>Keep it current</h3>
+            <p><code>npx opc-skills update</code> uses a verified Git source cache and three-way merge. A conflict leaves every install unchanged and keeps backups. <code>npx opc-skills doctor</code> does not require <code>.git</code> inside the installed directory.</p>
           </article>
           <article class="note">
             <h3>Optional Codex plugin</h3>
