@@ -180,6 +180,10 @@
               <span>配套说明和检查脚本，核对候选 commit、deployment commit、默认分支合并和 worktree 归位。</span>
             </li>
             <li>
+              <strong>一键升级</strong>
+              <span>一条命令即可把已安装的 skill 升到最新版本。本地改动按受校验基线做三方合并；出现冲突时全部安装保持不变，并保留备份。</span>
+            </li>
+            <li>
               <strong>安装面</strong>
               <span>CLI 提供 install、update 和 doctor，并同步 Cursor 与 Claude 发现目录。可选 Codex Agent Plugin。本仓库尚未进入公开 Plugins Directory。</span>
             </li>
@@ -209,7 +213,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="install-title">安装</h2>
-          <p>需要 Git 和 Python 3.9+。一键安装会按需创建 <code>~/.codex/skills</code>。已安装时用 update 更新；用 doctor 检查来源、版本和本地差异。</p>
+          <p>需要 Git 和 Python 3.9+。一键安装会按需创建 <code>~/.codex/skills</code>。安装之后，一条命令即可把已安装的 skill 升到最新版本。<code>doctor</code> 检查来源、版本和本地差异。</p>
         </div>
         <div class="terminals">
           <div class="terminal">
@@ -228,11 +232,19 @@
             </div>
             <pre><code>curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash</code></pre>
           </div>
+          <div class="terminal terminal-upgrade">
+            <div class="terminal-bar">
+              <span>升级</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="npx opc-skills update">复制</button>
+            </div>
+            <pre><code>npx opc-skills update</code></pre>
+          </div>
         </div>
         <div class="install-notes">
           <article class="note">
-            <h3>保持更新</h3>
-            <p><code>npx opc-skills update</code> 使用受校验的 Git 源缓存和三方合并。出现冲突时全部安装保持不变，并保留备份。<code>npx opc-skills doctor</code> 不再要求安装目录里必须有 <code>.git</code>。</p>
+            <h3>升级已有安装</h3>
+            <p><code>npx opc-skills update</code> 从受校验的 Git 源缓存刷新已有安装，并同步已经存在的 <code>.agents</code>、Cursor 和 Claude 发现目录。各安装的本地改动使用受校验基线和三方合并。任一冲突都保持全部安装不变，并保留备份。升级要你自己执行：不会在后台自动跑，也不会因为一次产品发布就覆盖全局 skill。<code>npx opc-skills doctor</code> 检查来源、版本和本地差异，不再要求安装目录里必须有 <code>.git</code>。</p>
           </article>
           <article class="note">
             <h3>可选的 Codex 插件</h3>

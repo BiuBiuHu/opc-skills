@@ -180,6 +180,10 @@
               <span>Reference plus a check script for candidate commit, deployment commit, default-branch merge, and worktree reconciliation.</span>
             </li>
             <li>
+              <strong>One-command upgrade</strong>
+              <span>Upgrade an existing install to the latest version with one command. Local edits use a verified baseline and three-way merge; a conflict leaves every install unchanged and keeps backups.</span>
+            </li>
+            <li>
               <strong>Install surfaces</strong>
               <span>CLI for install, update, and doctor, plus Cursor and Claude discovery directories. Optional Codex Agent Plugin install. This repo is not in the public Plugins Directory.</span>
             </li>
@@ -209,7 +213,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="install-title">Install</h2>
-          <p>Git and Python 3.9+ are required. The one-liner creates <code>~/.codex/skills</code> if needed. Use update to refresh an existing install; use doctor to check provenance, versions, and local overrides.</p>
+          <p>Git and Python 3.9+ are required. The one-liner creates <code>~/.codex/skills</code> if needed. After install, one command upgrades the installed skill to the latest version. <code>doctor</code> checks provenance, versions, and local overrides.</p>
         </div>
         <div class="terminals">
           <div class="terminal">
@@ -228,11 +232,19 @@
             </div>
             <pre><code>curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash</code></pre>
           </div>
+          <div class="terminal terminal-upgrade">
+            <div class="terminal-bar">
+              <span>upgrade</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="npx opc-skills update">Copy</button>
+            </div>
+            <pre><code>npx opc-skills update</code></pre>
+          </div>
         </div>
         <div class="install-notes">
           <article class="note">
-            <h3>Keep it current</h3>
-            <p><code>npx opc-skills update</code> uses a verified Git source cache and three-way merge. A conflict leaves every install unchanged and keeps backups. <code>npx opc-skills doctor</code> does not require <code>.git</code> inside the installed directory.</p>
+            <h3>Upgrade an existing install</h3>
+            <p><code>npx opc-skills update</code> refreshes an existing install from a verified Git source cache and syncs already-present <code>.agents</code>, Cursor, and Claude skill surfaces. Per-install local edits use a verified baseline and three-way merge. Any conflict leaves all installations unchanged; backups are retained. You run this command yourself: it is not an unattended or background auto-update, and a product release does not overwrite the global skill. <code>npx opc-skills doctor</code> checks provenance, versions, and local overrides, and does not require <code>.git</code> in the installed directory.</p>
           </article>
           <article class="note">
             <h3>Optional Codex plugin</h3>
