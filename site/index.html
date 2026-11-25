@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPC Skills — ship the consumer product and the operator console</title>
+  <meta name="description" content="opc-skills is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. Evidence-gated delivery for solo builders, one-person companies, and small teams.">
+  <link rel="canonical" href="https://biubiuhu.github.io/opc-skills/">
+  <link rel="alternate" hreflang="en" href="https://biubiuhu.github.io/opc-skills/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://biubiuhu.github.io/opc-skills/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://biubiuhu.github.io/opc-skills/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OPC Skills">
+  <meta property="og:description" content="A Codex Skill for shipping consumer-facing apps together with their B-side operator consoles.">
+  <meta property="og:url" content="https://biubiuhu.github.io/opc-skills/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_CN">
+  <meta name="theme-color" content="#14110f">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="wordmark" href="./">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#14110f" stroke="#3a342e"/>
+          <circle cx="16" cy="16" r="9" fill="none" stroke="#f4efe6" stroke-width="2.1"/>
+          <path d="M16 8.2v8.2l5.6 3.2" fill="none" stroke="#c45a3a" stroke-width="2.1" stroke-linecap="round"/>
+        </svg>
+        OPC Skills
+      </a>
+      <nav class="site-nav" aria-label="Sections">
+        <a href="#audience">For whom</a>
+        <a href="#loop">Delivery loop</a>
+        <a href="#gain">What you get</a>
+        <a href="#install">Install</a>
+        <a href="#reading">Further reading</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="./" lang="en" aria-current="page">English</a>
+        <a href="zh/" lang="zh-Hans">中文</a>
+      </nav>
+      <a class="header-github" href="https://github.com/BiuBiuHu/opc-skills">GitHub</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker">Codex Skill</p>
+          <h1 id="hero-title">From a pain point to a shippable release.</h1>
+          <p class="lede">opc-skills is a Codex Skill for shipping consumer-facing apps together with their <span class="nowrap">B-side</span> operator consoles. It is for solo builders, one-person companies (OPC), and small teams that have to keep the product running after launch.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">Install opc-skills</a>
+            <a class="btn btn-ghost" href="https://github.com/BiuBiuHu/opc-skills">View on GitHub</a>
+          </div>
+          <div class="hero-meta">
+            <span class="chip">v<span data-opc-version>0.6.2</span></span>
+            <span class="chip">MIT</span>
+            <span class="chip">Git · Python 3.9+</span>
+          </div>
+        </div>
+        <aside class="loop-card" aria-label="Delivery loop">
+          <h2>Delivery loop</h2>
+          <ol class="loop-mini">
+            <li><span>01</span>Clarify</li>
+            <li><span>02</span>PRD</li>
+            <li><span>03</span>UI</li>
+            <li><span>04</span>Architecture</li>
+            <li><span>05</span>Implement</li>
+            <li><span>06</span>Test</li>
+            <li><span>07</span>Integrate</li>
+            <li><span>08</span>Release</li>
+            <li><span>09</span>Optional bilingual content</li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="audience" id="audience" aria-labelledby="audience-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="audience-title">Who it is for</h2>
+          <p>The skill covers user-side App / Web / mini-program / desktop work, the matching ops, review, config, and support consoles, and the primary API / auth / worker path behind them.</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>Solo builders and OPC</h3>
+            <p>A complete path from a pain point to a shippable release, without turning the method into a private project dump.</p>
+          </article>
+          <article class="card">
+            <h3>Small teams</h3>
+            <p>Ship a consumer product and the operator console that keeps it running—configuration, review, support, and release control included.</p>
+          </article>
+          <article class="card">
+            <h3>Evidence-first delivery</h3>
+            <p>Work that needs real pages, real clients, staging, test reports, and production regression—not only a green build.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow" id="loop" aria-labelledby="loop-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="loop-title">The delivery loop</h2>
+          <p>The main agent reads SKILL.md and enters requirement validation, UI, architecture, implementation, testing, integration, release, or post-release content. Page release is never blocked by article work.</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="idx">01</span>
+            <h3>Clarify</h3>
+            <p>Align on the user, the job, and the success path before writing a backlog of fields.</p>
+          </li>
+          <li>
+            <span class="idx">02</span>
+            <h3>PRD</h3>
+            <p>Lock the consumer journey and the operator loop that has to exist for that journey to stay alive.</p>
+          </li>
+          <li>
+            <span class="idx">03</span>
+            <h3>UI</h3>
+            <p>Prototype the consumer experience and the B-side console together, including empty, error, and slow states.</p>
+          </li>
+          <li>
+            <span class="idx">04</span>
+            <h3>Architecture</h3>
+            <p>Draw the call graph and change impact. Clients talk to the primary API; internal services stay behind it.</p>
+          </li>
+          <li>
+            <span class="idx">05</span>
+            <h3>Implement</h3>
+            <p>Move in controlled steps from a saved baseline. Project names and deployments stay in the project’s own facts.</p>
+          </li>
+          <li>
+            <span class="idx">06</span>
+            <h3>Test</h3>
+            <p>Choose the smallest sufficient set from changed files, call chains, and risk. A passing build is not the proof.</p>
+          </li>
+          <li>
+            <span class="idx">07</span>
+            <h3>Integrate</h3>
+            <p>Exercise real pages and real clients against staging and the real API, not a login screen alone.</p>
+          </li>
+          <li>
+            <span class="idx">08</span>
+            <h3>Release</h3>
+            <p>Staging evidence, review, release-plan sign-off, production smoke, then production-domain regression.</p>
+          </li>
+          <li>
+            <span class="idx">09</span>
+            <h3>Optional content</h3>
+            <p>After a completed release, Content Agent can suggest, draft, or publish bilingual notes. Publishing is never silent.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gain" id="gain" aria-labelledby="gain-title">
+      <div class="wrap split">
+        <div>
+          <div class="section-head">
+            <h2 id="gain-title">What you get</h2>
+            <p>Reusable methods, gates, templates, and role placeholders. Not a hosted runtime and not a screenshot gallery of private products.</p>
+          </div>
+          <ul class="gain-list">
+            <li>
+              <strong>Templates</strong>
+              <span>Requirement validation, PRD, UI prototype, architecture, change impact, implementation plan, test strategy, release plan, evidence manifest, ops runbook, and post-release content.</span>
+            </li>
+            <li>
+              <strong>Role files</strong>
+              <span>Explorer, Frontend, Backend, QA, Integration, DevOps, and Content. The skill does not call subagents itself; the main agent uses runtime tools only when you explicitly allow it.</span>
+            </li>
+            <li>
+              <strong>Release integrity</strong>
+              <span>Reference plus a check script for candidate commit, deployment commit, default-branch merge, and worktree reconciliation.</span>
+            </li>
+            <li>
+              <strong>Install surfaces</strong>
+              <span>CLI for install, update, and doctor, plus Cursor and Claude discovery directories. Optional Codex Agent Plugin install. This repo is not in the public Plugins Directory.</span>
+            </li>
+            <li>
+              <strong>Product hosting</strong>
+              <span>Products this skill helps ship can deploy to Vercel or Cloudflare. Hosting follows the project; this marketing site is separate.</span>
+            </li>
+          </ul>
+        </div>
+        <aside class="panel">
+          <h3>Evidence gates</h3>
+          <ol class="gate-list">
+            <li><strong>Real pages and clients</strong><span>Not a mock-only walkthrough.</span></li>
+            <li><strong>Staging</strong><span>Real API, storage, and feature paths.</span></li>
+            <li><strong>Test report</strong><span>Scoped to the change, then recorded.</span></li>
+            <li><strong>Code review</strong><span>A reviewable diff, not a private patch.</span></li>
+            <li><strong>Release-plan sign-off</strong><span>Related systems included or explicitly out of scope.</span></li>
+            <li><strong>Production smoke</strong><span>The live entry, not only a health check.</span></li>
+            <li><strong>Production-domain regression</strong><span>Smoke does not replace P0/P1 checks.</span></li>
+            <li><strong>Observation window</strong><span>Release is complete only after the window closes.</span></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="install-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="install-title">Install</h2>
+          <p>Git and Python 3.9+ are required. The one-liner creates <code>~/.codex/skills</code> if needed. Use update to refresh an existing install; use doctor to check provenance, versions, and local overrides.</p>
+        </div>
+        <div class="terminals">
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span>npx</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="npx opc-skills install">Copy</button>
+            </div>
+            <pre><code>npx opc-skills install</code></pre>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span>curl</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash">Copy</button>
+            </div>
+            <pre><code>curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash</code></pre>
+          </div>
+        </div>
+        <div class="install-notes">
+          <article class="note">
+            <h3>Keep it current</h3>
+            <p><code>npx opc-skills update</code> uses a verified Git source cache and three-way merge. A conflict leaves every install unchanged and keeps backups. <code>npx opc-skills doctor</code> does not require <code>.git</code> inside the installed directory.</p>
+          </article>
+          <article class="note">
+            <h3>Optional Codex plugin</h3>
+            <ul>
+              <li><code>codex plugin marketplace add BiuBiuHu/opc-skills</code></li>
+              <li><code>codex plugin add opc-skills@opc-skills</code></li>
+            </ul>
+            <p>The public OpenAI Plugins Directory does not list this repo. The openai/skills curated listing is deprecated.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="reading" id="reading" aria-labelledby="reading-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="reading-title">Further reading</h2>
+          <p>Related notes from One PC. These are practice write-ups, not extra product claims.</p>
+        </div>
+        <div class="reading-grid">
+          <a class="card" href="https://www.peak-lake.com/en/blog/opc-software-practice/">
+            <p class="source">One PC</p>
+            <h3>One Person Can Ship a Product Too: My OPC Software Development Practice</h3>
+            <p>How a solo builder runs the product loop. This repository is that delivery flow.</p>
+          </a>
+          <a class="card" href="https://www.peak-lake.com/en/blog/mslj4f6g/">
+            <p class="source">One PC</p>
+            <h3>Loop Engineering Has No Silver Bullet: Vertical Skills + spec/TDD</h3>
+            <p>Vertical Skills with spec/TDD. The post links here.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>OPC Skills is MIT licensed. Agent rules live in SKILL.md; this page is the product introduction, not the docs portal.</p>
+      <div class="footer-meta">
+        <a href="https://github.com/BiuBiuHu/opc-skills">GitHub</a>
+        <span>v<span data-opc-version>0.6.2</span></span>
+        <nav class="lang-switch" aria-label="Language">
+          <a href="./" lang="en" aria-current="page">English</a>
+          <a href="zh/" lang="zh-Hans">中文</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+  <script src="assets/site.js"></script>
+</body>
+</html>

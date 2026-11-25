@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="OPC Skills">
+  <rect width="32" height="32" rx="8" fill="#14110f"/>
+  <circle cx="16" cy="16" r="9" fill="none" stroke="#f3eee4" stroke-width="2.1"/>
+  <path d="M16 8.2v8.2l5.6 3.2" fill="none" stroke="#c45a3a" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

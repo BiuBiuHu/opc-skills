@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPC Skills — 把 C 端产品和工作台一起做完</title>
+  <meta name="description" content="opc-skills 是一套 Codex Skill，面向 C 端业务研发：把用户侧应用与配套 B 端运营工作台一起交付。给一人公司（OPC）和需要证据门禁的小团队用。">
+  <link rel="canonical" href="https://biubiuhu.github.io/opc-skills/zh/">
+  <link rel="alternate" hreflang="en" href="https://biubiuhu.github.io/opc-skills/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://biubiuhu.github.io/opc-skills/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://biubiuhu.github.io/opc-skills/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OPC Skills">
+  <meta property="og:description" content="一套 Codex Skill，把 C 端产品和配套 B 端运营工作台一起交付。">
+  <meta property="og:url" content="https://biubiuhu.github.io/opc-skills/zh/">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta name="theme-color" content="#14110f">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="wordmark" href="./">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#14110f" stroke="#3a342e"/>
+          <circle cx="16" cy="16" r="9" fill="none" stroke="#f4efe6" stroke-width="2.1"/>
+          <path d="M16 8.2v8.2l5.6 3.2" fill="none" stroke="#c45a3a" stroke-width="2.1" stroke-linecap="round"/>
+        </svg>
+        OPC Skills
+      </a>
+      <nav class="site-nav" aria-label="页面章节">
+        <a href="#audience">适用对象</a>
+        <a href="#loop">交付闭环</a>
+        <a href="#gain">你会得到什么</a>
+        <a href="#install">安装</a>
+        <a href="#reading">延伸阅读</a>
+      </nav>
+      <nav class="lang-switch" aria-label="语言">
+        <a href="../" lang="en">English</a>
+        <a href="./" lang="zh-Hans" aria-current="page">中文</a>
+      </nav>
+      <a class="header-github" href="https://github.com/BiuBiuHu/opc-skills">GitHub</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker">Codex Skill</p>
+          <h1 id="hero-title">从痛点，做到可发布。</h1>
+          <p class="lede">opc-skills 是一套面向 C 端业务研发的 Codex Skill：把用户侧 App / Web / 小程序，以及配套的 B 端运营工作台一起交付。主要给一人公司（OPC），以及必须同时交出产品与工作台的小团队用。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">安装 opc-skills</a>
+            <a class="btn btn-ghost" href="https://github.com/BiuBiuHu/opc-skills">打开 GitHub</a>
+          </div>
+          <div class="hero-meta">
+            <span class="chip">v<span data-opc-version>0.6.2</span></span>
+            <span class="chip">MIT</span>
+            <span class="chip">Git · Python 3.9+</span>
+          </div>
+        </div>
+        <aside class="loop-card" aria-label="交付闭环">
+          <h2>交付闭环</h2>
+          <ol class="loop-mini">
+            <li><span>01</span>目标澄清</li>
+            <li><span>02</span>PRD</li>
+            <li><span>03</span>UI</li>
+            <li><span>04</span>架构</li>
+            <li><span>05</span>实现</li>
+            <li><span>06</span>测试</li>
+            <li><span>07</span>联调</li>
+            <li><span>08</span>发布</li>
+            <li><span>09</span>可选的发布后双语内容</li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="audience" id="audience" aria-labelledby="audience-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="audience-title">给谁用</h2>
+          <p>覆盖用户侧 App / Web / 小程序 / 桌面端，配套的运营、审核、配置和客服工作台，以及背后的主 API、认证和 worker 路径。</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <h3>独立开发者与一人公司（OPC）</h3>
+            <p>从痛点走到可发布版本的完整路径，方法保持通用，不把私有项目细节写进 skill。</p>
+          </article>
+          <article class="card">
+            <h3>小团队</h3>
+            <p>同时交付用户产品，以及让它持续运转的运营工作台：配置、审核、排错和发布控制。</p>
+          </article>
+          <article class="card">
+            <h3>以证据为准的交付</h3>
+            <p>需要真实页面、真实客户端、预发、测试报告和线上回归；构建通过不能代替验收。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow" id="loop" aria-labelledby="loop-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="loop-title">交付闭环</h2>
+          <p>主 Agent 读取 SKILL.md，按任务进入需求验证、UI、架构、实现、测试、联调、发布或发布后内容。文章工作不阻塞页面发布。</p>
+        </div>
+        <ol class="steps">
+          <li>
+            <span class="idx">01</span>
+            <h3>目标澄清</h3>
+            <p>先对齐用户、任务和成功路径，而不是先堆一堆字段。</p>
+          </li>
+          <li>
+            <span class="idx">02</span>
+            <h3>PRD</h3>
+            <p>写清 C 端主路径，以及这条路径要持续运转所必需的运营闭环。</p>
+          </li>
+          <li>
+            <span class="idx">03</span>
+            <h3>UI</h3>
+            <p>同时做 C 端体验和 B 端工作台原型，空态、错态和慢态不能缺。</p>
+          </li>
+          <li>
+            <span class="idx">04</span>
+            <h3>架构</h3>
+            <p>画出调用图和变更影响。客户端只打主 API，内部服务留在边界之后。</p>
+          </li>
+          <li>
+            <span class="idx">05</span>
+            <h3>实现</h3>
+            <p>从已保存的基线小步推进。项目名、账号和部署留在项目自己的事实源里。</p>
+          </li>
+          <li>
+            <span class="idx">06</span>
+            <h3>测试</h3>
+            <p>按改动文件、调用链和风险选择最小充分集合。构建通过不是证明。</p>
+          </li>
+          <li>
+            <span class="idx">07</span>
+            <h3>联调</h3>
+            <p>用真实页面和真实客户端打预发与真实 API，不能只停在登录页。</p>
+          </li>
+          <li>
+            <span class="idx">08</span>
+            <h3>发布</h3>
+            <p>预发证据、评审、发布方案签字、生产 smoke，再做固定生产域名回归。</p>
+          </li>
+          <li>
+            <span class="idx">09</span>
+            <h3>可选内容</h3>
+            <p>页面发布完成后，Content Agent 可以选题、写稿或发布中英文笔记。默认不会静默公开。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="gain" id="gain" aria-labelledby="gain-title">
+      <div class="wrap split">
+        <div>
+          <div class="section-head">
+            <h2 id="gain-title">你会得到什么</h2>
+            <p>可复用的方法、门禁、模板和角色占位。这不是托管运行时，也不展示私有产品截图。</p>
+          </div>
+          <ul class="gain-list">
+            <li>
+              <strong>模板</strong>
+              <span>需求验证、PRD、UI 原型、架构、变更影响、实施计划、测试策略、发布方案、证据清单、运维手册和发布后内容。</span>
+            </li>
+            <li>
+              <strong>角色文件</strong>
+              <span>Explorer、Frontend、Backend、QA、Integration、DevOps 和 Content。skill 本身不会调用 subagent；只有你明确允许时，主 Agent 才使用运行时工具。</span>
+            </li>
+            <li>
+              <strong>发布完整性</strong>
+              <span>配套说明和检查脚本，核对候选 commit、deployment commit、默认分支合并和 worktree 归位。</span>
+            </li>
+            <li>
+              <strong>安装面</strong>
+              <span>CLI 提供 install、update 和 doctor，并同步 Cursor 与 Claude 发现目录。可选 Codex Agent Plugin。本仓库尚未进入公开 Plugins Directory。</span>
+            </li>
+            <li>
+              <strong>产品部署</strong>
+              <span>本 skill 帮助交付的产品可部署到 Vercel 或 Cloudflare。平台服从项目选择；本介绍站是另一件事。</span>
+            </li>
+          </ul>
+        </div>
+        <aside class="panel">
+          <h3>证据门禁</h3>
+          <ol class="gate-list">
+            <li><strong>真实页面与客户端</strong><span>不是只走一遍本地 mock。</span></li>
+            <li><strong>预发</strong><span>真实 API、存储和功能页路径。</span></li>
+            <li><strong>测试报告</strong><span>按改动范围选择，并落盘。</span></li>
+            <li><strong>Code Review</strong><span>可评审的 diff，不是私下补丁。</span></li>
+            <li><strong>发布方案签字</strong><span>关联系统纳入范围，或明确不发布。</span></li>
+            <li><strong>生产 smoke</strong><span>打真实入口，而不是只看健康检查。</span></li>
+            <li><strong>固定生产域名回归</strong><span>smoke 不能代替 P0/P1 回归。</span></li>
+            <li><strong>观察窗口</strong><span>窗口结束前，不能宣布发布完成。</span></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="install-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="install-title">安装</h2>
+          <p>需要 Git 和 Python 3.9+。一键安装会按需创建 <code>~/.codex/skills</code>。已安装时用 update 更新；用 doctor 检查来源、版本和本地差异。</p>
+        </div>
+        <div class="terminals">
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span>npx</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="npx opc-skills install">复制</button>
+            </div>
+            <pre><code>npx opc-skills install</code></pre>
+          </div>
+          <div class="terminal">
+            <div class="terminal-bar">
+              <span>curl</span>
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <button class="copy" type="button" data-copy="curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash">复制</button>
+            </div>
+            <pre><code>curl -fsSL https://raw.githubusercontent.com/BiuBiuHu/opc-skills/main/scripts/install.sh | bash</code></pre>
+          </div>
+        </div>
+        <div class="install-notes">
+          <article class="note">
+            <h3>保持更新</h3>
+            <p><code>npx opc-skills update</code> 使用受校验的 Git 源缓存和三方合并。出现冲突时全部安装保持不变，并保留备份。<code>npx opc-skills doctor</code> 不再要求安装目录里必须有 <code>.git</code>。</p>
+          </article>
+          <article class="note">
+            <h3>可选的 Codex 插件</h3>
+            <ul>
+              <li><code>codex plugin marketplace add BiuBiuHu/opc-skills</code></li>
+              <li><code>codex plugin add opc-skills@opc-skills</code></li>
+            </ul>
+            <p>公开的 OpenAI Plugins Directory 尚未收录本仓库。openai/skills curated 列表已弃用。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="reading" id="reading" aria-labelledby="reading-title">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="reading-title">延伸阅读</h2>
+          <p>相关实践，来自 One PC。这是方法笔记，不是额外的产品承诺。</p>
+        </div>
+        <div class="reading-grid">
+          <a class="card" href="https://www.peak-lake.com/blog/opc-software-practice/">
+            <p class="source">One PC</p>
+            <h3>一个人，也可以做完一款产品：我的 OPC 软件研发实践</h3>
+            <p>一人公司如何把痛点做到发布。本仓库就是其中的交付流程。</p>
+          </a>
+          <a class="card" href="https://www.peak-lake.com/blog/mslj4f6g/">
+            <p class="source">One PC</p>
+            <h3>Loop Engineering 没有银弹：垂直场景的 Skills + spec/TDD 落地实践</h3>
+            <p>垂直 Skills 与 spec/TDD。文中指向本仓库。</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>OPC Skills 使用 MIT 许可证。Agent 规则以 SKILL.md 为准；本页是产品介绍，不是文档门户。</p>
+      <div class="footer-meta">
+        <a href="https://github.com/BiuBiuHu/opc-skills">GitHub</a>
+        <span>v<span data-opc-version>0.6.2</span></span>
+        <nav class="lang-switch" aria-label="语言">
+          <a href="../" lang="en">English</a>
+          <a href="./" lang="zh-Hans" aria-current="page">中文</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/site.js"></script>
+</body>
+</html>
