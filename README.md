@@ -108,6 +108,7 @@ Related notes from One PC:
 
 ## Docs
 
+- Product site: [site/](site/)
 - Chinese: [README.zh-CN.md](README.zh-CN.md)
 - English: [README.en.md](README.en.md)
 - Main skill rules: [SKILL.md](SKILL.md)

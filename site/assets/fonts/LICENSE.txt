@@ -1,0 +1,15 @@
+This directory redistributes Latin subsets of two SIL Open Font License
+families for the OPC Skills product site. The fonts are unchanged except
+for being served locally.
+
+Fraunces
+  Copyright 2020 The Fraunces Project Authors
+  https://github.com/undercasetype/Fraunces
+  SIL Open Font License 1.1
+
+IBM Plex Sans and IBM Plex Mono
+  Copyright 2017 IBM Corp. All rights reserved.
+  https://github.com/IBM/plex
+  SIL Open Font License 1.1
+
+SIL Open Font License: https://scripts.sil.org/OFL
