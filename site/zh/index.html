@@ -148,7 +148,7 @@
           <li>
             <span class="idx">08</span>
             <h3>发布</h3>
-            <p>预发证据、评审、发布方案签字、生产 smoke，再做固定生产域名回归。</p>
+            <p>预发证据、评审、按变更类型规划版本、发布方案签字、生产 smoke，再做固定生产域名回归。</p>
           </li>
           <li>
             <span class="idx">09</span>
@@ -178,6 +178,10 @@
             <li>
               <strong>发布完整性</strong>
               <span>配套说明和检查脚本，核对候选 commit、deployment commit、默认分支合并和 worktree 归位。</span>
+            </li>
+            <li>
+              <strong>按变更类型定版本</strong>
+              <span>发布产品时，skill 按这次用户可见变更的类型规划版本（<code>MAJOR</code> / <code>MINOR</code> / <code>PATCH</code>）。依据是相对上一正式版本的完整变化，不是提交次数、调试轮次或打包次数。多类变更取最高级别。你指定了版本，或项目已有规则时，以那套为准，并写入发布方案。</span>
             </li>
             <li>
               <strong>安装面</strong>

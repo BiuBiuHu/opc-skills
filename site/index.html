@@ -148,7 +148,7 @@
           <li>
             <span class="idx">08</span>
             <h3>Release</h3>
-            <p>Staging evidence, review, release-plan sign-off, production smoke, then production-domain regression.</p>
+            <p>Staging evidence, review, a version planned from the change type, release-plan sign-off, production smoke, then production-domain regression.</p>
           </li>
           <li>
             <span class="idx">09</span>
@@ -178,6 +178,10 @@
             <li>
               <strong>Release integrity</strong>
               <span>Reference plus a check script for candidate commit, deployment commit, default-branch merge, and worktree reconciliation.</span>
+            </li>
+            <li>
+              <strong>Version from the change</strong>
+              <span>When shipping a product, the skill plans the version from the change type (<code>MAJOR</code> / <code>MINOR</code> / <code>PATCH</code>). It uses the complete user-visible change against the last formal version, not commit count, debug rounds, or packaging times. Mixed changes take the highest level. If you name a version, or the project already has rules, those come first and are recorded in the release plan.</span>
             </li>
             <li>
               <strong>Install surfaces</strong>
