@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OPC Skills — 把 C 端产品和工作台一起做完</title>
-  <meta name="description" content="opc-skills 是一套 Codex Skill，面向 C 端业务研发：把用户侧应用与配套 B 端运营工作台一起交付。给一人公司（OPC）和需要证据门禁的小团队用。">
+  <meta name="description" content="opc-skills 是一套编程 Agent 都能用的 Skill，面向 C 端业务研发：把用户侧应用与配套 B 端运营工作台一起交付。给一人公司（OPC）和需要证据门禁的小团队用。">
   <link rel="canonical" href="https://biubiuhu.github.io/opc-skills/zh/">
   <link rel="alternate" hreflang="en" href="https://biubiuhu.github.io/opc-skills/">
   <link rel="alternate" hreflang="zh-Hans" href="https://biubiuhu.github.io/opc-skills/zh/">
   <link rel="alternate" hreflang="x-default" href="https://biubiuhu.github.io/opc-skills/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="OPC Skills">
-  <meta property="og:description" content="一套 Codex Skill，把 C 端产品和配套 B 端运营工作台一起交付。">
+  <meta property="og:description" content="一套编程 Agent 都能用的 Skill，把 C 端产品和配套 B 端运营工作台一起交付。">
   <meta property="og:url" content="https://biubiuhu.github.io/opc-skills/zh/">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:locale:alternate" content="en_US">
@@ -50,9 +50,9 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div>
-          <p class="kicker">Codex Skill</p>
+          <p class="kicker">编程 Agent 的 Skill</p>
           <h1 id="hero-title">从痛点，做到可发布。</h1>
-          <p class="lede">opc-skills 是一套面向 C 端业务研发的 Codex Skill：把用户侧 App / Web / 小程序，以及配套的 B 端运营工作台一起交付。主要给一人公司（OPC），以及必须同时交出产品与工作台的小团队用。</p>
+          <p class="lede">opc-skills 是一套编程 Agent 都能用的 Skill：把用户侧 App / Web / 小程序，以及配套的 B 端运营工作台一起交付。主要给一人公司（OPC），以及必须同时交出产品与工作台的小团队用。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#install">安装 opc-skills</a>
             <a class="btn btn-ghost" href="https://github.com/BiuBiuHu/opc-skills">打开 GitHub</a>
@@ -84,7 +84,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="audience-title">给谁用</h2>
-          <p>覆盖用户侧 App / Web / 小程序 / 桌面端，配套的运营、审核、配置和客服工作台，以及背后的主 API、认证和 worker 路径。</p>
+          <p>编程 Agent 都能用，不限于 Codex。已写明的安装面包括 Codex、Cursor、Claude 和 <code>.agents</code>。覆盖用户侧 App / Web / 小程序 / 桌面端，配套的运营、审核、配置和客服工作台，以及背后的主 API、认证和 worker 路径。</p>
         </div>
         <div class="cards">
           <article class="card">
@@ -185,7 +185,7 @@
             </li>
             <li>
               <strong>安装面</strong>
-              <span>CLI 提供 install、update 和 doctor，并同步 Cursor 与 Claude 发现目录。可选 Codex Agent Plugin。本仓库尚未进入公开 Plugins Directory。</span>
+              <span>CLI 提供 install、update 和 doctor，并同步已有 <code>.agents</code>、Cursor 和 Claude 发现目录。可选 Codex Agent Plugin。本仓库尚未进入公开 Plugins Directory。</span>
             </li>
             <li>
               <strong>产品部署</strong>
@@ -236,7 +236,7 @@
         <div class="install-notes">
           <article class="note">
             <h3>保持更新</h3>
-            <p><code>npx opc-skills update</code> 使用受校验的 Git 源缓存和三方合并。出现冲突时全部安装保持不变，并保留备份。<code>npx opc-skills doctor</code> 不再要求安装目录里必须有 <code>.git</code>。</p>
+            <p><code>npx opc-skills update</code> 使用受校验的 Git 源缓存，并同步已有 <code>.agents</code>、Cursor 和 Claude 发现目录。出现冲突时全部安装保持不变，并保留备份。<code>npx opc-skills doctor</code> 不再要求安装目录里必须有 <code>.git</code>。</p>
           </article>
           <article class="note">
             <h3>可选的 Codex 插件</h3>

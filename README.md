@@ -4,7 +4,7 @@
 
 Current version: `v0.6.2`
 
-`opc-skills` is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
+`opc-skills` is a skill for coding agents that ships consumer-facing apps together with their B-side operator consoles. This hub is the short map. Full detail lives in [README.en.md](README.en.md) and [README.zh-CN.md](README.zh-CN.md). Agent rules are defined in [SKILL.md](SKILL.md); do not treat this page as a substitute.
 
 ## Install
 
@@ -37,7 +37,7 @@ Vercel and Cloudflare are supported. See [Cloudflare deployment](references/clou
 
 ## Trigger phrases
 
-In Codex, use one of these intents:
+In a coding agent, use one of these intents:
 
 ```text
 Start OPC Skills
@@ -55,7 +55,7 @@ The main agent then reads `SKILL.md` and enters requirement validation, UI, arch
 
 ## What it is
 
-A reusable Codex Skill that walks the main agent through a reviewable delivery loop:
+A reusable skill for coding agents that walks the main agent through a reviewable delivery loop:
 
 **clarify → PRD → UI → architecture → implement → test → integrate → release → optional post-release content**
 
@@ -65,6 +65,7 @@ Default planning mode is `manual-gated`; wait when implementation is not yet aut
 
 ## Who it's for
 
+- People using a coding agent (documented surfaces: Codex, Cursor, Claude, and `.agents`)—not Codex alone
 - Solo builders and one-person companies (OPC) who need a complete path from a pain point to a shippable release
 - Small teams that ship a consumer product and the operator console that keeps it running
 - Work that needs evidence, not only a green build: real pages, real clients, staging, test reports, and production regression

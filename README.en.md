@@ -4,7 +4,7 @@
 
 Current version: `v0.6.2`
 
-`opc-skills` is a Codex Skill for delivering consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
+`opc-skills` is a skill for coding agents that delivers consumer-facing apps, Web apps, mini programs, and their supporting operator consoles. Documented surfaces include Codex, Cursor, Claude, and `.agents`. It is aimed at solo builders / one-person companies (OPC) and small teams that ship both the user product and the ops console.
 
 It is designed for the full delivery loop: clarify the user goal, write the PRD, design UI and architecture, implement in controlled steps, verify with real pages and real clients, integrate, then release only after staging evidence, review, and production regression. After a completed release, it can optionally produce bilingual articles. The short map is in [README.md](README.md); agent rules live in [SKILL.md](SKILL.md).
 
@@ -35,7 +35,7 @@ Or clone it elsewhere and symlink it into `~/.codex/skills/opc-skills`.
 
 ## Usage
 
-Use one of these intents in Codex:
+In a coding agent, use one of these intents:
 
 ```text
 Start OPC Skills

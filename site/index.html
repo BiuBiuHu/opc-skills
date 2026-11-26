@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OPC Skills — ship the consumer product and the operator console</title>
-  <meta name="description" content="opc-skills is a Codex Skill for shipping consumer-facing apps together with their B-side operator consoles. Evidence-gated delivery for solo builders, one-person companies, and small teams.">
+  <meta name="description" content="opc-skills is a skill for coding agents that ships consumer-facing apps together with their B-side operator consoles. Evidence-gated delivery for solo builders, one-person companies, and small teams.">
   <link rel="canonical" href="https://biubiuhu.github.io/opc-skills/">
   <link rel="alternate" hreflang="en" href="https://biubiuhu.github.io/opc-skills/">
   <link rel="alternate" hreflang="zh-Hans" href="https://biubiuhu.github.io/opc-skills/zh/">
   <link rel="alternate" hreflang="x-default" href="https://biubiuhu.github.io/opc-skills/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="OPC Skills">
-  <meta property="og:description" content="A Codex Skill for shipping consumer-facing apps together with their B-side operator consoles.">
+  <meta property="og:description" content="A skill for coding agents that ships consumer-facing apps together with their B-side operator consoles.">
   <meta property="og:url" content="https://biubiuhu.github.io/opc-skills/">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="zh_CN">
@@ -50,9 +50,9 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div>
-          <p class="kicker">Codex Skill</p>
+          <p class="kicker">Skill for coding agents</p>
           <h1 id="hero-title">From a pain point to a shippable release.</h1>
-          <p class="lede">opc-skills is a Codex Skill for shipping consumer-facing apps together with their <span class="nowrap">B-side</span> operator consoles. It is for solo builders, one-person companies (OPC), and small teams that have to keep the product running after launch.</p>
+          <p class="lede">opc-skills is a skill for coding agents that ships consumer-facing apps together with their <span class="nowrap">B-side</span> operator consoles. It is for solo builders, one-person companies (OPC), and small teams that have to keep the product running after launch.</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#install">Install opc-skills</a>
             <a class="btn btn-ghost" href="https://github.com/BiuBiuHu/opc-skills">View on GitHub</a>
@@ -84,7 +84,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2 id="audience-title">Who it is for</h2>
-          <p>The skill covers user-side App / Web / mini-program / desktop work, the matching ops, review, config, and support consoles, and the primary API / auth / worker path behind them.</p>
+          <p>Coding agents can use this skill, not only Codex. Documented surfaces include Codex, Cursor, Claude, and <code>.agents</code>. The work covers user-side App / Web / mini-program / desktop, the matching ops, review, config, and support consoles, and the primary API / auth / worker path behind them.</p>
         </div>
         <div class="cards">
           <article class="card">
@@ -185,7 +185,7 @@
             </li>
             <li>
               <strong>Install surfaces</strong>
-              <span>CLI for install, update, and doctor, plus Cursor and Claude discovery directories. Optional Codex Agent Plugin install. This repo is not in the public Plugins Directory.</span>
+              <span>CLI for install, update, and doctor, and it synchronizes existing <code>.agents</code>, Cursor, and Claude skill surfaces. Optional Codex Agent Plugin install. This repo is not in the public Plugins Directory.</span>
             </li>
             <li>
               <strong>Product hosting</strong>
@@ -236,7 +236,7 @@
         <div class="install-notes">
           <article class="note">
             <h3>Keep it current</h3>
-            <p><code>npx opc-skills update</code> uses a verified Git source cache and three-way merge. A conflict leaves every install unchanged and keeps backups. <code>npx opc-skills doctor</code> does not require <code>.git</code> inside the installed directory.</p>
+            <p><code>npx opc-skills update</code> uses a verified Git source cache and synchronizes existing <code>.agents</code>, Cursor, and Claude skill surfaces. A conflict leaves every install unchanged and keeps backups. <code>npx opc-skills doctor</code> does not require <code>.git</code> inside the installed directory.</p>
           </article>
           <article class="note">
             <h3>Optional Codex plugin</h3>

@@ -105,6 +105,11 @@ EN_MARKETING_ON_ZH = (
     "Keep it current",
     "When shipping a product",
     "Version from the change",
+    "skill for coding agents",
+    "Skill for coding agents",
+    "Coding agents can use",
+    "not only Codex",
+    "A Codex Skill",
 )
 
 ZH_MARKETING_ON_EN = (
@@ -317,6 +322,18 @@ class SiteTests(unittest.TestCase):
         self.assertIn("MINOR", zh)
         self.assertIn("PATCH", zh)
         self.assertNotIn("一条命令即可把已安装的 skill 升到最新版本", zh)
+
+    def test_positioned_for_coding_agents_not_codex_only(self):
+        en = EN_PAGE.read_text(encoding="utf-8")
+        zh = ZH_PAGE.read_text(encoding="utf-8")
+        self.assertIn("skill for coding agents", en)
+        self.assertIn("Coding agents can use this skill, not only Codex", en)
+        self.assertNotIn("is a Codex Skill", en)
+        self.assertNotIn("A Codex Skill", en)
+        self.assertIn("编程 Agent 都能用", zh)
+        self.assertIn("不限于 Codex", zh)
+        self.assertNotIn("是一套 Codex Skill", zh)
+        self.assertNotIn("面向 C 端业务研发的 Codex Skill", zh)
 
     def test_language_guard_detects_mixed_copy(self):
         self.assertTrue(
